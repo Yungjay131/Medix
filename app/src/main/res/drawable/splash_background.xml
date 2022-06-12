@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+            android:drawable="@drawable/splash_bg_gradient"/>
+        <item
+            android:start="16dp"
+            android:end="16dp">
+            <bitmap
+                android:gravity="center"
+                android:src="@drawable/splash_image_2"
+                android:tint="@color/appBlue" />
+        </item>
+</layer-list>

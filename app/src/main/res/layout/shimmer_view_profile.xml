@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivShimmer_frag_view_profile"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/iv_bg2"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintTop_toBottomOf="@id/ivShimmer_frag_view_profile"
+            android:backgroundTint="@color/appGrey_shimmer"
+            app:maxImageSize="20dp"
+            app:fabCustomSize="45dp"
+            android:outlineSpotShadowColor="@android:color/transparent"/>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".05"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".95"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

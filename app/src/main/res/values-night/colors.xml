@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="appCardBlue">#3439B8</color>
+    <color name="appTransparent">#FFF</color>
+    <color name="appBlue_pressed">#658CF1</color>
+    <color name="appGrey_li_message_from">#99999C</color>
+    <color name="appBlue_dark">#AD7672</color>
+    <color name="appBlue_pressed2">#C11353</color>
+</resources>

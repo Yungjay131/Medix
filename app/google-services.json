@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "265831238570",
+    "firebase_url": "https://gads-2021-project-default-rtdb.firebaseio.com",
+    "project_id": "gads-2021-project",
+    "storage_bucket": "gads-2021-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265831238570:android:9857dff7d617c8320eb9d3",
+        "android_client_info": {
+          "package_name": "com.slyworks.medix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265831238570-njjra26s2455pmcfup3mq12vhehpnab7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNoPzDeP02JDvZYkXxgxDq-s9qLe33r5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265831238570-njjra26s2455pmcfup3mq12vhehpnab7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

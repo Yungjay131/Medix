@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/btn_login_selector.xml" value="0.2791666666666667" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_bg_normal.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_bg_selected.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_selector.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_selector2.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/splash_background2.xml" value="0.2" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-land/activity_login.xml" value="0.39114583333333336" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-land/activity_on_boarding.xml" value="0.25" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-land/activity_registration.xml" value="0.18806509945750452" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_main.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_on_boarding.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_registration.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_registration_doctor.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_registration_patient.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/app_bar_main.xml" value="0.29375" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/bottomsheet_forgot_password.xml" value="0.28489583333333335" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_change_photo.xml" value="0.3144208037825059" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_exit.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_exit2.xml" value="0.264" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_logout.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_logout2.xml" value="0.2" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_permission_rationale.xml" value="0.28489583333333335" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_permission_rationale2.xml" value="0.2" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_switch_to_video_call.xml" value="0.11203703703703703" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_home.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_start_call.xml" value="0.2875" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_progressbar.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/network_notifier.xml" value="0.264" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

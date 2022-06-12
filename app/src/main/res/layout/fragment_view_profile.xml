@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragments.ViewProfileFragment"
+    android:id="@+id/rootView"
+    android:paddingBottom="30dp">
+
+    <include
+        android:id="@+id/toolbar_frag_view"
+        layout="@layout/toolbar_frag_view_profile2"
+        android:layout_width="match_parent"
+        android:layout_height="263dp"/>
+
+    <ProgressBar
+        android:id="@+id/progress_frag_view_profile"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srlMain_frag_view_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="263dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView_frag_view_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView_inner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/tvHeaderFirstName_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:text="First Name"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvFirstName_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:background="@drawable/et_bg_normal"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/appTextColor3"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderFirstName_frag_view_profile" />
+
+
+        <TextView
+            android:id="@+id/tvHeaderLastName_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toBottomOf="@id/tvFirstName_frag_view_profile"
+            android:layout_marginTop="32dp"
+            android:text="Last Name"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvLastName_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:background="@drawable/et_bg_normal"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/appTextColor3"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderLastName_frag_view_profile" />
+
+        <TextView
+            android:id="@+id/tvHeaderSex_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toBottomOf="@id/tvLastName_frag_view_profile"
+            android:layout_marginTop="32dp"
+            android:text="Sex"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvSex_frag_view_profile"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:background="@drawable/et_bg_normal"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/appTextColor3"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderSex_frag_view_profile" />
+
+       <TextView
+           android:id="@+id/tvHeaderSpecialization_frag_view_profile"
+           android:layout_height="wrap_content"
+           android:layout_width="0dp"
+           app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+           app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+           app:layout_constraintTop_toBottomOf="@id/tvSex_frag_view_profile"
+           android:layout_marginTop="32dp"
+           android:text="Specialization"
+           android:textSize="16sp"
+           android:visibility="gone"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".05"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".95"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".2"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".8"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

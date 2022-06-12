@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="et_corner_radius">12dp</dimen>
+    <dimen name="layout_size_margin">20dp</dimen>
+    <dimen name="layout_size_margin2">32dp</dimen>
+    <dimen name="iv_li_message_height">16dp</dimen>
+    <dimen name="button_radius">24dp</dimen>
+</resources>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.slyworks.medix"
+    tools:ignore="MissingLeanbackLauncher">
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher2"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher2_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Medix">
+        <activity
+            android:name=".ui.activities.settingsActivity.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.voiceCallActivity.VoiceCallActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.videoCallActivity.VideoCallActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.videoCall" />
+        <activity
+            android:name=".ui.activities.messageActivity.MessageActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.message"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
+            android:name=".ui.activities.requestsActivity.RequestsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activities.registrationActivity.RegistrationDoctorActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.registration_doctor" />
+        <activity
+            android:name=".ui.activities.registrationActivity.RegistrationPatientActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.registration_patient" />
+        <activity
+            android:name=".ui.activities.loginActivity.LoginActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.login"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".ui.activities.registrationActivity.RegistrationActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.registration" />
+        <activity
+            android:name=".ui.activities.onBoardingActivity.OnBoardingActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.mainActivity.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.main" />
+        <activity
+            android:name=".ui.activities.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.splash2">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/appGrey" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <receiver
+            android:name=".broadcast_receivers.CloudMessageBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.slyworks.medix.BROADCAST_CLOUD_MESSAGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".broadcast_receivers.VideoCallRequestBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.slyworks.medix.BROADCAST_VIDEO_CALL_REQUEST" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".broadcast_receivers.VoiceCallRequestBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.slyworks.medix.BROADCAST_VOICE_CALL_REQUEST" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.slyworks.medix.services.MFirebaseMessagingService"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="NavigationService"
+            android:foregroundServiceType="location">
+            <!-- Any inner elements would go here. -->
+        </service>
+        <service
+            android:name=".services.ListenerService"
+            android:description="@string/appservice_description_text"
+            android:exported="false"
+            android:stopWithTask="false" />
+    </application>
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+</manifest>

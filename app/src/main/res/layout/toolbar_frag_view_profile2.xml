@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="263dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:id="@+id/appBarLayout_frag_view_profile">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:contentScrim="@color/appTextColor3"
+        android:background="@color/white"
+        app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_collapseMode="parallax"
+            app:layout_collapseParallaxMultiplier="0.7">
+
+            <ImageView
+                android:id="@+id/ivBack_frag_view_profile2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_back_arrow"
+                app:tint="@color/appTextColor3"
+                android:elevation="4dp"
+                android:layout_margin="8dp"/>
+
+            <ImageView
+                android:id="@+id/ivProfile_frag_view_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_image_demo"
+                android:layout_marginBottom="28dp"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabToggleFabsStatus_frag_view_profile"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fabSendRequest_frag_view_profile"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                android:backgroundTint="@color/appPink"
+                android:enabled="true"
+                android:src="@drawable/ic_add"
+                android:tint="@color/white"
+                app:fabCustomSize="56dp"
+                app:maxImageSize="20dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabSendRequest_frag_view_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:backgroundTint="@color/appPink"
+                android:enabled="true"
+                android:src="@drawable/ic_person_add"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:fabCustomSize="45dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fabMessage_frag_view_profile"
+                app:layout_constraintEnd_toStartOf="@id/fabToggleFabsStatus_frag_view_profile"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:maxImageSize="20dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabMessage_frag_view_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:backgroundTint="@color/appPink"
+                android:enabled="true"
+                android:src="@drawable/ic_message"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:fabCustomSize="45dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fabVoiceCall_frag_view_profile"
+                app:layout_constraintEnd_toStartOf="@id/fabSendRequest_frag_view_profile"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:maxImageSize="20dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabVoiceCall_frag_view_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:backgroundTint="@color/appPink"
+                android:enabled="true"
+                android:src="@drawable/ic_voice_call"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:fabCustomSize="45dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fabVideoCall_frag_view_profile"
+                app:layout_constraintEnd_toStartOf="@id/fabMessage_frag_view_profile"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:maxImageSize="20dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabVideoCall_frag_view_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:backgroundTint="@color/appPink"
+                android:enabled="true"
+                android:src="@drawable/ic_videocall"
+                android:tint="@color/white"
+                app:fabCustomSize="45dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/fabVoiceCall_frag_view_profile"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
+                app:maxImageSize="20dp"
+                android:visibility="gone" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_1_frag_view_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="fabSendRequest_frag_view_profile,fabMessage_frag_view_profile,fabVoiceCall_frag_view_profile,fabVideoCall_frag_view_profile"
+            />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/toolbar_frag_view_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_collapseMode="pin"/>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>
