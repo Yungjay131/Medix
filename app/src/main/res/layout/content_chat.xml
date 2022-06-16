@@ -139,21 +139,6 @@
             app:layout_constraintGuide_percent=".98"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/layout_shimmer_content_chat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0"
-        android:visibility="gone">
-
-        <include layout="@layout/shimmer_chat"/>
-        <include layout="@layout/divider"/>
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChats_frag_chat"
         android:layout_width="match_parent"

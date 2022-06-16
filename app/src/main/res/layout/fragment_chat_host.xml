@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:id="@+id/vpHost_frag_chat_host"/>
+            android:id="@+id/vpHost_frag_chat_host" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

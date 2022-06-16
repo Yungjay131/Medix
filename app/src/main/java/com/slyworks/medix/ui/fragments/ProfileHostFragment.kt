@@ -9,33 +9,23 @@ import androidx.fragment.app.FragmentTransaction
 import com.slyworks.medix.R
 import com.slyworks.medix.navigation.FragmentWrapper
 import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 
 class ProfileHostFragment : Fragment() {
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         @JvmStatic
-        fun newInstance():ProfileHostFragment {
+        fun getInstance():ProfileHostFragment {
             return ProfileHostFragment()
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initData()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        NavigationManager.inflateFragment(FragmentWrapper.PROFILE_HOST,
-                                           FragmentWrapper.FIND_DOCTORS,
-                                           addToBackStack = true)
         return inflater.inflate(R.layout.fragment_profile_host, container, false)
     }
 
-    private fun initData(){
-        FragmentWrapper.PROFILE_HOST.setFragmentManager(childFragmentManager)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        inflateFragment2(FindDoctorsFragment.newInstance())
     }
 
     fun inflateFragment2(f:Fragment){
@@ -43,7 +33,7 @@ class ProfileHostFragment : Fragment() {
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 
         if(f.isAdded) transaction.show(f)
-        else transaction.replace(R.id.fragment_container_profile_host, f)
+        else transaction.replace(R.id.fragment_container_profile_host, f, "${f::class.simpleName}")
 
         transaction.commit()
     }

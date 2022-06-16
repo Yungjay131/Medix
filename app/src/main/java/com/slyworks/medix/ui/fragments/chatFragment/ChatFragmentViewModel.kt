@@ -8,7 +8,6 @@ import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.DataManager
 import com.slyworks.medix.Subscription
-import com.slyworks.medix.utils.*
 import com.slyworks.models.models.Observer
 import com.slyworks.models.models.Outcome
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -38,15 +37,19 @@ class ChatFragmentViewModel : ViewModel(), Observer {
     fun getPersonsListLiveData():LiveData<Outcome> = _mPersonListLiveData
 
     fun getChats(){
-        mDataManager!!.getMessagesFromFB()
-        val d = mDataManager!!.observeMessagePersonsFromDB()
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe {
-                _mPersonListLiveData.postValue(it)
-            }
+       val d = mDataManager!!.observeMessagePersonsFromFB()
+           .subscribeOn(Schedulers.io())
+           .observeOn(Schedulers.io())
+           .subscribe {
+               _mPersonListLiveData.postValue(it)
+           }
 
         mSubscriptions.add(d)
+    }
+
+    fun cleanup(){
+        mSubscriptions.clear()
+        mDataManager!!.detachMessagesPersonsFromFBListener()
     }
 
     override fun <T> notify(event: String, data: T?) {
@@ -60,7 +63,7 @@ class ChatFragmentViewModel : ViewModel(), Observer {
         mSubscriptionList.forEach { it.clearAndRemove() }
         mSubscriptions.clear()
 
-        mDataManager!!.cleanup()
+        mDataManager!!.detachMessagesPersonsFromFBListener()
         mDataManager = null
 
     }

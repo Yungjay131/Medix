@@ -1,5 +1,6 @@
 package com.slyworks.medix.ui.fragments.chatFragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -28,6 +29,7 @@ import com.slyworks.medix.R
 import com.slyworks.medix.Subscription
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.utils.*
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
@@ -40,12 +42,10 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     private lateinit var srlMain:SwipeRefreshLayout
 
     private lateinit var layout_chat_empty:ConstraintLayout
-    //private lateinit var ivChat:ImageView
-    //private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private lateinit var rvChats:RecyclerView
     private lateinit var fabStartChat:ExtendedFloatingActionButton
     private lateinit var rootView:CoordinatorLayout
-    private lateinit var progress:ConstraintLayout
+    private lateinit var progress:ProgressBar
     private lateinit var layout_error:ConstraintLayout
     private lateinit var tvRetry:TextView
     private lateinit var btnRetry:Button
@@ -67,8 +67,16 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
             return ChatFragment()
         }
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onStart() {
+        super.onStart()
+
+        getData(3)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mViewModel.cleanup()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -88,35 +96,23 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
         rvChats = view.findViewById(R.id.rvChats_frag_chat)
         fabStartChat = view.findViewById(R.id.fabStatChat_frag_chat)
         rootView = view.findViewById(R.id.rootView)
-        progress = view.findViewById(R.id.progress)
+        progress = view.findViewById(R.id.progress_layout)
         layout_error = view.findViewById(R.id.layout_error)
         tvRetry = view.findViewById(R.id.tvRetry_content_chat)
         btnRetry = view.findViewById(R.id.btnRetry_content_chat)
         progress_retry = view.findViewById(R.id.progrss_retry)
 
-            /*TODO:abstract, looks 'dirty'*/
-        srlMain.setOnRefreshListener {
-            if(!mIsBeingLoaded && ((System.currentTimeMillis() - mLastCheckTime) > MIN_CHECK_TIME)){
-                srlMain.isRefreshing = true
-                mIsBeingLoaded = true
-                mViewModel.getChats()
-            }
-        }
+        srlMain.setOnRefreshListener { getData(0) }
 
-        btnRetry.setOnClickListener {
-            progress_retry.visibility = View.VISIBLE
-            mIsBeingLoaded = true
-            mViewModel.getChats()
-        }
+        btnRetry.setOnClickListener { getData(1) }
 
-        progress.visibility = View.VISIBLE
     }
 
     private fun initViews2(view:View){
         mAdapter2 = RVChatAdapter2()
         rvChats.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         rvChats.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        rvChats.adapter = mAdapter
+        rvChats.adapter = mAdapter2
     }
     private fun initData(){
         AppController.addEvent(EVENT_OPEN_MESSAGE_ACTIVITY)
@@ -132,7 +128,9 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
             when{
                 it.isSuccess ->{
                     toggleLayoutErrorStatus(false)
-                    val data:MutableList<com.slyworks.models.room_models.Person> = it.getValue() as MutableList<com.slyworks.models.room_models.Person>
+
+                    //**@noinspection unchecked
+                    val data:MutableList<Person> = it.getValue() as MutableList<Person>
                     if(data.isNullOrEmpty()){
                         toggleLayoutIntroStatus(true)
                         return@observe
@@ -153,6 +151,20 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
             progress_retry.visibility = View.GONE
             mLastCheckTime = System.currentTimeMillis()
             mIsBeingLoaded = false
+        }
+    }
+
+    private fun getData(from:Int){
+        val condition = System.currentTimeMillis() - mLastCheckTime > MIN_CHECK_TIME
+        if(mIsBeingLoaded || !condition)
+            return
+
+        mIsBeingLoaded = true
+        mLastCheckTime = System.currentTimeMillis()
+        when(from){
+            0 -> srlMain.isRefreshing = true
+            1 -> progress_retry.isVisible = true
+            2 -> progress.isVisible = true
         }
 
         mViewModel.getChats()
@@ -188,12 +200,12 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
                     imageUri = result.senderImageUri
                 )
 
-                NavigationManager.inflateActivity(
-                    requireActivity(),
-                    activity = ActivityWrapper.MESSAGE,
-                    extras =  Bundle().apply{
-                    putParcelable(EXTRA_USER_PROFILE_FBU, entity)
-                })
+                startActivity(
+                    Intent(requireActivity(),MessageActivity::class.java)
+                        .apply {
+                            putExtra(EXTRA_USER_PROFILE_FBU, entity)
+                        }
+                )
             }
         }
     }

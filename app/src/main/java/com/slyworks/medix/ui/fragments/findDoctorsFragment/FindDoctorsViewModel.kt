@@ -27,6 +27,5 @@ class FindDoctorsViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         UsersManager.detachGetAllDoctorsListener()
-        mDoctorsListLiveData = null
     }
 }

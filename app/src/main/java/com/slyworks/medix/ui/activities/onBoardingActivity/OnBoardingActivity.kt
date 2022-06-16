@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.imageview.ShapeableImageView
+import com.slyworks.constants.GENERAL
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
@@ -41,7 +42,7 @@ class OnBoardingActivity : BaseActivity() {
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView)
+                networkStatusView = NetworkStatusView.from(rootView, GENERAL)
 
             networkStatusView!!.setVisibilityStatus(it)
         }

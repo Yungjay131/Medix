@@ -21,6 +21,7 @@
      android:layout_height="match_parent"
      android:layout_gravity="start"
      app:itemHorizontalPadding="40dp"
+     app:itemBackground="@drawable/menu_item_padding"
      app:headerLayout="@layout/nav_header_main"
      app:menu="@menu/menu_main"/>
 

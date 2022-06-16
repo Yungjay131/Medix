@@ -140,7 +140,7 @@ class LoginActivity : BaseActivity() {
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView)
+                networkStatusView = NetworkStatusView.from(rootView, COORDINATOR)
 
             networkStatusView!!.setVisibilityStatus(it)
         }
@@ -160,7 +160,7 @@ class LoginActivity : BaseActivity() {
 
     private fun closeKeyboard3(){
         val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(currentFocus!!.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)
+        inputManager.hideSoftInputFromWindow(currentFocus?.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)
     }
     private fun closeKeyboard2(){
         //to show soft keyboard

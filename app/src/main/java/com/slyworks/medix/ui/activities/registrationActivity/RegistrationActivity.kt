@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import com.slyworks.constants.GENERAL
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
@@ -34,7 +35,7 @@ class RegistrationActivity : BaseActivity() {
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView)
+                networkStatusView = NetworkStatusView.from(rootView, GENERAL)
 
             networkStatusView!!.setVisibilityStatus(it)
         }

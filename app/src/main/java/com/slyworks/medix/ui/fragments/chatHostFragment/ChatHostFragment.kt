@@ -39,7 +39,7 @@ class ChatHostFragment : Fragment() {
         //region Vars
         val mTabTitles:MutableList<String> = mutableListOf("Chats", "Call History")
         @JvmStatic
-        fun newInstance(): ChatHostFragment {
+        fun getInstance(): ChatHostFragment {
             return ChatHostFragment()
         }
     }
@@ -70,7 +70,10 @@ class ChatHostFragment : Fragment() {
 
         containerSecondary = view.findViewById(R.id.fragment_container_chat_host)
 
-        ivToggle.setOnClickListener { (requireActivity() as MainActivity).apply { this.toggleDrawerState() } }
+        ivToggle.setOnClickListener {
+            (requireActivity() as MainActivity).toggleDrawerState()
+        }
+
         ivProfile.displayImage(UserDetailsUtils.user!!.imageUri)
     }
     private fun initViews_2(view:View){
@@ -90,16 +93,10 @@ class ChatHostFragment : Fragment() {
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 
         if(f.isAdded) transaction.show(f)
-        else transaction.replace(R.id.fragment_container_chat_host, f)
+        else transaction.replace(R.id.fragment_container_chat_host, f, "${f::class.simpleName}")
 
         transaction.commit()
 
         layout_vp.visibility = View.GONE
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        //(context as MainActivity).apply { toggleBNVState(false) }
     }
 }

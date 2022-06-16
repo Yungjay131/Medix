@@ -137,3 +137,8 @@ const val TYPE_RESPONSE = "RESPONSE"
 
 const val INPUT_ERROR = 1
 const val INCOMING_CALL_NOTIFICATION = 2
+
+/*intDef for NetworkStatusView */
+const val GENERAL= 0
+const val COORDINATOR = 1
+const val MAIN = 2

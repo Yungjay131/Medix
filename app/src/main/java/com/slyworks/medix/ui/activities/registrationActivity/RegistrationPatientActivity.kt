@@ -21,9 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
-import com.slyworks.constants.EVENT_SELECT_PROFILE_IMAGE
-import com.slyworks.constants.EVENT_USER_REGISTRATION
-import com.slyworks.constants.PROFILE_PHOTO_URI
+import com.slyworks.constants.*
 import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.ui.activities.BaseActivity
@@ -134,7 +132,7 @@ class RegistrationPatientActivity : BaseActivity() {
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView)
+                networkStatusView = NetworkStatusView.from(rootView, COORDINATOR)
 
             networkStatusView!!.setVisibilityStatus(it)
         }

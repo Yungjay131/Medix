@@ -2,11 +2,11 @@ package com.slyworks.medix.ui.activities.mainActivity
 
 import android.os.Bundle
 import android.view.*
+import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.collection.SimpleArrayMap
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,22 +16,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.slyworks.constants.DOCTOR
-import com.slyworks.constants.EVENT_UPDATE_MESSAGE_COUNT
-import com.slyworks.constants.EXTRA_MAIN_FRAGMENT
-import com.slyworks.constants.KEY_UNREAD_MESSAGE_COUNT
-import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.constants.*
 import com.slyworks.medix.R
-import com.slyworks.medix.Subscription
 import com.slyworks.medix.UserDetailsUtils
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.navigation.FragmentWrapper
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
 import com.slyworks.medix.ui.dialogs.ExitDialog
 import com.slyworks.medix.ui.dialogs.LogoutDialog
+import com.slyworks.medix.ui.fragments.ProfileHostFragment
+import com.slyworks.medix.ui.fragments.chatHostFragment.ChatHostFragment
+import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
+import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.*
 import com.slyworks.models.models.AccountType
-import com.slyworks.models.models.Observer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,13 +43,15 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     private lateinit var bnvMain_layout:ConstraintLayout
     private lateinit var bnvMain:BottomNavigationView
 
-    private lateinit var rootView:CoordinatorLayout
+    private var rootView:CoordinatorLayout? = null
+
+    private lateinit var progress:ProgressBar
 
     private var networkStatusView:NetworkStatusView? = null
 
     private var mFragmentMap:SimpleArrayMap<FragmentWrapper, Int> = SimpleArrayMap()
 
-    private var mSelectedItem:Int = 0
+    private var mSelectedItem:Int = R.id.action_home
 
     private  val mViewModel: MainActivityViewModel by viewModels()
     //endregion
@@ -60,12 +60,10 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     override fun onStart() {
         super.onStart()
 
-        mViewModel.subscribeToNetwork().observe(this) {
-            if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView, false)
+        if(rootView == null)
+            return
 
-            networkStatusView!!.setVisibilityStatus(it)
-        }
+       initNetworkStatusView()
     }
 
     override fun onStop() {
@@ -74,17 +72,35 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         mViewModel.unsubscribeToNetwork()
     }
 
+    private fun initNetworkStatusView(){
+        mViewModel.subscribeToNetwork().observe(this) {
+            if(networkStatusView == null)
+                networkStatusView = NetworkStatusView.from(rootView!!, MAIN)
+
+            networkStatusView!!.setVisibilityStatus(it)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val content = findViewById<ViewGroup>(android.R.id.content)
+        AsyncLayoutInflater(this)
+            .inflate(R.layout.activity_main, content,
+            object:AsyncLayoutInflater.OnInflateFinishedListener{
+                override fun onInflateFinished(view: View,
+                                               resid: Int,
+                                               parent: ViewGroup?) {
+                    setContentView(view)
 
-        initViews()
-        initFragmentMap()
-        initBottomNavMenu()
-        initData()
-        checkIntent()
-
+                    initViews()
+                    initFragmentMap()
+                    initBottomNavMenu()
+                    initData()
+                    checkIntent()
+                    initNetworkStatusView()
+                }
+            })
     }
+
     private fun initFragmentMap(){
         if(UserDetailsUtils.user!!.accountType == DOCTOR){
             mFragmentMap.put(FragmentWrapper.HOME, R.id.action_home)
@@ -108,7 +124,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
             .addCallback(this,
             object:OnBackPressedCallback(true){
                 override fun handleOnBackPressed() {
-                    if(supportFragmentManager.backStackEntryCount == 1){
+                    if(supportFragmentManager.backStackEntryCount == 0){
                         if(ActivityUtils.isLastActivity())
                             ExitDialog.getInstance()
                                 .show(supportFragmentManager, "exit dialog")
@@ -123,7 +139,6 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
                 }
             })
 
-        mViewModel
     }
 
     private fun checkIntent(){
@@ -144,30 +159,64 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
 
     private fun initViews(){
+        progress = findViewById(R.id.progress_layout)
         rootView = findViewById(R.id.layout_app_bar_main)
         drawer = findViewById(R.id.drawer_main)
         navView = findViewById(R.id.nav_view_main)
         navView.setNavigationItemSelectedListener(this)
-        bnvMain = findViewById(R.id.bnv_main)
-
     }
 
     private fun initBottomNavMenu(){
-        if(UserDetailsUtils.user!!.accountType == AccountType.DOCTOR.toString()){
-            bnvMain.menu.add(Menu.NONE, R.id.action_home,1, getString(R.string.action_home_text))
-                .setIcon(AppCompatResources.getDrawable(this,R.drawable.ic_home))
-            bnvMain.menu.add(Menu.NONE, R.id.action_chats, 2, getString(R.string.action_chats_text))
-                .setIcon(AppCompatResources.getDrawable(this,R.drawable.ic_chat))
-        }else{
-            bnvMain.menu.add(Menu.NONE, R.id.action_home, 1, getString(R.string.action_home_text))
-                .setIcon(AppCompatResources.getDrawable(this,R.drawable.ic_home))
-            bnvMain.menu.add(Menu.NONE, R.id.action_connect, 2, getString(R.string.action_connect_text))
-                .setIcon(AppCompatResources.getDrawable(this,R.drawable.ic_people))
-            bnvMain.menu.add(Menu.NONE, R.id.action_chats, 3, getString(R.string.action_chats_text))
-                .setIcon(AppCompatResources.getDrawable(this,R.drawable.ic_chat))
-        }
+        val bnvLayout:View
+        if(UserDetailsUtils.user!!.accountType == AccountType.DOCTOR.toString())
+            bnvLayout  = LayoutInflater.from(this).inflate(R.layout.menu_doctor, rootView, false)
+        else
+            bnvLayout = LayoutInflater.from(this).inflate(R.layout.menu_patient,rootView, false)
+
+        bnvLayout.layoutParams =  CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            70.px)
+            .apply {
+                gravity = Gravity.BOTTOM
+            }
+
+        rootView!!.addView(bnvLayout)
+
+        bnvMain = findViewById(R.id.bnv_main)
+        bnvMain.setOnItemSelectedListener(::handleBnvMenuItemClick)
+        bnvMain.setOnItemReselectedListener(::handleBnvMenuItemClick)
 
         updateActiveItem(R.id.action_home)
+    }
+
+    private fun handleBnvMenuItemClick(item:MenuItem):Boolean {
+        if (item.itemId == mSelectedItem)
+            return true
+
+        return when (item.itemId) {
+            R.id.action_home -> {
+                inflateFragment(
+                    if (UserDetailsUtils.user!!.accountType == DOCTOR)
+                        DoctorHomeFragment.getInstance()
+                    else
+                        PatientHomeFragment.getInstance()
+                )
+                mSelectedItem = item.itemId
+                true
+            }
+            R.id.action_chats -> {
+                inflateFragment(ChatHostFragment.getInstance())
+                mSelectedItem = item.itemId
+                true
+            }
+            R.id.action_connect -> {
+                inflateFragment(ProfileHostFragment.getInstance())
+                mSelectedItem = item.itemId
+                true
+            }
+            else -> throw UnsupportedOperationException()
+
+        }
     }
 
     fun updateActiveItem(f:FragmentWrapper){
@@ -206,12 +255,16 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 
         if(f.isAdded) transaction.show(f)
-        else transaction.add(R.id.fragment_container_main, f, "${f::class.simpleName}")
+        else transaction.replace(R.id.fragment_container_main, f, "${f::class.simpleName}")
 
         transaction.commit()
     }
 
-    fun MainActivity.toggleDrawerState(){
+    fun toggleProgressBar(status:Boolean) {
+        progress.isVisible = status
+    }
+
+    fun toggleDrawerState(){
         if(drawer.isOpen)
             drawer.close()
         else

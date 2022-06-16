@@ -37,7 +37,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/profile_image_demo"
                 android:layout_marginBottom="28dp"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

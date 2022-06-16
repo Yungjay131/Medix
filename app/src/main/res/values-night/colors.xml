@@ -6,4 +6,6 @@
     <color name="appGrey_li_message_from">#99999C</color>
     <color name="appBlue_dark">#AD7672</color>
     <color name="appBlue_pressed2">#C11353</color>
+    <color name="appBlue2">#575CE5</color>
+    <color name="appDarkGrey">#B8B8B8</color>
 </resources>

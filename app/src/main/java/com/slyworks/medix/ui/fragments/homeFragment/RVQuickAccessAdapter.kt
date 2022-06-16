@@ -18,13 +18,13 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 /**
  *Created by Joshua Sylvanus, 12:21 PM, 1/12/2022.
  */
-data class QuickAccessItem(var icon:Int, var title:String, var description:String)
-class RVQuickAccessAdapter(var type: com.slyworks.models.models.AccountType) : RecyclerView.Adapter<RVQuickAccessAdapter.ViewHolder>(){
+data class QuickAccessItem(val icon:Int, val title:String, val description:String)
+class RVQuickAccessAdapter(val type: AccountType) : RecyclerView.Adapter<RVQuickAccessAdapter.ViewHolder>(){
     //region Vars
     private val mList:MutableList<QuickAccessItem> = mutableListOf()
     //endregion
     companion object{
-        val data_patient:MutableList<QuickAccessItem> = mutableListOf(
+        val data_patient:List<QuickAccessItem> = listOf(
             QuickAccessItem(R.drawable.ic_people, "Connect", "Connect with various doctors from around the world" ),
             QuickAccessItem(R.drawable.ic_hospital, "Find Hospitals","Find hospitals close to you"),
             QuickAccessItem(R.drawable.ic_alarm_on, "Set Reminders for medication","Easily set reminders to take medications and for other health related events"),
@@ -33,7 +33,7 @@ class RVQuickAccessAdapter(var type: com.slyworks.models.models.AccountType) : R
             QuickAccessItem(R.drawable.ic_voice_call, "Calls","Quickly contact doctors through the in-app voice call feature"),
             QuickAccessItem(R.drawable.ic_diagnose, "Check symptoms for common diseases","Easily diagnose symptoms for common illnesses")
         )
-        val data_doctor:MutableList<QuickAccessItem> = mutableListOf(
+        val data_doctor:List<QuickAccessItem> = listOf(
             QuickAccessItem(R.drawable.ic_people, "Connect", "Connect with various patients from around the world" ),
             QuickAccessItem(R.drawable.ic_videocall, "Video Consultation","Have real-time video consultaions"),
             QuickAccessItem(R.drawable.ic_chat, "Chat","Easily communicate with patients with the in-app real-time messaging feature"),
@@ -45,8 +45,8 @@ class RVQuickAccessAdapter(var type: com.slyworks.models.models.AccountType) : R
     }
 
     init{
-        if(type == com.slyworks.models.models.AccountType.PATIENT) mList.addAll(data_patient)
-        else if(type == com.slyworks.models.models.AccountType.DOCTOR) mList.addAll(data_doctor)
+        if(type == AccountType.PATIENT) mList.addAll(data_patient)
+        else if(type == AccountType.DOCTOR) mList.addAll(data_doctor)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

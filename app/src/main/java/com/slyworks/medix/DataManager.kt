@@ -24,6 +24,9 @@ class DataManager{
     private val mListenersMap:SimpleArrayMap<String, ValueEventListener> = SimpleArrayMap()
     private val mObserversMap:SimpleArrayMap<String, Observable<String>> = SimpleArrayMap()
 
+    private var handleNewMessagesJob:Job? = null
+    private var observeNewMessagePersonsJob:Job? = null
+
     /*fixme:watch this for memory leaks*/
     private var mUIDValueEventListener:ValueEventListener =
         MValueEventListener(onDataChangeFunc = ::handleChangedMessages)
@@ -47,7 +50,8 @@ class DataManager{
 
 
     private fun handleNewMessages(snapshot: DataSnapshot){
-    CoroutineScope(Dispatchers.IO).launch {
+    handleNewMessagesJob =
+        CoroutineScope(Dispatchers.IO).launch {
       val l:MutableList<Message> = mutableListOf()
         for (child in snapshot.children) {
             val m: Message = child.getValue(Message::class.java)!!
@@ -206,47 +210,50 @@ class DataManager{
     }
 
     /*fixme:move to a background thread*/
-    fun getMessagesFromFB(){
+    fun observeMessagePersonsFromFB():Observable<Outcome>{
         FirebaseDatabase.getInstance()
             .reference
             .child("messages")
             .child(UserDetailsUtils.user!!.firebaseUID)
             .addChildEventListener(mUIDChildEventListener)
+
+        val o:Observable<Outcome> = Observable.create { emitter ->
+            observeNewMessagePersonsJob =
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        AppDatabase.getInstance(App.getContext())
+                            .getPersonDao()
+                            .observePersons()
+                            .collectLatest {
+                                if (it.isNotEmpty()) {
+                                    val r: Outcome = Outcome.SUCCESS<MutableList<Person>>(it)
+                                    emitter.onNext(r)
+                                } else {
+                                    val r: Outcome = Outcome.FAILURE<Nothing>(reason = "you don't seem to have any messages at the moment")
+                                    emitter.onNext(r)
+                                }
+                            }
+                    } catch (e: Exception) {
+                        val r:Outcome = Outcome.ERROR<Nothing>(error = e)
+                        emitter.onNext(r)
+                    }
+                }
+        }
+
+        return o
     }
 
-    fun detachMessagesFromFBListener(){
+    fun detachMessagesPersonsFromFBListener(){
         FirebaseDatabase.getInstance()
             .reference
             .child("messages")
             .child(UserDetailsUtils.user!!.firebaseUID)
             .removeEventListener(mUIDChildEventListener)
+
+        handleNewMessagesJob!!.cancel()
+        observeNewMessagePersonsJob!!.cancel()
     }
 
-    fun observeMessagePersonsFromDB():Observable<Outcome>{
-        val o:Observable<Outcome> = Observable.create { emitter ->
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    AppDatabase.getInstance(App.getContext())
-                        .getPersonDao()
-                        .observePersons()
-                        .collectLatest {
-                            if (it.isNotEmpty()) {
-                                val r: Outcome = Outcome.SUCCESS<MutableList<Person>>(it)
-                                emitter.onNext(r)
-                            } else {
-                                val r: Outcome = Outcome.FAILURE<Nothing>(reason = "you don't seem to have any messages at the moment")
-                                emitter.onNext(r)
-                            }
-                        }
-                } catch (e: Exception) {
-                    val r:Outcome = Outcome.ERROR<Nothing>(error = e)
-                    emitter.onNext(r)
-                }
-            }
-        }
-
-        return o
-    }
 
     fun observeMessagesFromUIDFromFB(firebaseUID: String){
         FirebaseDatabase.getInstance()

@@ -115,8 +115,7 @@ class MessageActivity : BaseActivity(), Observer {
 
     private fun initData(){
         //fixme:could be a FBUserDetails object with some values missing if it comes from ChatFragment and not ViewProfileActivity
-        val b:Bundle = intent.getBundleExtra(EXTRA_ACTIVITY)!!
-        mUserProfile = b.getParcelable(EXTRA_USER_PROFILE_FBU)!!
+        mUserProfile = intent.getParcelableExtra<FBUserDetails>(EXTRA_USER_PROFILE_FBU)!!
         setUserData(mUserProfile)
 
         mViewModel = ViewModelProvider(this).get(MessageViewModel::class.java)

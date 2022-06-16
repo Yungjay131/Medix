@@ -86,14 +86,12 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         app:layout_constraintStart_toEndOf="@id/guide_vertical_3"
-        app:layout_constraintTop_toBottomOf="@id/guide_horizontal_3"
-        android:src="@drawable/profile_image_demo"/>
+        app:layout_constraintTop_toBottomOf="@id/guide_horizontal_3" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivGroup_2_invite"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/profile_image_demo"
         app:layout_constraintTop_toTopOf="@id/ivGroup_1_invite"
         app:layout_constraintStart_toEndOf="@id/ivGroup_1_invite"
         app:layout_constraintEnd_toEndOf="@id/ivGroup_1_invite"/>
@@ -101,7 +99,6 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/profile_image_demo"
         app:layout_constraintTop_toTopOf="@id/ivGroup_2_invite"
         app:layout_constraintStart_toEndOf="@id/ivGroup_2_invite"
         app:layout_constraintEnd_toEndOf="@id/ivGroup_2_invite"/>

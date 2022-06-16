@@ -22,6 +22,8 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
+import com.slyworks.constants.COORDINATOR
+import com.slyworks.constants.GENERAL
 import com.slyworks.constants.PROFILE_PHOTO_URI
 import com.slyworks.medix.*
 import com.slyworks.medix.ui.dialogs.ChangePhotoDialog
@@ -126,7 +128,7 @@ class RegistrationDoctorActivity : BaseActivity() {
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView)
+                networkStatusView = NetworkStatusView.from(rootView, COORDINATOR)
 
             networkStatusView!!.setVisibilityStatus(it)
         }

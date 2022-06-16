@@ -22,19 +22,26 @@ object ViewUtils {
     //region Vars
 
     private val RVColors:IntArray = intArrayOf(
-        R.color.appRVBlue,
+        R.color.appRVBlue2,
         R.color.appRVYellow,
         R.color.appRVPink,
         R.color.appRVGreen,
       /*  R.color.appRVPurple,
         R.color.appRVOrange*/
     )
+
+    private val RVColorPair:List<Pair<Int,Int>> = listOf(
+        R.color.appRVBlue2 to R.color.appGrey,
+        R.color.appRVYellow to R.color.appTextColor3,
+        R.color.appRVPink to R.color.appTextColor3,
+        R.color.appRVGreen to R.color.appTextColor3,
+    )
     private val range: IntRange = 0 until RVColors.size
     //endregion
 
-    fun getColor():Int{
-        return RVColors[range.random()]
-    }
+    fun getColorPair():Pair<Int,Int> = RVColorPair[range.random()]
+    fun getColor():Int = RVColors[range.random()]
+
 
     fun View.setChildViewsStatus(status:Boolean){
         isEnabled = status

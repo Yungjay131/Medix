@@ -31,7 +31,7 @@ class VPAdapter(private val fragmentManager:FragmentManager, lifecycle:Lifecycle
         return when(position){
             0 -> ChatFragment.newInstance()
             1 -> CallsHistoryFragment.newInstance()
-            else -> ChatFragment.newInstance()
+            else -> throw IllegalArgumentException()
         }
     }
 

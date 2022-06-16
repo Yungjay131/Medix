@@ -85,10 +85,7 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
     //endregion
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
+
         @JvmStatic
         fun newInstance(args:Any):ViewProfileFragment {
             return ViewProfileFragment().apply {

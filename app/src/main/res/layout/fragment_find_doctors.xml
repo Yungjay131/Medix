@@ -49,7 +49,7 @@
         android:drawablePadding="-16dp"
         android:padding="10dp"
         android:paddingStart="24dp"
-        android:background="@drawable/btn_bg2"/>
+        android:background="@drawable/btn_login_selector"/>
 
      <androidx.constraintlayout.widget.Guideline
          android:id="@+id/_guide_horizontal_1"

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -25,12 +26,14 @@ import com.slyworks.medix.Subscription
 import com.slyworks.medix.UsersManager
 import com.slyworks.medix.navigation.FragmentWrapper
 import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.ui.fragments.ProfileHostFragment
+import com.slyworks.medix.ui.fragments.ViewProfileFragment
 import com.slyworks.models.room_models.FBUserDetails
 
 class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
    //region Vars
     private lateinit var rvDoctors:RecyclerView
-    private lateinit var progress:ConstraintLayout
+    private lateinit var progress:ProgressBar
     private lateinit var rootView:ConstraintLayout
     private lateinit var layout_intro:ConstraintLayout
     private lateinit var ivLayout_intro:ImageView
@@ -85,7 +88,7 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
     private fun initViews1(view:View){
         rootView = view.findViewById(R.id.rootView)
         rvDoctors = view.findViewById(R.id.rvFindDoctors_find_doctors)
-        progress = view.findViewById(R.id.progress)
+        progress = view.findViewById(R.id.progress_layout)
 
         layout_intro = view.findViewById(R.id.layout_intro_frag_find_doctors)
         ivLayout_intro = view.findViewById(R.id.ivFindDoctors_layout_intro)
@@ -131,14 +134,10 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
             EVENT_OPEN_VIEW_PROFILE_FRAGMENT ->{
                 val entity: FBUserDetails = data as FBUserDetails
 
-                //ViewProfileFragment.setArgs(entity)
-               /* (requireParentFragment() as ProfileHostFragment)
-                    .inflateFragment(ViewProfileFragment.newInstance(entity))*/
+                (requireParentFragment() as ProfileHostFragment)
+                    .inflateFragment2(ViewProfileFragment.newInstance(entity))
 
-                NavigationManager.inflateFragment(FragmentWrapper.PROFILE_HOST,
-                                                   FragmentWrapper.VIEW_PROFILE,
-                                                   addToBackStack = true,
-                                                   args = entity)
+
             }
 
         }

@@ -16,8 +16,7 @@
         app:layout_constraintStart_toEndOf="@id/guide_vertical_5"
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_4"
         app:layout_constraintTop_toBottomOf="@id/guide_horizontal_1"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/profile_image_demo"/>
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/tvName_activity_voice_call"

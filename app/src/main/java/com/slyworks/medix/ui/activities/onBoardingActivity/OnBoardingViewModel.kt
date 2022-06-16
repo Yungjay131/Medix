@@ -26,11 +26,13 @@ class OnBoardingViewModel : ViewModel() {
             .subscribeToNetworkUpdates()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
+            .doOnSubscribe{
+                l.postValue(mNetworkRegister!!.getNetworkStatus())
+            }
             .subscribe {
                 l.postValue(it)
             }
 
-        l.postValue(mNetworkRegister!!.getNetworkStatus())
 
         mSubscriptions.add(d1)
         return l

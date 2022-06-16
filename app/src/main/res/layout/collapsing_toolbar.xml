@@ -2,6 +2,7 @@
     <com.google.android.material.appbar.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="143dp"
         android:fitsSystemWindows="true">
@@ -37,7 +38,7 @@
                     android:id="@+id/tvUsername_collapsing_toolbar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Joshua"
+                    tools:text="Joshua"
                     android:textColor="@color/appTextColor"
                     android:textSize="26sp"
                     android:textStyle="bold"
