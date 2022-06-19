@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toEndOf="@id/ivProfile_layout_schedule_frag_home"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/ivProfile_layout_schedule_frag_home"
-                app:layout_constraintBottom_toTopOf="@id/tvProfileDetails_layout_schedule_frag_photo"
+                app:layout_constraintBottom_toTopOf="@id/tvProfileDetails_layout_schedule_frag_home"
                 app:layout_constraintHorizontal_bias="0"
                 android:layout_marginStart="10dp"
                 android:ellipsize="end"
@@ -48,7 +48,7 @@
                 android:text="Dr. Joshua Sylvanus"/>
 
             <TextView
-                android:id="@+id/tvProfileDetails_layout_schedule_frag_photo"
+                android:id="@+id/tvProfileDetails_layout_schedule_frag_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@id/ivProfile_layout_schedule_frag_home"
@@ -69,7 +69,7 @@
                 android:layout_height="55dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvProfileDetails_layout_schedule_frag_photo"
+                app:layout_constraintTop_toBottomOf="@id/tvProfileDetails_layout_schedule_frag_home"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:cardBackgroundColor="#797DEA"
                 android:layout_marginStart="8dp"
@@ -148,7 +148,7 @@
         android:layout_marginBottom="12dp"
         app:cardBackgroundColor="#C1C3FB"
         app:cardCornerRadius="6dp"
-        app:cardElevation="2dp"/>
+        app:cardElevation="4dp"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_3_schedule_frag_home"
@@ -157,8 +157,9 @@
         app:layout_constraintStart_toEndOf="@id/guide_vertical_3"
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_4"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:cardBackgroundColor="#ECEDFE"
         app:cardCornerRadius="6dp"
-        app:cardBackgroundColor="#ECEDFE"/>
+        app:cardElevation="2dp"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_vertical_1"

@@ -83,7 +83,7 @@ class ChatHostFragment : Fragment() {
         TabLayoutMediator(tabLayoutChatHostFragment, vpChatHostFragment,
             object: TabLayoutMediator.TabConfigurationStrategy {
                 override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    tab.text = mTabTitles[position]
+                    tab.setText(mTabTitles[position])
                 }
             }).attach()
     }

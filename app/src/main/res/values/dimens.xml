@@ -16,4 +16,5 @@
 
     <dimen name="btn_radius">24dp</dimen>
     <dimen name="button_radius">24dp</dimen>
+    <dimen name="et_corner_radius2">4dp</dimen>
 </resources>

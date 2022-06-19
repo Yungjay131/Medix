@@ -46,19 +46,19 @@ class RvHealthAreasAdapter : RecyclerView.Adapter<RvHealthAreasAdapter.ViewHolde
         private val rootView:CardView = itemView.findViewById(R.id.rootView)
         private val ivIcon:ImageView = itemView.findViewById(R.id.ivIcon_li_health_areas)
         private val tvText: TextView = itemView.findViewById(R.id.tvText_li_health_areas)
-        private val bgColor:Int
-        private val tvTextColor:Int
+        //private val bgColor:Int
+        //private val tvTextColor:Int
         //endregion
 
         init {
-            val p = ViewUtils.getColorPair()
+           /* val p = ViewUtils.getColorPair()
             bgColor = p.first
-            tvTextColor = p.second
+            tvTextColor = p.second*/
         }
 
         fun bind(entity:HealthAreas){
-            rootView.setCardBackgroundColor(ContextCompat.getColor(App.getContext(), bgColor))
-            tvText.setTextColor(ContextCompat.getColor(App.getContext(), tvTextColor))
+            //rootView.setCardBackgroundColor(ContextCompat.getColor(App.getContext(), bgColor))
+            //tvText.setTextColor(ContextCompat.getColor(App.getContext(), tvTextColor))
             ivIcon.displayImage(entity.icon)
             tvText.text = entity.text
         }

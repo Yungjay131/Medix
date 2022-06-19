@@ -8,6 +8,7 @@ import com.slyworks.constants.KEY_UNREAD_MESSAGE_COUNT
 import com.slyworks.medix.*
 import com.slyworks.medix.utils.*
 import com.slyworks.network.NetworkRegister
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -27,15 +28,17 @@ class MainActivityViewModel: ViewModel() {
         val l: MutableLiveData<Boolean> = MutableLiveData()
 
         mNetworkRegister = NetworkRegister(App.getContext())
-        mSubscription = mNetworkRegister!!
-            .subscribeToNetworkUpdates()
+        mSubscription =
+            Observable.merge(
+                Observable.just(mNetworkRegister!!.getNetworkStatus()),
+                mNetworkRegister!!.subscribeToNetworkUpdates()
+            )
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 l.postValue(it)
             }
 
-        l.postValue(mNetworkRegister!!.getNetworkStatus())
         return l
     }
 

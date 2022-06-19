@@ -9,7 +9,7 @@
     <string name="notification_channel_2_name">General App Notifications Channel</string>
     <string name="notification_channel_2_description">serves for routine all other notifications</string>
 
-    <string name="SERVER_KEY">AAAAPeTGy6o:APA91bFIBuqcGzF4lNM-3ns9qQx5bU2h8f3ksSkfFTZd57Uq79csYzUNEMzwbfPLR0MYiIFfUXXHSyzD41QLsbDgShUzubk-jVoWvCi-fdjMiNTef-61VoWGeQbGfyJCIDnE7vhYPKuj</string>
+    <string name="SERVER_KEY" translatable="false">AAAAPeTGy6o:APA91bFIBuqcGzF4lNM-3ns9qQx5bU2h8f3ksSkfFTZd57Uq79csYzUNEMzwbfPLR0MYiIFfUXXHSyzD41QLsbDgShUzubk-jVoWvCi-fdjMiNTef-61VoWGeQbGfyJCIDnE7vhYPKuj</string>
 
     <string name="login_bottom_counter"><b>1</b> of <b>4</b></string>
     <string name="signup_text">Not a user? <u>Register here</u></string>

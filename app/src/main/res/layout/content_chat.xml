@@ -64,21 +64,20 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRetry_content_chat"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvRetry_content_chat"
             android:layout_marginTop="16dp"
             android:paddingStart="10dp"
-            android:text="retry"
-            android:textSize="18sp"
+            android:text="Retry"
             android:textColor="@color/White"
             android:textAllCaps="false"
             android:drawableLeft="@drawable/ic_refresh"
             android:drawableTint="@color/White"
-            android:drawablePadding="-24dp"
-            android:background="@drawable/btn_bg2"/>
+            android:drawablePadding="-16dp"
+            android:background="@drawable/btn_login_selector"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -14,11 +14,10 @@ import com.slyworks.medix.ui.fragments.chatFragment.ChatFragment
 class VPAdapter(private val fragmentManager:FragmentManager, lifecycle:Lifecycle) : FragmentStateAdapter(fragmentManager,lifecycle){
     companion object{
         //region Vars
-        val mList:MutableList<Fragment> = mutableListOf(ChatFragment.newInstance(), CallsHistoryFragment.newInstance())
         //endregion
     }
     override fun getItemCount(): Int {
-        return mList.size
+        return 2
     }
 
     override fun createFragment(position: Int): Fragment {

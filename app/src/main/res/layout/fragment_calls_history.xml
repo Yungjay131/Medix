@@ -30,8 +30,9 @@
         android:layout_gravity="bottom|end"
         android:backgroundTint="@color/appGreen"
         android:src="@drawable/ic_mic"
+        app:rippleColor="@color/appBlue"
+        app:fabSize="normal"
         app:maxImageSize="25dp"
-        app:fabCustomSize="55dp"
         android:tint="@color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

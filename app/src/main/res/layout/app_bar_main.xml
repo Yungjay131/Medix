@@ -17,6 +17,6 @@
             android:id="@+id/fragment_container_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="70dp" />
+            android:layout_marginBottom="80dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

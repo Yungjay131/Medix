@@ -250,7 +250,6 @@ class DataManager{
             .child(UserDetailsUtils.user!!.firebaseUID)
             .removeEventListener(mUIDChildEventListener)
 
-        handleNewMessagesJob!!.cancel()
         observeNewMessagePersonsJob!!.cancel()
     }
 

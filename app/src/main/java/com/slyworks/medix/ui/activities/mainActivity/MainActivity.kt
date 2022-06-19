@@ -26,6 +26,7 @@ import com.slyworks.medix.ui.dialogs.ExitDialog
 import com.slyworks.medix.ui.dialogs.LogoutDialog
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.chatHostFragment.ChatHostFragment
+import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.*
@@ -49,11 +50,14 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
     private var networkStatusView:NetworkStatusView? = null
 
-    private var mFragmentMap:SimpleArrayMap<FragmentWrapper, Int> = SimpleArrayMap()
+    private var mFragmentMap:SimpleArrayMap<String, Int> = SimpleArrayMap()
 
     private var mSelectedItem:Int = R.id.action_home
 
     private  val mViewModel: MainActivityViewModel by viewModels()
+
+    private var mCurrentFragmentTag:String? = null
+    private var mFragmentTagList:MutableList<String> = mutableListOf()
     //endregion
 
 
@@ -82,33 +86,38 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initUsingAsyncLayoutInflater()
+    }
+
+    private fun initUsingAsyncLayoutInflater(){
         val content = findViewById<ViewGroup>(android.R.id.content)
         AsyncLayoutInflater(this)
             .inflate(R.layout.activity_main, content,
-            object:AsyncLayoutInflater.OnInflateFinishedListener{
-                override fun onInflateFinished(view: View,
-                                               resid: Int,
-                                               parent: ViewGroup?) {
-                    setContentView(view)
+                object:AsyncLayoutInflater.OnInflateFinishedListener{
+                    override fun onInflateFinished(view: View,
+                                                   resid: Int,
+                                                   parent: ViewGroup?) {
+                        setContentView(view)
 
-                    initViews()
-                    initFragmentMap()
-                    initBottomNavMenu()
-                    initData()
-                    checkIntent()
-                    initNetworkStatusView()
-                }
-            })
+                        initViews()
+                        initFragmentMap()
+                        initBottomNavMenu()
+                        initFragment()
+                        initData()
+                        initNetworkStatusView()
+                    }
+                })
     }
 
     private fun initFragmentMap(){
         if(UserDetailsUtils.user!!.accountType == DOCTOR){
-            mFragmentMap.put(FragmentWrapper.HOME, R.id.action_home)
-            mFragmentMap.put(FragmentWrapper.CHAT_HOST, R.id.action_chats)
+            mFragmentMap.put(DoctorHomeFragment::class.simpleName, R.id.action_home)
+            mFragmentMap.put(ChatHostFragment::class.simpleName, R.id.action_chats)
         } else{
-            mFragmentMap.put(FragmentWrapper.HOME, R.id.action_home)
-            mFragmentMap.put(FragmentWrapper.FIND_DOCTORS, R.id.action_connect)
-            mFragmentMap.put(FragmentWrapper.HOME, R.id.action_chats)
+            mFragmentMap.put(PatientHomeFragment::class.simpleName, R.id.action_home)
+            mFragmentMap.put(ChatHostFragment::class.simpleName, R.id.action_chats)
+            mFragmentMap.put(FindDoctorsFragment::class.simpleName, R.id.action_connect)
         }
     }
 
@@ -124,7 +133,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
             .addCallback(this,
             object:OnBackPressedCallback(true){
                 override fun handleOnBackPressed() {
-                    if(supportFragmentManager.backStackEntryCount == 0){
+                    if(supportFragmentManager.backStackEntryCount == 1){
                         if(ActivityUtils.isLastActivity())
                             ExitDialog.getInstance()
                                 .show(supportFragmentManager, "exit dialog")
@@ -135,28 +144,18 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
                         }
                     }else{
                         supportFragmentManager.popBackStack()
+                        handleBackstackPop()
                     }
                 }
             })
 
     }
 
-    private fun checkIntent(){
-        /*TODO: remove all the NavigationManager and FragmentWrapper related code - eventually*/
-        var _f: FragmentWrapper? = null
-        if(intent.getParcelableExtra<FragmentWrapper>(EXTRA_MAIN_FRAGMENT) != null){
-            val f:FragmentWrapper = intent.getParcelableExtra<FragmentWrapper>(EXTRA_MAIN_FRAGMENT)!!
-            _f = f
-            updateActiveItem(mFragmentMap[_f]!!)
-            inflateFragment(_f.getInstance())
-            return
-        }
-
-        _f = FragmentWrapper.HOME
-        updateActiveItem(mFragmentMap[_f]!!)
-        inflateFragment(_f.getInstance())
+    private fun handleBackstackPop(){
+        mFragmentTagList.removeLast()
+        mCurrentFragmentTag = mFragmentTagList.last()
+        updateActiveItem(mFragmentMap[mCurrentFragmentTag!!]!!)
     }
-
 
     private fun initViews(){
         progress = findViewById(R.id.progress_layout)
@@ -219,9 +218,13 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         }
     }
 
-    fun updateActiveItem(f:FragmentWrapper){
-        updateActiveItem(mFragmentMap[f]!!)
+    private fun initFragment(){
+        if(UserDetailsUtils.user!!.accountType == DOCTOR)
+            inflateFragment(DoctorHomeFragment.getInstance())
+        else
+            inflateFragment(PatientHomeFragment.getInstance())
     }
+    fun updateActiveItem(f:FragmentWrapper) = updateActiveItem(mFragmentMap[f]!!)
 
     private fun updateActiveItem(@IdRes id:Int){
         bnvMain.setSelectedItemId(id)
@@ -233,15 +236,19 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
             R.id.action_logout -> {
                 LogoutDialog.getInstance()
                     .show(supportFragmentManager, "")
+                toggleDrawerState()
                 return true
             }
             R.id.action_settings ->{
+                toggleDrawerState()
                 return true
             }
             R.id.action_support ->{
+                toggleDrawerState()
                 return true
             }
             R.id.action_about ->{
+                toggleDrawerState()
                 return true
             }
         }
@@ -254,10 +261,23 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 
-        if(f.isAdded) transaction.show(f)
-        else transaction.replace(R.id.fragment_container_main, f, "${f::class.simpleName}")
+        if(supportFragmentManager.findFragmentByTag(f::class.simpleName) != null){
+            /*its been added before*/
+            transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
+            transaction.show(supportFragmentManager.findFragmentByTag(f::class.simpleName)!!)
+        }
+        else{
+            if(mCurrentFragmentTag != null)
+               transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
+
+            transaction.addToBackStack("${f::class.simpleName}")
+            transaction.add(R.id.fragment_container_main, f, "${f::class.simpleName}")
+        }
 
         transaction.commit()
+        mCurrentFragmentTag = f::class.simpleName
+        mFragmentTagList = mFragmentTagList.filter{ it != f::class.simpleName} as MutableList<String>
+        mFragmentTagList.add(mCurrentFragmentTag!!)
     }
 
     fun toggleProgressBar(status:Boolean) {

@@ -136,8 +136,6 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
 
                 (requireParentFragment() as ProfileHostFragment)
                     .inflateFragment2(ViewProfileFragment.newInstance(entity))
-
-
             }
 
         }

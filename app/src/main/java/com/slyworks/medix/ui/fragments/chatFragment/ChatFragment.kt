@@ -57,7 +57,7 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
 
     private var mSubscriptionsList:MutableList<Subscription> = mutableListOf()
 
-    private var mIsBeingLoaded:Boolean = true
+    private var mIsBeingLoaded:Boolean = false
     private val MIN_CHECK_TIME:Long = 5_000
     private var mLastCheckTime:Long = System.currentTimeMillis()
     //endregion
@@ -71,7 +71,7 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     override fun onStart() {
         super.onStart()
 
-        getData(3)
+        getData(2)
     }
 
     override fun onStop() {

@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="24dp"
             app:queryHint="Search"
-            android:background="@color/appGrey"/>
+            android:background="@drawable/search_view_selector"/>
 
         <TextView
             android:id="@+id/tvQuickActions_frag_home"
@@ -42,26 +42,16 @@
             android:textColor="@color/appTextColor3"
             android:text="Quick Actions"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvQuick_action_frag_home"
+        <include
+            android:id="@+id/layout_quick_actions_doctor"
+            layout="@layout/layout_quick_actions_doctor"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="200dp"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
             app:layout_constraintTop_toBottomOf="@id/tvQuickActions_frag_home"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="true"
-            tools:listitem="@layout/li_quick_actions" />
+            android:layout_marginTop="8dp"/>
 
-        <include
-            android:id="@+id/layout_covid_card"
-            layout="@layout/layout_covid_card"
-            android:layout_width="0dp"
-            android:layout_height="140dp"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/rvQuick_action_frag_home"
-            android:layout_marginTop="20dp"/>
 
         <TextView
             android:id="@+id/tvTalk_frag_home"
@@ -69,7 +59,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/layout_covid_card"
+            app:layout_constraintTop_toBottomOf="@id/layout_quick_actions_doctor"
             app:layout_constraintHorizontal_bias="0"
             android:layout_marginTop="20dp"
             android:textStyle="bold"
@@ -77,24 +67,13 @@
             android:textColor="@color/appTextColor3"
             android:text="Reach out to patients"/>
 
-        <TextView
-            android:id="@+id/tvText_frag_home"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/tvTalk_frag_home"
-            android:layout_marginTop="4dp"
-            android:textSize="16sp"
-            android:text="Quickly reach out to patients anywhere, giving expert medical advice."/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvHealthAreas_frag_home"
             android:layout_width="0dp"
             android:layout_height="50dp"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/tvText_frag_home"
+            app:layout_constraintTop_toBottomOf="@id/tvTalk_frag_home"
             android:layout_marginTop="10dp"
             tools:listitem="@layout/li_health_areas"/>
 

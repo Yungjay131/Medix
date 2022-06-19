@@ -47,7 +47,6 @@
         android:textAllCaps="false"
         android:drawableLeft="@drawable/ic_person_search"
         android:drawablePadding="-16dp"
-        android:padding="10dp"
         android:paddingStart="24dp"
         android:background="@drawable/btn_login_selector"/>
 
