@@ -250,7 +250,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="High Blood Pressure"
+                        android:text="Hypertension"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvDisease_patient_reg_one" />
 
@@ -259,7 +259,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Sickle Cell Anaemia"
+                        android:text="Sickle Cell"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/__guide_vertical_1"
                         app:layout_constraintTop_toBottomOf="@id/tvDisease_patient_reg_one" />

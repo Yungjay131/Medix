@@ -23,18 +23,16 @@
         layout="@layout/content_chat"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabStatChat_frag_chat"
-        style="@style/AppTheme.ExtendedFAB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_gravity="bottom|end"
-        android:text="Start Chat"
-        android:textColor="#4A4747"
-        android:textAllCaps="false"
-        app:icon="@drawable/ic_chat"
-        app:iconTint="@color/white"
-        android:backgroundTint="@color/appGreen" />
+        app:backgroundTint="@color/appGreen"
+        android:src="@drawable/ic_message"
+        app:rippleColor="#388E3C"
+        app:elevation="4dp"
+        app:tint="@color/white" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -38,11 +38,15 @@
         <activity
             android:name=".ui.activities.registrationActivity.RegistrationDoctorActivity"
             android:exported="false"
-            android:theme="@style/AppTheme.registration_doctor" />
+            android:theme="@style/AppTheme.registration_doctor"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+
         <activity
             android:name=".ui.activities.registrationActivity.RegistrationPatientActivity"
             android:exported="false"
-            android:theme="@style/AppTheme.registration_patient" />
+            android:theme="@style/AppTheme.registration_patient"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+
         <activity
             android:name=".ui.activities.loginActivity.LoginActivity"
             android:exported="false"
@@ -61,7 +65,8 @@
             android:name=".ui.activities.mainActivity.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.main" />
+            android:theme="@style/AppTheme.main"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity
             android:name=".ui.activities.SplashActivity"
             android:exported="true"

@@ -67,7 +67,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         if(rootView == null)
             return
 
-       initNetworkStatusView()
+        initNetworkStatusView()
     }
 
     override fun onStop() {
@@ -76,14 +76,6 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         mViewModel.unsubscribeToNetwork()
     }
 
-    private fun initNetworkStatusView(){
-        mViewModel.subscribeToNetwork().observe(this) {
-            if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView!!, MAIN)
-
-            networkStatusView!!.setVisibilityStatus(it)
-        }
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -103,13 +95,21 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
                         initViews()
                         initFragmentMap()
                         initBottomNavMenu()
+                        initNetworkStatusView()
                         initFragment()
                         initData()
-                        initNetworkStatusView()
                     }
                 })
     }
 
+    private fun initNetworkStatusView(){
+        mViewModel.subscribeToNetwork().observe(this) {
+            if(networkStatusView == null)
+                networkStatusView = NetworkStatusView.from(rootView!!, MAIN)
+
+            networkStatusView!!.setVisibilityStatus(it)
+        }
+    }
     private fun initFragmentMap(){
         if(UserDetailsUtils.user!!.accountType == DOCTOR){
             mFragmentMap.put(DoctorHomeFragment::class.simpleName, R.id.action_home)
@@ -158,7 +158,6 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     }
 
     private fun initViews(){
-        progress = findViewById(R.id.progress_layout)
         rootView = findViewById(R.id.layout_app_bar_main)
         drawer = findViewById(R.id.drawer_main)
         navView = findViewById(R.id.nav_view_main)
@@ -194,7 +193,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
         return when (item.itemId) {
             R.id.action_home -> {
-                inflateFragment(
+                _inflateFragment(
                     if (UserDetailsUtils.user!!.accountType == DOCTOR)
                         DoctorHomeFragment.getInstance()
                     else
@@ -204,12 +203,12 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
                 true
             }
             R.id.action_chats -> {
-                inflateFragment(ChatHostFragment.getInstance())
+                _inflateFragment(ChatHostFragment.getInstance())
                 mSelectedItem = item.itemId
                 true
             }
             R.id.action_connect -> {
-                inflateFragment(ProfileHostFragment.getInstance())
+                _inflateFragment(ProfileHostFragment.getInstance())
                 mSelectedItem = item.itemId
                 true
             }
@@ -220,9 +219,9 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
     private fun initFragment(){
         if(UserDetailsUtils.user!!.accountType == DOCTOR)
-            inflateFragment(DoctorHomeFragment.getInstance())
+            _inflateFragment(DoctorHomeFragment.getInstance())
         else
-            inflateFragment(PatientHomeFragment.getInstance())
+            _inflateFragment(PatientHomeFragment.getInstance())
     }
     fun updateActiveItem(f:FragmentWrapper) = updateActiveItem(mFragmentMap[f]!!)
 
@@ -232,23 +231,27 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        toggleDrawerState()
+
         when(item.getItemId()){
             R.id.action_logout -> {
                 LogoutDialog.getInstance()
                     .show(supportFragmentManager, "")
-                toggleDrawerState()
+                return true
+            }
+            R.id.action_call_history ->{
+                return true
+            }
+            R.id.action_requests ->{
                 return true
             }
             R.id.action_settings ->{
-                toggleDrawerState()
                 return true
             }
             R.id.action_support ->{
-                toggleDrawerState()
                 return true
             }
             R.id.action_about ->{
-                toggleDrawerState()
                 return true
             }
         }
@@ -256,8 +259,13 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         return true
     }
 
+    /*called from outside this class*/
+    fun inflateFragment(f:Fragment){
+        _inflateFragment(f)
+        updateActiveItem(mFragmentMap[f::class.simpleName]!!)
+    }
 
-    fun inflateFragment(f: Fragment){
+    private fun _inflateFragment(f: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 

@@ -6,4 +6,6 @@
     <string name="view_tc"><u>View Terms and Conditions</u></string>
     <string name="action_home_text">Home</string>
     <string name="action_chats_text">Chats</string>
+    <string name="menu_main_action_calls_history">Calls History</string>
+    <string name="menu_main_action_requests">Requests</string>
 </resources>

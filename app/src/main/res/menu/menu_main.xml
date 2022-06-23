@@ -7,8 +7,18 @@
             android:icon="@drawable/ic_login"/>
 
         <item
-            android:id="@+id/action_settings"
+            android:id="@+id/action_call_history"
+            android:title="@string/menu_main_action_calls_history"
+            android:icon="@drawable/ic_records"/>
+
+        <item
+            android:id="@+id/action_requests"
+            android:title="@string/menu_main_action_requests"
+            android:icon="@drawable/ic_person_add"/>
+
+        <item
             android:title="@string/menu_main_action_settings"
+            android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings"/>
 
         <item

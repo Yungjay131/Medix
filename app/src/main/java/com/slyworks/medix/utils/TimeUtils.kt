@@ -78,4 +78,10 @@ object TimeUtils {
         val sdf: DateFormat = SimpleDateFormat("ddMMyyyyHHmm", Locale.getDefault())
         return sdf.format(Calendar.getInstance().time).toLong()
     }
+
+    fun isWithin3DayPeriod(lastSignInTime: Long): Boolean {
+        val threeDays:Long = 3 * 24 * 60 * 60 * 1000
+        val currentTime = System.currentTimeMillis()
+        return (currentTime - lastSignInTime) < threeDays
+    }
 }

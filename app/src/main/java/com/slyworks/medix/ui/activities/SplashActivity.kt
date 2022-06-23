@@ -76,14 +76,8 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun isLoginSessionValid():Boolean{
-        var status = true
-        val lastSignInTime: Long = PreferenceManager.get(KEY_LAST_SIGN_IN_TIME, DEFAULT_LAST_SIGN_IN_TIME)
-        val condition: Boolean = (TimeUtils.getCurrentDate() - lastSignInTime) >= MAX_LAST_SIGN_IN_TIME
-        if (condition)
-        //means user should sign-in again
-            status = false
-
-        return status
+        val lastSignInTime: Long = PreferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
+        return TimeUtils.isWithin3DayPeriod(lastSignInTime)
     }
 
     private suspend fun checkUserDetailsAvailability(): Boolean{

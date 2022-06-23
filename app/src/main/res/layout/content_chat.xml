@@ -49,7 +49,7 @@
             app:layout_constraintBottom_toBottomOf="@id/ivRetry_content_chat"
             android:progressTint="@color/appBlue"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="gone"/>
 
         <TextView
             android:id="@+id/tvRetry_content_chat"
@@ -70,13 +70,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvRetry_content_chat"
             android:layout_marginTop="16dp"
-            android:paddingStart="10dp"
+            android:paddingStart="24dp"
             android:text="Retry"
             android:textColor="@color/White"
             android:textAllCaps="false"
             android:drawableLeft="@drawable/ic_refresh"
             android:drawableTint="@color/White"
-            android:drawablePadding="-16dp"
+            android:drawablePadding="-24dp"
             android:background="@drawable/btn_login_selector"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -89,7 +89,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"
-        tools:visibility="gone">
+        tools:visibility="visible">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/ivChat_frag_chat"
@@ -112,7 +112,7 @@
             app:layout_constraintBottom_toTopOf="@id/_guide_horizontal_2"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:text="oh oh. You currently have no chats, but not too worry, click the chat icon on the screen and let's get you started"
+            android:text="It seems you have no messages- but not too worry, click the 'chat'icon on the screen and let's get you started"
             android:textSize="18sp"
             android:lineSpacingMultiplier="1"
             android:gravity="center_vertical|center_horizontal|center"/>

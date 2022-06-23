@@ -24,6 +24,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
 import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
@@ -185,10 +186,15 @@ class RegistrationPatientActivity : BaseActivity() {
                         displayMessage("registration successful, please verify your email and login ")
                         delay(1_000)
 
-                        val intent = Intent(this@RegistrationPatientActivity, LoginActivity::class.java)
+                      /*  val intent = Intent(this@RegistrationPatientActivity, LoginActivity::class.java)
                         intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP)
                         startActivity(intent)
-                        finish()
+                        finish()*/
+
+                        Navigator.intentFor<LoginActivity>(this@RegistrationPatientActivity)
+                            .previousIsTop()
+                            .finishCaller()
+                            .navigate()
                     }
                 }
                 it.isFailure ||
@@ -287,7 +293,7 @@ class RegistrationPatientActivity : BaseActivity() {
                                 }
                                 .show(supportFragmentManager, "")
                             }else{
-                                showMessage("error occurred requesting permissions", rootView)
+                                showMessage("Medix requires these permissions to work, please grant access to the requested permissions", rootView)
                             }
                         }
 

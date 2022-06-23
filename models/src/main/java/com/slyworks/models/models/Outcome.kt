@@ -1,5 +1,7 @@
 package com.slyworks.models.models
 
+import java.lang.UnsupportedOperationException
+
 /**
  *Created by Joshua Sylvanus, 7:06 AM, 4/2/2022.
  */
@@ -17,6 +19,13 @@ private constructor(private val value:Any? = null) {
     get() = value is Error
     //endregion
 
+    fun <T> getTypedValue():T{
+        when{
+            isSuccess -> return (value as Success<T>).value as T
+            isFailure -> return (value as Failure<T>).value as T
+            else -> throw UnsupportedOperationException("op not supported for Outcome#isError()")
+        }
+    }
     fun getValue():Any?{
         when {
             isSuccess -> return (value as Success<*>).value

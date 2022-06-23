@@ -40,5 +40,7 @@
     <string name="tvdetails_text_placeholder"><b>%1$s</b> would like a Video Call with you</string>
     <string name="new_message_received">New Message Received</string>
     <string name="new_message_text">You have new messages.Tap to view</string>
-    <string name="menu_main_action_login">login</string>
+    <string name="menu_main_action_login">logout</string>
+    <string name="menu_main_action_calls_history">Calls History</string>
+    <string name="menu_main_action_requests">Requests</string>
 </resources>

@@ -33,6 +33,8 @@ const val EVENT_LISTEN_FOR_CONSULTATION_REQUESTS_ACCEPT = "com.slyworks.medix.EV
 
 const val DEFAULT_LAST_SIGN_IN_TIME = 100_000_000_000L
 const val MAX_LAST_SIGN_IN_TIME = 300_000_000_000L
+const val MAX_LAST_SIGN_IN_TIME2 = (3 * 24 * 60 * 60 * 1000).toLong()
+
 const val KEY_LAST_SIGN_IN_TIME = "com.slyworks.medix.KEY_LAST_SIGN_IN_TIME"
 const val KEY_UNREAD_MESSAGE_COUNT = "com.slyworks.medix.KEY_UNREAD_MESSAGE_COUNT"
 const val KEY_FCM_UPLOAD_TOKEN = "com.slyworks.medix.KEY_FCM_UPLOAD_TOKEN"

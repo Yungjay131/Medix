@@ -13,6 +13,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import androidx.core.content.ContextCompat
 import com.slyworks.constants.*
 import com.slyworks.medix.App
 import com.slyworks.medix.R
@@ -34,6 +35,8 @@ object NotificationHelper {
     //region Vars
     private val notificationManager:NotificationManager =
         App.getContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private val mColor:Int = ContextCompat.getColor(App.getContext(), R.color.appBlue)
 
     private val mChannelID1:String = App.getContext().getString(R.string.notification_channel_1_id)
     private val mChannelID2:String = App.getContext().getString(R.string.notification_channel_2_id)
@@ -67,6 +70,7 @@ object NotificationHelper {
             .setContentTitle("Consultation Request Response")
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(message))
+            .setColor(mColor)
             .setAutoCancel(true)
             .setWhen(System.currentTimeMillis())
             .setVisibility(VISIBILITY_PUBLIC)
@@ -124,6 +128,7 @@ object NotificationHelper {
                .setContentTitle("Consultation Request")
                .setStyle(NotificationCompat.BigTextStyle()
                                            .bigText(message))
+               .setColor(mColor)
                .setAutoCancel(true)
                .setWhen(System.currentTimeMillis())
                .setVisibility(VISIBILITY_PUBLIC)
@@ -141,6 +146,7 @@ object NotificationHelper {
         builder.setSmallIcon(R.drawable.splash_image_2)
             .setChannelId(mChannelID1)
             .setContentText("Medix is doing work in the background")
+            .setColor(mColor)
             .setWhen(System.currentTimeMillis())
             .setAllowSystemGeneratedContextualActions(false)
             .setVisibility(VISIBILITY_PUBLIC)
@@ -175,6 +181,7 @@ object NotificationHelper {
             .setContentText("You have new messages. Tap to open")
             .setCustomHeadsUpContentView(remoteView)
             .setAutoCancel(true)
+            .setColor(mColor)
             .setWhen(System.currentTimeMillis())
             .setVisibility(VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
@@ -222,6 +229,7 @@ object NotificationHelper {
             .setContentTitle("Incoming Video Call")
             .setContentText("${userDetails.fullName} would like a video call with you")
             .setCustomHeadsUpContentView(remoteView)
+            .setColor(mColor)
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .setWhen(System.currentTimeMillis())
@@ -275,6 +283,7 @@ object NotificationHelper {
             .setContentText("${details.fullName} would like a voice call with you")
             .setCustomHeadsUpContentView(remoteView)
             .setLargeIcon(bitmap)
+            .setColor(mColor)
             .setAutoCancel(true)
             .setWhen(System.currentTimeMillis())
             .setVisibility(VISIBILITY_PUBLIC)

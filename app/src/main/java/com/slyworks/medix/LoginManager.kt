@@ -13,6 +13,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -57,7 +58,7 @@ private constructor() {
                         if (mFirebaseAuth!!.currentUser!!.isEmailVerified) {
                             PreferenceManager.set(
                                 KEY_LAST_SIGN_IN_TIME,
-                                TimeUtils.getCurrentDate()
+                                System.currentTimeMillis()
                             )
 
                             retrieveUserDetails()
@@ -116,9 +117,10 @@ private constructor() {
 
 
     fun logoutUser(){
-        mFirebaseAuth!!.signOut()
-        UserDetailsUtils.clearUserData()
-        PreferenceManager.set(KEY_LAST_SIGN_IN_TIME, DEFAULT_LAST_SIGN_IN_TIME)
+            mFirebaseAuth!!.signOut()
+            UsersManager.clearUserDetails()
+            UserDetailsUtils.clearUserData()
+            PreferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
     }
 
     fun onDestroy(){

@@ -79,10 +79,7 @@ class PatientHomeFragment : Fragment() {
 
         initData()
         initViews(view)
-        stopActivityProgressBar()
     }
-
-    private fun stopActivityProgressBar() = mParentActivity.toggleProgressBar(false)
 
     private fun initData(){
         mViewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)

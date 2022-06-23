@@ -11,7 +11,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -19,6 +18,7 @@ import androidx.constraintlayout.widget.Group
 import androidx.constraintlayout.widget.Guideline
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
@@ -27,16 +27,16 @@ import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.*
 import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
-import com.slyworks.medix.utils.*
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.*
 import com.slyworks.models.room_models.FBUserDetails
 import de.hdodenhof.circleimageview.CircleImageView
 
-class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
+class ViewProfileFragment : Fragment(), Observer {
     //region Vars
     private val TAG: String? = ViewProfileFragment::class.simpleName
 
@@ -48,8 +48,8 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
 
     private lateinit var rootView:CoordinatorLayout
     private lateinit var progress:ProgressBar
-    private lateinit var scrollView:ScrollView
-    private lateinit var ivProfile:CircleImageView
+    private lateinit var scrollView: NestedScrollView
+    private lateinit var ivProfile:ImageView
     private lateinit var tvFirstName:TextView
     private lateinit var tvLastName:TextView
     private lateinit var tvSex:TextView
@@ -62,6 +62,7 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
     private lateinit var fabVideoCall:FloatingActionButton
 
     private lateinit var group_fabs:Group
+    private lateinit var group_toolbar:Group
 
     private lateinit var appBarLayout: AppBarLayout
 
@@ -87,14 +88,32 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
     companion object {
 
         @JvmStatic
-        fun newInstance(args:Any):ViewProfileFragment {
-            return ViewProfileFragment().apply {
+        fun newInstance(args:Any):ViewProfileFragment  =
+             ViewProfileFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(EXTRA_USER_PROFILE_ARGS, args as FBUserDetails)
                 }
             }
 
-        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        /*TODO:make fullscreen*/
+       /* requireActivity()
+            .window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS )*/
+    }
+
+    override fun onStop() {
+        super.onStop()
+        /*TODO:exit fullscreen*/
+        /*requireActivity()
+            .window
+            .setFlags(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT )*/
     }
 
     override fun onDestroy() {
@@ -114,7 +133,6 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
     }
 
     private fun initViews_1(view:View){
-        ivBack = view.findViewById(R.id.ivBack_frag_view_profile)
         ivBack2 = view.findViewById(R.id.ivBack_frag_view_profile2)
         ivProfileSmall = view.findViewById(R.id.ivProfile_small_frag_view_profile)
         tvNameSmall = view.findViewById(R.id.tvProfile_small_frag_view_profile)
@@ -138,6 +156,7 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
         fabVideoCall = view.findViewById(R.id.fabVideoCall_frag_view_profile)
 
         group_fabs = view.findViewById(R.id.group_1_frag_view_profile);
+        group_toolbar = view.findViewById(R.id.group_2_frag_view_profile)
 
         appBarLayout = view.findViewById(R.id.appBarLayout_frag_view_profile)
 
@@ -149,6 +168,9 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
         ivProfile.displayImage(mUserProfile!!.imageUri)
         ivProfileSmall.displayImage(mUserProfile!!.imageUri)
 
+        ivBack2.setOnClickListener { requireActivity().onBackPressed() }
+
+        tvNameSmall.text = "Dr. ${mUserProfile!!.firstName} ${mUserProfile!!.lastName}"
         tvFirstName.text = mUserProfile!!.firstName
         tvLastName.text = mUserProfile!!.lastName
         tvSex.text = mUserProfile!!.sex
@@ -160,30 +182,33 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
 
         fun toggleFABAnimation(status:Boolean){
             if (status){
-                fabToggleFABsStatus.startAnimation(anim_fab_rotate_backward)
-                fabSendRequest.startAnimation(anim_fab_close)
-                fabMessage.startAnimation(anim_fab_close)
-                fabVoiceCall.startAnimation(anim_fab_close)
-                fabVideoCall.startAnimation(anim_fab_close)
-            } else{
+                group_fabs.visibility = View.VISIBLE
                 fabToggleFABsStatus.startAnimation(anim_fab_rotate_forward)
                 fabSendRequest.startAnimation(anim_fab_open)
                 fabMessage.startAnimation(anim_fab_open)
                 fabVoiceCall.startAnimation(anim_fab_open)
                 fabVideoCall.startAnimation(anim_fab_open)
+            } else{
+                fabToggleFABsStatus.startAnimation(anim_fab_rotate_backward)
+                fabSendRequest.startAnimation(anim_fab_close)
+                fabMessage.startAnimation(anim_fab_close)
+                fabVoiceCall.startAnimation(anim_fab_close)
+                fabVideoCall.startAnimation(anim_fab_close)
+                group_fabs.visibility = View.GONE
             }
-
-            mAreFABsDisplayed = status
         }
 
        appBarLayout.addOnOffsetChangedListener(object:AppBarStateChangeListener(){
            override fun onStateChanged(appBarLayout: AppBarLayout, state: AppBarState) {
                when(state){
                    AppBarState.IDLE ->{}
-                   AppBarState.EXPANDED ->{}
+                   AppBarState.EXPANDED ->{
+                       group_toolbar.visibility = View.GONE
+                   }
                    AppBarState.COLLAPSED ->{
                        /*close fab*/
-                       toggleFABAnimation(false)
+                       group_toolbar.visibility = View.VISIBLE
+                       toggleFABAnimation(false.also { mAreFABsDisplayed = false })
                    }
 
                }
@@ -191,21 +216,17 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
        })
 
         fabToggleFABsStatus.setOnClickListener {
-            toggleFABAnimation(mAreFABsDisplayed)
+            toggleFABAnimation(!mAreFABsDisplayed.also { mAreFABsDisplayed = !mAreFABsDisplayed })
         }
 
         fabSendRequest.setOnClickListener {
             val message:String = "Hi i'm ${UserDetailsUtils.user!!.fullName}. Please i would like a consultation with you"
-            val data: ConsultationRequestData =
-                ConsultationRequestData(message, UserDetailsUtils.user!!.firebaseUID, FCM_REQUEST)
-            val fcmMessage: FirebaseCloudMessage =
-                FirebaseCloudMessage(mUserProfile!!.FCMRegistrationToken, data)
+            val data: ConsultationRequestData = ConsultationRequestData(message, UserDetailsUtils.user!!.firebaseUID, FCM_REQUEST)
+            val fcmMessage: FirebaseCloudMessage = FirebaseCloudMessage(mUserProfile!!.FCMRegistrationToken, data)
             //CloudMessageManager.sendCloudMessage(fcmMessage)
 
-            val request: Request =
-                Request(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!.firebaseUID, message)
-            val request2: ConsultationRequest =
-                ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
+            val request: Request = Request(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!.firebaseUID, message)
+            val request2: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
             CloudMessageManager.sendConsultationRequest(request2)
 
             Log.e(TAG, "initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
@@ -213,9 +234,7 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
 
         fabSendRequest.setOnLongClickListener{
             val message:String = "Hi i'm ${UserDetailsUtils.user!!.fullName}. Please i would like a consultation with you"
-            val request: ConsultationRequest =
-                ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
-
+            val request: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
             CloudMessageManager.sendConsultationRequest(request, mode = MessageMode.CLOUD_MESSAGE)
 
             Log.e(TAG, "initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
@@ -223,10 +242,14 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
         }
 
         fabMessage.setOnClickListener {
-            val intent:Intent = Intent(requireContext(), MessageActivity::class.java)
+            /*val intent:Intent = Intent(requireContext(), MessageActivity::class.java)
             intent.putExtra(EXTRA_USER_PROFILE_FBU, mUserProfile)
             startActivity(intent)
-            requireActivity().finish()
+            requireActivity().finish()*/
+            Navigator.intentFor<MessageActivity>(requireActivity())
+                .addExtra(EXTRA_USER_PROFILE_FBU, mUserProfile)
+                .finishCaller()
+                .navigate()
         }
 
         fabVoiceCall.setOnClickListener {
@@ -234,11 +257,16 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
         }
 
         fabVideoCall.setOnClickListener {
-             val intent:Intent = Intent(requireContext(), VideoCallActivity::class.java)
+           /*  val intent:Intent = Intent(requireContext(), VideoCallActivity::class.java)
              intent.putExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
              intent.putExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
              startActivity(intent)
-             requireActivity().finish()
+             requireActivity().finish()*/
+            Navigator.intentFor<VideoCallActivity>(requireActivity())
+                .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+                .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
+                .finishCaller()
+                .navigate()
         }
 
         if(mUserProfile == null || mUserProfile?.specialization.isNullOrEmpty()) return
@@ -277,7 +305,7 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
             ConstraintSet.TOP,
             ANCHOR,
             ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(R.dimen.layout_size_margin2))
+            resources.getDimensionPixelSize(R.dimen.layout_size_margin3))
 
         constraintSet.applyTo(rootView_inner)
         ANCHOR = layout.id
@@ -309,16 +337,18 @@ class ViewProfileFragment : Fragment(), com.slyworks.models.models.Observer {
         CloudMessageManager.checkRequestStatus(mUserProfile!!.firebaseUID)
     }
     private fun toggleFABStatus(status:Boolean,vararg FAB:FloatingActionButton) {
-        val color_blue = ContextCompat.getColor(requireContext(), R.color.appPink)
+        val color_black = ContextCompat.getColor(requireContext(), android.R.color.black)
         val color_grey = ContextCompat.getColor(requireContext(), R.color.appGrey_shimmer)
         if (status) {
             FAB.forEach {
-                it.setBackgroundTintList(ColorStateList.valueOf(color_blue))
+                //it.setBackgroundTintList(ColorStateList.valueOf(color_blue))
+                it.setImageTintList(ColorStateList.valueOf(color_black))
                 it.isEnabled = status
             }
         } else{
             FAB.forEach {
-                it.setBackgroundTintList(ColorStateList.valueOf(color_grey))
+                //it.setBackgroundTintList(ColorStateList.valueOf(color_grey))
+                it.setImageTintList(ColorStateList.valueOf(color_grey))
                 it.isEnabled = status
             }
      }

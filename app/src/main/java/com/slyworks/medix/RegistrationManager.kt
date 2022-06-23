@@ -58,36 +58,36 @@ class  RegistrationManager {
     fun register(userDetails: TempUserDetails): Observable<Outcome> {
         mUser = userDetails
         return createFirebaseUser()
-            .flatMap {
+            .concatMap {
                 when {
-                    it.isSuccess -> return@flatMap uploadUserProfileImage()
+                    it.isSuccess -> return@concatMap uploadUserProfileImage()
                     else -> {
-                        return@flatMap deleteUser().flatMap { _ -> Observable.just(it) }
+                        return@concatMap deleteUser().concatMap { _ -> Observable.just(it) }
                     }
                 }
-            }.flatMap {
+            }.concatMap {
                 when {
-                    it.isSuccess -> return@flatMap createAgoraUser()
+                    it.isSuccess -> return@concatMap createAgoraUser()
                     else ->{
-                        return@flatMap deleteUserProfileImage().flatMap { _ ->  Observable.just(it)}
+                        return@concatMap deleteUserProfileImage().concatMap { _ ->  Observable.just(it)}
                     }
                 }
-            }.flatMap {
+            }.concatMap {
                 when {
-                    it.isSuccess -> return@flatMap getFCMRegistrationToken()
-                    else -> return@flatMap Observable.just(it)
+                    it.isSuccess -> return@concatMap getFCMRegistrationToken()
+                    else -> return@concatMap Observable.just(it)
 
                 }
-            }.flatMap {
+            }.concatMap {
                 when {
-                    it.isSuccess -> return@flatMap uploadUserDetailsToFirebaseDB()
-                    else -> return@flatMap Observable.just(it)
+                    it.isSuccess -> return@concatMap uploadUserDetailsToFirebaseDB()
+                    else -> return@concatMap Observable.just(it)
                 }
-            }.flatMap {
+            }.concatMap {
                 when {
-                    it.isSuccess -> return@flatMap sendVerificationEmail()
+                    it.isSuccess -> return@concatMap sendVerificationEmail()
                     else ->{
-                        return@flatMap deleteUserDetailsFromDB().flatMap { _ -> Observable.just(it) }
+                        return@concatMap deleteUserDetailsFromDB().concatMap { _ -> Observable.just(it) }
                     }
                 }
             }

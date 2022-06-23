@@ -59,34 +59,7 @@ class RVFindDoctorsAdapter : RecyclerView.Adapter<RVFindDoctorsAdapter.ViewHolde
         private val ivProfile:CircleImageView =itemView.findViewById(R.id.ivProfile_find_doctor)
         private val tvDoctorName: TextView = itemView.findViewById(R.id.tvName_find_doctor)
         private val tvSpecialisation: TextView = itemView.findViewById(R.id.tvSpecialization_find_doctor)
-
-        private val ivDropDown: ImageView = itemView.findViewById(R.id.ivDropDown_find_doctor)
-        private val ivDropUp: ImageView = itemView.findViewById(R.id.ivDropUp_find_doctor)
-
-        private val divider:MaterialDivider = itemView.findViewById(R.id.divider_1)
-        private val layout_two:ConstraintLayout = itemView.findViewById(R.id.li_find_doctors_layout_two)
-
-        private val ivGoUp:ImageView = itemView.findViewById(R.id.ivGoUp_find_doctor)
         //endregion
-
-        init{
-            ivDropDown.setOnClickListener {
-                divider.visibility = View.VISIBLE
-                layout_two.visibility = View.VISIBLE
-                it.visibility = View.GONE
-                ivDropUp.visibility = View.VISIBLE
-            }
-
-            ivDropUp.setOnClickListener {
-                divider.visibility = View.INVISIBLE
-                layout_two.visibility = View.GONE
-                it.visibility = View.GONE
-                ivDropDown.visibility = View.VISIBLE
-            }
-
-            ivGoUp.setOnClickListener {}
-
-        }
         fun bind(entity: FBUserDetails){
              ivProfile.displayImage(entity.imageUri)
 

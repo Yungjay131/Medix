@@ -11,10 +11,12 @@ import com.slyworks.constants.EVENT_UPDATE_FCM_REGISTRATION_TOKEN
 import com.slyworks.constants.OUTGOING_MESSAGE
 import com.slyworks.medix.utils.*
 import com.slyworks.data.AppDatabase
+import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.FBUserDetailsWrapper
 import com.slyworks.models.room_models.Message
 import com.slyworks.models.room_models.Person
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.*
@@ -95,7 +97,7 @@ object UsersManager {
            }
     }
 
-    private fun doctorChildEventListener(flow:FlowCollector<MutableList<FBUserDetails>>):ChildEventListener{
+    private fun doctorChildEventListener(o:PublishSubject<Outcome>):ChildEventListener{
            mDoctorChildEventListener = MChildEventListener(
                onChildAddedFunc = { snapshot ->
                        val list:MutableList<FBUserDetails> = mutableListOf()
@@ -104,20 +106,18 @@ object UsersManager {
                            list.add(user!!)
                        }
 
-                       CoroutineScope(Dispatchers.IO).launch { flow.emit(list) }
+                       o.onNext(Outcome.SUCCESS(list))
                })
 
            return mDoctorChildEventListener!!
     }
 
+    fun observeDoctors():Observable<Outcome>{
+        val o = PublishSubject.create<Outcome>()
+        getAllDoctorsRef()
+            .addChildEventListener(doctorChildEventListener(o))
 
-    fun observeDoctors(): Flow<MutableList<FBUserDetails>> {
-        val flow: Flow<MutableList<FBUserDetails>> = flow {
-           getAllDoctorsRef()
-                .addChildEventListener(doctorChildEventListener(this))
-        }
-
-        return flow
+        return o.hide()
     }
 
     fun detachGetAllDoctorsListener() {
@@ -125,6 +125,16 @@ object UsersManager {
              .removeEventListener(mDoctorChildEventListener!!)
 
         mDoctorChildEventListener = null
+    }
+
+    fun clearUserDetails() {
+        CoroutineScope(Dispatchers.IO).launch{
+            App.getContext().userDetailsProtoDataStore.updateData {
+                it.toBuilder()
+                    .clear()
+                    .build()
+            }
+        }
     }
 
     suspend fun saveUserToDataStore(userDetails: FBUserDetails){
@@ -251,6 +261,8 @@ object UsersManager {
         }
 
     }
+
+
 
 
 }

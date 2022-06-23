@@ -320,7 +320,6 @@ class RegistrationDoctorActivity : BaseActivity() {
                 return@setOnClickListener
 
             toggleLoadingStatus(true)
-            displayMessage("passed")
 
             mViewModel.register(parseUserDetails())
         }

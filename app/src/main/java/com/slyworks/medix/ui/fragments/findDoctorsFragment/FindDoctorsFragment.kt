@@ -47,13 +47,9 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
     //endregion
    companion object {
        @JvmStatic
-       fun newInstance(): FindDoctorsFragment {
-           return FindDoctorsFragment()
-       }
+       fun newInstance(): FindDoctorsFragment  = FindDoctorsFragment()
+
    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_find_doctors, container, false)
@@ -77,7 +73,6 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
         mSubscriptionsList.add(subscription_1)
         mSubscriptionsList.add(subscription_2)
 
-
         mViewModel = ViewModelProvider(this).get(FindDoctorsViewModel::class.java)
         mViewModel.mDoctorsListLiveData!!.observe(viewLifecycleOwner, Observer {
             mAdapter.addDoctors(it)
@@ -99,8 +94,13 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
         //ivLayout_intro.displayGif(R.drawable.find_doctors)
 
         btnFindDoctors.setOnClickListener {
+            if(!mViewModel.getNetworkStatus()) {
+                displayMessage("no network connection")
+                return@setOnClickListener
+            }
+
             toggleProgressVisibility(true)
-            UsersManager.getAllDoctors()
+            mViewModel.getAllDoctors()
         }
 
         mAdapter = RVFindDoctorsAdapter()

@@ -4,19 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/appGrey">
-
-    <ImageView
-        android:id="@+id/ivBack_frag_view_profile"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@id/guide_vertical_1"
-        app:layout_constraintEnd_toStartOf="@id/guide_vertical_3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/ic_back_arrow"
-        app:tint="@color/appTextColor3"/>
+    android:layout_height="?attr/actionBarSize">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfile_small_frag_view_profile"
@@ -26,23 +14,20 @@
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="@color/appTextColor3"
-        android:visibility="gone"/>
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"/>
 
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/guide_vertical_7"
-        app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+        app:layout_constraintStart_toEndOf="@id/guide_vertical_4"
+        app:layout_constraintEnd_toStartOf="@id/guide_vertical_5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
-        android:progressTint="@color/appGreen"
+        android:progressTint="@color/appTextColor3"
         android:visibility="gone" />
 
     <TextView
@@ -50,49 +35,17 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@id/guide_vertical_6"
-        app:layout_constraintEnd_toStartOf="@id/progress"
+        app:layout_constraintEnd_toStartOf="@id/guide_vertical_7"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="4dp"
-        android:text="Joshua Joshua Joshua Joshua"
+        tools:text="Dr. Joshua Sylvanus"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textColor="@color/appTextColor3"
-        android:textStyle="bold"
         android:gravity="center_vertical"
-        android:visibility="gone"
         tools:visibility="visible"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_vertical_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".02"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_vertical_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".98"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_vertical_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".1"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_vertical_4"
@@ -102,7 +55,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".12"/>
+        app:layout_constraintGuide_percent=".82"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_vertical_5"
@@ -112,7 +65,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".28"/>
+        app:layout_constraintGuide_percent=".98"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_vertical_6"
@@ -122,7 +75,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".3"/>
+        app:layout_constraintGuide_percent=".02"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_vertical_7"
@@ -132,14 +85,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".86"/>
+        app:layout_constraintGuide_percent=".80"/>
 
-  <androidx.constraintlayout.widget.Barrier
-      android:id="@+id/barrier_vertical_1"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      app:barrierAllowsGoneWidgets="true"
-      app:barrierDirection="right"
-      app:barrierMargin="0dp"
-      app:constraint_referenced_ids="progress"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

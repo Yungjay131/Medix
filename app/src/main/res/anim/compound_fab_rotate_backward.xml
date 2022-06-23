@@ -6,7 +6,7 @@
     <rotate
         android:fromDegrees="-45"
         android:toDegrees="0"
-        android:duration="300"
+        android:duration="700"
         android:pivotX="50%"
         android:pivotY="50%"
         android:interpolator="@android:anim/linear_interpolator" />

@@ -1,5 +1,6 @@
 package com.slyworks.medix.ui.fragments.chatFragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,17 +20,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY_2
 import com.slyworks.constants.EXTRA_USER_PROFILE_FBU
+import com.slyworks.constants.PATIENT
 import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.R
 import com.slyworks.medix.Subscription
+import com.slyworks.medix.UserDetailsUtils
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
+import com.slyworks.medix.ui.fragments.callsHistoryFragment.CallsHistoryFragment
+import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
+import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.medix.utils.*
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
@@ -43,7 +51,7 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
 
     private lateinit var layout_chat_empty:ConstraintLayout
     private lateinit var rvChats:RecyclerView
-    private lateinit var fabStartChat:ExtendedFloatingActionButton
+    private lateinit var fabStartChat: FloatingActionButton
     private lateinit var rootView:CoordinatorLayout
     private lateinit var progress:ProgressBar
     private lateinit var layout_error:ConstraintLayout
@@ -71,28 +79,27 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     override fun onStart() {
         super.onStart()
 
-        getData(2)
     }
 
     override fun onStop() {
         super.onStop()
-        mViewModel.cleanup()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
-        initData()
         initViews1(view)
         initViews2(view)
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initData()
     }
 
     private fun initViews1(view:View){
         srlMain = view.findViewById(R.id.srlChatFragment)
 
         layout_chat_empty = view.findViewById(R.id.layout_no_messages_content_chat)
-        //shimmerFrameLayout = view.findViewById(R.id.layout_shimmer_content_chat)
-        //ivChat = view.findViewById(R.id.ivChat_frag_chat)
         rvChats = view.findViewById(R.id.rvChats_frag_chat)
         fabStartChat = view.findViewById(R.id.fabStatChat_frag_chat)
         rootView = view.findViewById(R.id.rootView)
@@ -101,6 +108,17 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
         tvRetry = view.findViewById(R.id.tvRetry_content_chat)
         btnRetry = view.findViewById(R.id.btnRetry_content_chat)
         progress_retry = view.findViewById(R.id.progrss_retry)
+
+        fabStartChat.setOnClickListener {
+            val f:Fragment
+            if(UserDetailsUtils.user!!.accountType == PATIENT)
+                    f = FindDoctorsFragment.newInstance()
+            else
+                    f = DoctorHomeFragment.getInstance()
+
+            (requireActivity() as MainActivity)
+                .inflateFragment(f)
+        }
 
         srlMain.setOnRefreshListener { getData(0) }
 
@@ -127,18 +145,21 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
             Log.e(TAG, "initData#getPersonsListLiveData: running on ${Thread.currentThread().name}")
             when{
                 it.isSuccess ->{
+                    toggleLayoutIntroStatus(false)
                     toggleLayoutErrorStatus(false)
 
-                    //**@noinspection unchecked
+                    //noinspection unchecked
                     val data:MutableList<Person> = it.getValue() as MutableList<Person>
-                    if(data.isNullOrEmpty()){
-                        toggleLayoutIntroStatus(true)
-                        return@observe
-                    }
-
                     mAdapter2.submitList(data)
                 }
-                it.isFailure || it.isError ->{
+                it.isFailure  ->{
+                    toggleLayoutErrorStatus(false)
+                    toggleLayoutIntroStatus(true)
+                    val message:String? = it.getAdditionalInfo() as? String
+                    message?.let{it2 -> showMessage(it2, rootView) }
+                }
+                it.isError ->{
+                    toggleLayoutIntroStatus(false)
                     toggleLayoutErrorStatus(true)
                     val message:String? = it.getAdditionalInfo() as? String
                     message?.let{it2 -> showMessage(it2, rootView) }
@@ -152,6 +173,8 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
             mLastCheckTime = System.currentTimeMillis()
             mIsBeingLoaded = false
         }
+
+        getData(2)
     }
 
     private fun getData(from:Int){
@@ -175,14 +198,8 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     }
     private fun toggleLayoutIntroStatus(status:Boolean){
         layout_chat_empty.isVisible = status
-       /* if(status){
-            Glide.with(requireContext())
-                .asGif()
-                .dontTransform()
-                .load(R.drawable.chat_empty)
-                .into(ivChat)
-        }*/
     }
+
     private fun displayMessage(message:String){
         Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show();
     }

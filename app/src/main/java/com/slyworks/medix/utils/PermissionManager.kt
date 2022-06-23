@@ -14,7 +14,9 @@ import com.slyworks.medix.ui.dialogs.PermissionsRationaleDialog
 import com.slyworks.models.models.Outcome
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
@@ -55,8 +57,7 @@ private constructor(private val activity: Activity,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         )
 
-        fun of(activity: Activity,
-               vararg permissions:String):PermissionManager{
+        fun of(activity: Activity, vararg permissions:String):PermissionManager{
             if(permissions.isEmpty())
                 throw IllegalArgumentException("vararg param for permissions is empty")
 
@@ -71,20 +72,19 @@ private constructor(private val activity: Activity,
                 object : ActivityResultCallback<Boolean> {
                     override fun onActivityResult(result: Boolean?) {
                             mO.onNext(result ?: false)
-
-                            if(mCount + 1 < permissions.size)
-                                requestPermissions(permissions[++mCount])
-                            else
-                                mO.onComplete()
                     }
                 })
+
     }
 
+    private fun isPermissionGranted(permission:String):Boolean =
+        (ContextCompat.checkSelfPermission(App.getContext(), permission)
+                == PackageManager.PERMISSION_GRANTED)
 
     private fun requestPermissions(p:String){
             when{
                 isPermissionGranted(p) -> {
-                    if(mCount + 1 >= permissions.size){
+                    if(mCount + 1 > permissions.size){
                         mO.onComplete()
                         return
                     }
@@ -106,21 +106,64 @@ private constructor(private val activity: Activity,
             }
     }
 
-    fun requestPermissions(): Single<Boolean>{
-        requestPermissions(permissions[0])
+    fun requestPermissions(): Observable<Boolean>{
+     val subscriptions:CompositeDisposable = CompositeDisposable()
 
-        return mO.flatMap {
-                 Observable.just(it)
-               }
-               .toList()
-               .map {
-                   !it.contains(false)
-               }
-    }
+     return Observable.fromIterable(permissions)
+            .concatMap {
+                Observable.create<Boolean> { emitter ->
+                    when{
+                        isPermissionGranted(it) ->{
+                            emitter.onNext(true)
+                            emitter.onComplete()
+                        }
+                        else ->{
+                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                                if(activity.shouldShowRequestPermissionRationale(it)){
+                                    val dialog = PermissionsRationaleDialog(mPermissionsLauncher, it)
 
-    private fun isPermissionGranted(permission:String):Boolean  =
-        (ContextCompat.checkSelfPermission(App.getContext(), permission)
-                == PackageManager.PERMISSION_GRANTED)
+                                    val d =
+                                     Observable.merge(
+                                         /*in case the dialog is cancelled and mO didn't get a value to emit*/
+                                        dialog.getObservable(),
+                                        mO
+                                    ).subscribe {
+                                        emitter.onNext(it)
+                                        emitter.onComplete()
+                                    }
+                                    subscriptions.add(d)
 
-
+                                    dialog.show((activity as AppCompatActivity).supportFragmentManager, "")
+                                }else{
+                                    mPermissionsLauncher.launch(it)
+                                    val d = mO.subscribe{
+                                        emitter.onNext(it)
+                                        emitter.onComplete()
+                                    }
+                                    subscriptions.add(d)
+                                }
+                            }else{
+                                mPermissionsLauncher.launch(it)
+                                val d = mO.subscribe {
+                                    emitter.onNext(it)
+                                    emitter.onComplete()
+                                }
+                                subscriptions.add(d)
+                            }
+                        }
+                    }
+                }
+                .doOnComplete {
+                    subscriptions.clear()
+                }
+            }
+            .toList()
+            .toObservable()
+            .map{
+               !it.contains(false)
+            }
+     }
 }
+
+
+

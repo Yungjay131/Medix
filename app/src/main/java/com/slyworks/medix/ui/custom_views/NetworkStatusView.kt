@@ -184,7 +184,8 @@ constructor(
                           CoordinatorLayout.LayoutParams.WRAP_CONTENT)
                           .apply {
                               anchorId = bnvLayout.id
-                              anchorGravity = Gravity.BOTTOM
+                              anchorGravity = Gravity.TOP
+                              bottomMargin = bnvLayout.height
                           }
 
                   parent.addView(view)

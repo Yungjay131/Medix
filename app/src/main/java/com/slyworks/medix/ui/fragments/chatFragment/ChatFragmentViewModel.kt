@@ -4,12 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slyworks.constants.EVENT_GET_ALL_MESSAGES
+import com.slyworks.medix.App
 import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.DataManager
 import com.slyworks.medix.Subscription
 import com.slyworks.models.models.Observer
 import com.slyworks.models.models.Outcome
+import com.slyworks.network.NetworkRegister
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -24,7 +27,8 @@ class ChatFragmentViewModel : ViewModel(), Observer {
 
     private val _mPersonListLiveData:MutableLiveData<Outcome> = MutableLiveData()
     private var mDataManager: DataManager? = null
-     //endregion
+    private var mNetworkRegister:NetworkRegister? = null
+    //endregion
 
     init {
         AppController.addEvent(EVENT_GET_ALL_MESSAGES)
@@ -32,12 +36,23 @@ class ChatFragmentViewModel : ViewModel(), Observer {
          mSubscriptionList.add(subscription)
 
         mDataManager = DataManager()
+        mNetworkRegister = NetworkRegister(App.getContext())
     }
 
     fun getPersonsListLiveData():LiveData<Outcome> = _mPersonListLiveData
 
     fun getChats(){
-       val d = mDataManager!!.observeMessagePersonsFromFB()
+
+       val d = Observable.merge(
+           Observable.just(mNetworkRegister!!.getNetworkStatus()),
+           mNetworkRegister!!.subscribeToNetworkUpdates()
+       )
+           .flatMap {
+               if(!it)
+                   Observable.just(Outcome.ERROR(value = "no network connection detected"))
+               else
+                   mDataManager!!.observeMessagePersonsFromFB()
+           }
            .subscribeOn(Schedulers.io())
            .observeOn(Schedulers.io())
            .subscribe {
@@ -63,8 +78,10 @@ class ChatFragmentViewModel : ViewModel(), Observer {
         mSubscriptionList.forEach { it.clearAndRemove() }
         mSubscriptions.clear()
 
-        mDataManager!!.detachMessagesPersonsFromFBListener()
+        //mDataManager!!.detachMessagesPersonsFromFBListener()
         mDataManager = null
+        mNetworkRegister!!.unsubscribeToNetworkUpdates()
+        mNetworkRegister = null
 
     }
 }

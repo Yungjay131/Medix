@@ -92,7 +92,7 @@
         <item name="colorPrimaryVariant">@color/appGrey</item>
         <item name="colorOnPrimary">@color/appWhite</item>
         <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">@color/appGrey</item>
+        <item name="android:statusBarColor">@android:color/darker_gray</item>
     </style>
 
     <style name="AppTheme.main.bnv" parent="@style/Widget.MaterialComponents.BottomNavigationView.Colored">

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/back_btn_bg.xml" value="0.30416666666666664" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/btn_login_selector.xml" value="0.2791666666666667" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_bg_normal.xml" value="0.1" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/drawable/et_bg_selected.xml" value="0.1" />
@@ -25,7 +26,7 @@
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-land/activity_on_boarding.xml" value="0.25" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-land/activity_registration.xml" value="0.18806509945750452" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout-v28/menu_doctor.xml" value="0.28802083333333334" />
-        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_login.xml" value="0.16" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_main.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_on_boarding.xml" value="0.1" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_registration.xml" value="0.28802083333333334" />
@@ -34,7 +35,7 @@
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/activity_voice_call.xml" value="0.15729166666666666" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/app_bar_main.xml" value="0.29375" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/bottomsheet_forgot_password.xml" value="0.28489583333333335" />
-        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/collapsing_toolbar.xml" value="0.2" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/collapsing_toolbar.xml" value="0.4" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/collapsing_toolbar_frag_chat.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/content_chat.xml" value="0.2" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_change_photo.xml" value="0.3144208037825059" />
@@ -45,23 +46,28 @@
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_permission_rationale.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_permission_rationale2.xml" value="0.2" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/dialog_switch_to_video_call.xml" value="0.11203703703703703" />
-        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_calls_history.xml" value="0.1" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_calls_history.xml" value="0.2" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_chat.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_chat_host.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_find_doctors.xml" value="0.176" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_home.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_home_2.xml" value="0.264" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_home_doctor.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_home_patient.xml" value="0.199288256227758" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_message.xml" value="0.22777777777777777" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_start_call.xml" value="0.2875" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/fragment_view_profile.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/invite_patient.xml" value="0.15729166666666666" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_covid_card.xml" value="0.25" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_health_areas.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_message.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_progressbar.xml" value="0.1" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_quick_actions_doctor.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_quick_actions_patient.xml" value="0.264" />
-        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_schedule_frag_home.xml" value="0.264" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/layout_schedule_frag_home.xml" value="0.1" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_call_history.xml" value="0.264" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_chat.xml" value="0.15729166666666666" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_find_doctors.xml" value="0.2" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_health_areas.xml" value="0.2" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_quick_access.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/li_quick_actions.xml" value="0.264" />
@@ -69,6 +75,8 @@
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/menu_patient.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/network_notifier.xml" value="0.264" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/test_motion_layout.xml" value="0.28802083333333334" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/toolbar_frag_view_profile.xml" value="0.28489583333333335" />
+        <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/layout/toolbar_frag_view_profile2.xml" value="0.264" />
         <entry key="..\:/Users/JOSH/work_projects/AndroidStudioProjects/Medix/app/src/main/res/menu/main_bnv_menu_patient.xml" value="0.1" />
       </map>
     </option>

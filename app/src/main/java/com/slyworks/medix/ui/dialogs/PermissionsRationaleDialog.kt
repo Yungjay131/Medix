@@ -2,6 +2,7 @@ package com.slyworks.medix.ui.dialogs
 
 import android.Manifest
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,8 @@ import androidx.collection.SimpleArrayMap
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.slyworks.medix.R
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /**
@@ -21,6 +24,8 @@ import com.slyworks.medix.R
 class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<String>?,
                                  private val mPermission:String) : BaseDialogFragment(){
     //region Vars
+    private var mO:PublishSubject<Boolean> = PublishSubject.create()
+
     private lateinit var tvText:TextView
     private lateinit var tvAccept:TextView
     private lateinit var tvCancel:TextView
@@ -28,7 +33,7 @@ class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<St
 
        companion object{
            private val mMap:SimpleArrayMap<String, String> = SimpleArrayMap<String, String>().apply {
-               put(Manifest.permission.WRITE_EXTERNAL_STORAGE , "Medix needs this permission to access files stored on the memory of your phone for proper functioning")
+               put(Manifest.permission.WRITE_EXTERNAL_STORAGE , "Medix needs this permission to access files like pictures stored on the phone memory")
                put(Manifest.permission.READ_EXTERNAL_STORAGE , "Medix needs this permission to access files stored on the memory of your phone for proper functioning")
                put(Manifest.permission.CAMERA , "Medix needs this permission to access your phone's camera to enable capturing of images")
                put(Manifest.permission.ACCESS_BACKGROUND_LOCATION , "Medix needs this permission to be able to access location updates in the background")
@@ -39,6 +44,8 @@ class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<St
            }
 
        }
+
+    override fun isCancelable(): Boolean  = false
 
     override fun onDestroy() {
         launcher = null
@@ -70,8 +77,18 @@ class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<St
            launcher?.launch(mPermission)
            this.dismiss()
        }
-       tvCancel.setOnClickListener { this.dismiss() }
+       tvCancel.setOnClickListener {
+           mO.onNext(false)
+           mO.onComplete()
+           this.dismiss()
+       }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        mO.onNext(false)
+        mO.onComplete()
+    }
 
+    fun getObservable(): Observable<Boolean> = mO.hide()
 }

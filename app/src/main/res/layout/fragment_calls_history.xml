@@ -28,11 +28,10 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_gravity="bottom|end"
-        android:backgroundTint="@color/appGreen"
-        android:src="@drawable/ic_mic"
-        app:rippleColor="@color/appBlue"
-        app:fabSize="normal"
-        app:maxImageSize="25dp"
-        android:tint="@color/white"/>
+        app:backgroundTint="@color/appGreen"
+        android:src="@drawable/ic_start_call"
+        app:rippleColor="#388E3C"
+        app:elevation="4dp"
+        app:tint="@color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

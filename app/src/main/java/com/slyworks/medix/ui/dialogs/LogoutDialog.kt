@@ -13,7 +13,9 @@ import com.slyworks.medix.R
 import com.slyworks.medix.LoginManager
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
+import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
 
 
 /**
@@ -56,12 +58,10 @@ class LogoutDialog: BaseDialogFragment() {
             LoginManager.getInstance()
                 .logoutUser()
 
-            requireActivity()
-                .startActivity(
-                    Intent(requireActivity(),LoginActivity::class.java)
-                        .apply {
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        })
+            Navigator.intentFor<OnBoardingActivity>(requireActivity())
+                .newAndClearTask()
+                .finishCaller()
+                .navigate()
         }
     }
 
