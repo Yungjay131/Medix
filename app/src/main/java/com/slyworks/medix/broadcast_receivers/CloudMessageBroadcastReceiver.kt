@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import com.google.firebase.database.FirebaseDatabase
 import com.slyworks.constants.*
-import com.slyworks.medix.CloudMessageManager
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.utils.*
+import com.slyworks.medix.managers.CloudMessageManager
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.ConsultationResponse
+import com.slyworks.models.models.Outcome
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +24,6 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
 
         val fromUID:String = intent!!.getStringExtra(EXTRA_CLOUD_MESSAGE_FROM_UID)!!
         val toUID:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TO_UID)!!
-        val status:String? = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_STATUS)
         val fullName:String? = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_FULLNAME)
 
         var responseType:String = REQUEST_PENDING
@@ -34,13 +35,33 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
         }else if(response_decline == null)
             responseType = response_accept
 
-        val pendingResult:PendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            val response: ConsultationResponse =
-                ConsultationResponse(UserDetailsUtils.user!!.firebaseUID, toUID, status!!, fullName!!)
-            CloudMessageManager.sendConsultationRequestResponse(response, pendingResult)
-            uploadRequestResponseToDB(responseType, fromUID, toUID, pendingResult)
-        }
+        val pendingResult: PendingResult = goAsync()
+        Observable.just(
+            ConsultationResponse(
+                UserDetailsUtils.user!!.firebaseUID,
+                toUID,
+                responseType,
+                fullName!!)
+           )
+            .flatMap {
+                Observable.combineLatest(
+                    CloudMessageManager.sendConsultationRequestResponse(it),
+                    CloudMessageManager.sendConsultationRequestResponseToDB(it),
+                    { o1: Outcome, o2: Outcome ->
+                        if (o1.isSuccess && o2.isSuccess)
+                            Observable.just(Outcome.SUCCESS(null, additionalInfo = "response delivered"))
+                        else
+                            Observable.just(Outcome.FAILURE(null, reason = "response was not successfully delivered"))
+                    }
+                )
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe{
+                pendingResult.finish()
+            }
+
+
     }
 
     private fun uploadRequestResponseToDB(responseType:String,fromUID:String, toUID:String, pendingResult: PendingResult ){

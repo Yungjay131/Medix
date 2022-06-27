@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.slyworks.constants.KEY_UPLOAD_USER_PROFILE
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.UsersManager
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.medix.getUserDataForUIDRef
-import com.slyworks.medix.utils.PreferenceManager
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.models.room_models.FBUserDetails
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest

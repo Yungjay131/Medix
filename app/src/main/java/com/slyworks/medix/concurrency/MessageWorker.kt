@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.slyworks.medix.App
-import com.slyworks.medix.DataManager
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.UsersManager
+import com.slyworks.medix.managers.DataManager
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.data.AppDatabase
 import com.slyworks.models.room_models.FBUserDetails
 import kotlinx.coroutines.CoroutineScope

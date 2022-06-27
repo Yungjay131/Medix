@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slyworks.medix.App
-import com.slyworks.medix.RegistrationManager
+import com.slyworks.medix.managers.RegistrationManager
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.network.NetworkRegister
@@ -13,7 +13,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /**

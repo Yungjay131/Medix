@@ -6,8 +6,7 @@ import android.content.Intent
 import com.slyworks.constants.EXTRA_INCOMING_VIDEO_CALL_FROM_UID
 import com.slyworks.constants.EXTRA_INCOMING_VIDEO_CALL_RESPONSE_TYPE
 import com.slyworks.constants.TYPE_RESPONSE
-import com.slyworks.medix.CallManager
-import com.slyworks.medix.utils.*
+import com.slyworks.medix.managers.CallManager
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -17,7 +17,7 @@ class BackgroundService(): Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-       /*TODO:shouldnt return null cause a component would bind toit*/
+       /*TODO:shouldnt return null cause a component would bind to it*/
         return null
     }
 

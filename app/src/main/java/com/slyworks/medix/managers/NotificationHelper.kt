@@ -1,4 +1,4 @@
-package com.slyworks.medix.utils
+package com.slyworks.medix.managers
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -116,7 +116,6 @@ object NotificationHelper {
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(App.getContext(), 100, intent,  PendingIntent.FLAG_CANCEL_CURRENT)
-
         val pendingIntentAccept:PendingIntent = PendingIntent.getBroadcast(App.getContext(), 1, intentAccept, PendingIntent.FLAG_CANCEL_CURRENT)
         val pendingIntentDecline:PendingIntent = PendingIntent.getBroadcast(App.getContext(), 2, intentDecline, PendingIntent.FLAG_CANCEL_CURRENT)
 

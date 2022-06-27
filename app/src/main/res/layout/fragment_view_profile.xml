@@ -44,28 +44,41 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="@id/tvFirstName_frag_view_profile"
+            app:layout_constraintBottom_toBottomOf="@id/tvFirstName_frag_view_profile"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="First Name"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:textStyle="italic"/>
 
         <TextView
             android:id="@+id/tvFirstName_frag_view_profile"
             android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:background="@drawable/et_bg_normal"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="1"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:maxLines="2"
             android:textColor="@color/appTextColor3"
             android:textSize="20sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintTop_toBottomOf="@id/tvHeaderFirstName_frag_view_profile" />
+            android:layout_marginTop="32dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_5"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            tools:text="Joshua"/>
 
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider_horizontal_1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="@id/tvFirstName_frag_view_profile"
+            app:layout_constraintEnd_toEndOf="@id/tvFirstName_frag_view_profile"
+            app:layout_constraintTop_toBottomOf="@id/tvFirstName_frag_view_profile"
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:id="@+id/tvHeaderLastName_frag_view_profile"
@@ -73,27 +86,38 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/tvFirstName_frag_view_profile"
-            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="@id/tvLastName_frag_view_profile"
+            app:layout_constraintBottom_toBottomOf="@id/tvLastName_frag_view_profile"
             android:text="Last Name"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:textStyle="italic"/>
 
         <TextView
             android:id="@+id/tvLastName_frag_view_profile"
             android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:background="@drawable/et_bg_normal"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:textColor="@color/appTextColor3"
             android:textSize="20sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintTop_toBottomOf="@id/tvHeaderLastName_frag_view_profile" />
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_5"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toBottomOf="@id/divider_horizontal_1"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            tools:text="Sylvanus"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider_horizontal_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="@id/tvLastName_frag_view_profile"
+            app:layout_constraintEnd_toEndOf="@id/tvLastName_frag_view_profile"
+            app:layout_constraintTop_toBottomOf="@id/tvLastName_frag_view_profile"
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:id="@+id/tvHeaderSex_frag_view_profile"
@@ -101,27 +125,38 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintTop_toBottomOf="@id/tvLastName_frag_view_profile"
-            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="@id/tvSex_frag_view_profile"
+            app:layout_constraintBottom_toBottomOf="@id/tvSex_frag_view_profile"
             android:text="Sex"
+            android:textStyle="italic"
             android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tvSex_frag_view_profile"
             android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:background="@drawable/et_bg_normal"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="1"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:maxLines="2"
             android:textColor="@color/appTextColor3"
             android:textSize="20sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintTop_toBottomOf="@id/tvHeaderSex_frag_view_profile" />
+            android:layout_marginTop="32dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_5"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_2"
+            app:layout_constraintTop_toBottomOf="@id/divider_horizontal_2"
+            android:layout_marginStart="16dp"
+            tools:text="Male"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider_horizontal_3"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="@id/tvSex_frag_view_profile"
+            app:layout_constraintEnd_toEndOf="@id/tvSex_frag_view_profile"
+            app:layout_constraintTop_toBottomOf="@id/tvSex_frag_view_profile"
+            android:layout_marginTop="8dp"/>
 
        <TextView
            android:id="@+id/tvHeaderSpecialization_frag_view_profile"
@@ -129,11 +164,13 @@
            android:layout_width="0dp"
            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-           app:layout_constraintTop_toBottomOf="@id/tvSex_frag_view_profile"
+           app:layout_constraintTop_toBottomOf="@id/divider_horizontal_3"
            android:layout_marginTop="32dp"
-           android:text="Specialization"
+           android:text="Specializes in"
+           android:textStyle="italic"
            android:textSize="16sp"
-           android:visibility="gone"/>
+           android:visibility="gone"
+           tools:visibility="visible"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_vertical_1"
@@ -143,7 +180,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent=".05"/>
+            app:layout_constraintGuide_percent=".03"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_vertical_2"
@@ -153,7 +190,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent=".95"/>
+            app:layout_constraintGuide_percent=".29"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_vertical_3"
@@ -174,6 +211,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical"
             app:layout_constraintGuide_percent=".8"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".97"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

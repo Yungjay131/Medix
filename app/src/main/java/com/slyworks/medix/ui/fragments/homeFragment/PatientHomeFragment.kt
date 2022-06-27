@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.custom_views.HorizontalSpacingItemDecorator
 import com.slyworks.medix.utils.ViewUtils.displayImage
@@ -117,14 +117,15 @@ class PatientHomeFragment : Fragment() {
         tvNotificationCount.setText(1.toString())
 
         ivProfile.displayImage(UserDetailsUtils.user!!.imageUri)
-
         ivProfile_cardSchedule.displayImage(UserDetailsUtils.user!!.imageUri)
 
         ivToggle.setOnClickListener{ mParentActivity.toggleDrawerState() }
+
         val name: String = UserDetailsUtils.user!!.firstName
             .substring(0, 1)
             .uppercase(Locale.getDefault())
-            .plus(UserDetailsUtils.user!!.firstName
+            .plus(
+                UserDetailsUtils.user!!.firstName
                     .substring(1, UserDetailsUtils.user!!.firstName.length))
         tvUserName.text = name
 

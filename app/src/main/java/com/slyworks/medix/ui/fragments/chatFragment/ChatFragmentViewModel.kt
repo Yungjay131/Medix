@@ -7,7 +7,7 @@ import com.slyworks.constants.EVENT_GET_ALL_MESSAGES
 import com.slyworks.medix.App
 import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
-import com.slyworks.medix.DataManager
+import com.slyworks.medix.managers.DataManager
 import com.slyworks.medix.Subscription
 import com.slyworks.models.models.Observer
 import com.slyworks.models.models.Outcome
@@ -26,6 +26,7 @@ class ChatFragmentViewModel : ViewModel(), Observer {
     private val mSubscriptions:CompositeDisposable = CompositeDisposable()
 
     private val _mPersonListLiveData:MutableLiveData<Outcome> = MutableLiveData()
+
     private var mDataManager: DataManager? = null
     private var mNetworkRegister:NetworkRegister? = null
     //endregion
@@ -42,7 +43,6 @@ class ChatFragmentViewModel : ViewModel(), Observer {
     fun getPersonsListLiveData():LiveData<Outcome> = _mPersonListLiveData
 
     fun getChats(){
-
        val d = Observable.merge(
            Observable.just(mNetworkRegister!!.getNetworkStatus()),
            mNetworkRegister!!.subscribeToNetworkUpdates()

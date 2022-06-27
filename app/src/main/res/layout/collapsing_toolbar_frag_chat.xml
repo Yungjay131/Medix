@@ -58,8 +58,10 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@drawable/ic_hamburger_menu"
+                android:layout_marginStart="16dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/__guide_vertical_1"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/appTextColor3" />
 
@@ -78,9 +80,6 @@
                 android:id="@+id/ivProfile_collapsing_toolbar"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                app:civ_border_color="@color/appBlue_light"
-                app:civ_border_width="1dp"
-                app:civ_circle_background_color="@color/appWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/__guide_vertical_2"
                 app:layout_constraintTop_toTopOf="parent" />

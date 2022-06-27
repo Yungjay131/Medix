@@ -1,26 +1,21 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import com.slyworks.constants.EVENT_ROLLBACK_REGISTRATION
-import com.slyworks.constants.EVENT_SEND_PASSWORD_RESET_EMAIL
-import com.slyworks.constants.EVENT_USER_REGISTRATION
 import com.slyworks.medix.concurrency.TaskManager
 import com.slyworks.medix.concurrency.CompressImageCallable
+import com.slyworks.medix.getUserDataForUIDRef
+import com.slyworks.medix.getUserProfileImageStorageRef
 import com.slyworks.medix.utils.*
 import com.slyworks.models.models.AccountType
-import com.slyworks.models.models.Observer
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.models.room_models.FBUserDetails
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 /**
@@ -141,7 +136,7 @@ class  RegistrationManager {
                                         emitter.onNext(r)
                                         emitter.onComplete()
                                     } else {
-                                        Log.e(TAG, "_uploadUserProfileImage: query retrieving downloadUrl for image completed but wasnt successful")
+                                        Log.e(TAG, "_uploadUserProfileImage: query retrieving downloadUrl for image completed but wasn't successful")
                                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                                         val r = Outcome.FAILURE(value = "user profile image url was not downloaded", reason = it.exception?.message)
@@ -150,7 +145,7 @@ class  RegistrationManager {
                                     }
                                 }
                         } else {
-                            Log.e(TAG, "_uploadUserProfileImage: query uploading user image completed but wasnt successful")
+                            Log.e(TAG, "_uploadUserProfileImage: query uploading user image completed but wasn't successful")
                             //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                             val r = Outcome.FAILURE(value = "user profile image was not uploaded", reason = it.exception?.message)
@@ -162,7 +157,8 @@ class  RegistrationManager {
                 Log.e(TAG, "_uploadUserProfileImage: _uploadUserProfileImage().catch(): error occurred", e)
                 //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
-                val r = Outcome.ERROR(value = "an error occurred uploading user profile image", error = e)
+                val r = Outcome.ERROR(value = "an error occurred uploading user profile image"
+                )
                 emitter.onNext(r)
                 emitter.onComplete()
             }

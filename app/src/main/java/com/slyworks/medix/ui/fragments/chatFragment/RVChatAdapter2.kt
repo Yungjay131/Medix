@@ -13,7 +13,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
 import com.slyworks.medix.AppController
 import com.slyworks.medix.R
-import com.slyworks.medix.utils.*
+import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.Person
 import de.hdodenhof.circleimageview.CircleImageView

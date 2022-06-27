@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.constants.*
 import com.slyworks.medix.App
 import com.slyworks.medix.R
+import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.models.room_models.Message
-import com.slyworks.medix.utils.*
 import com.slyworks.medix.utils.ViewUtils.displayImage
 
 

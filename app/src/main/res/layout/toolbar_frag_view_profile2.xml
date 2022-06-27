@@ -32,7 +32,7 @@
                 app:tint="@color/appTextColor3"
                 android:elevation="4dp"
                 android:layout_margin="8dp"
-                android:padding="2dp"/>
+                android:padding="2dp" />
 
             <ImageView
                 android:id="@+id/ivProfile_frag_view_profile"

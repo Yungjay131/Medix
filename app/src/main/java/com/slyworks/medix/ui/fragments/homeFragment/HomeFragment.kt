@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.constants.KEY_UNREAD_MESSAGE_COUNT
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.AccountType
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.FragmentWrapper
 import com.slyworks.medix.navigation.NavigationManager
 import com.slyworks.medix.ui.custom_views.HorizontalSpacingItemDecorator
-import com.slyworks.medix.utils.PreferenceManager
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*

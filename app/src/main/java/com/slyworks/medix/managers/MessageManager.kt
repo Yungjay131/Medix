@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.content.Context
 import android.util.Log
@@ -7,6 +7,8 @@ import com.slyworks.constants.*
 import com.slyworks.data.AppDatabase
 import com.slyworks.data.daos.MessageDao
 import com.slyworks.data.daos.MessagePersonDao
+import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.room_models.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject

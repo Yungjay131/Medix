@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.content.Context
 import android.util.Log
@@ -9,14 +9,17 @@ import com.google.firebase.database.*
 import com.slyworks.constants.EVENT_GET_DOCTOR_USERS
 import com.slyworks.constants.EVENT_UPDATE_FCM_REGISTRATION_TOKEN
 import com.slyworks.constants.OUTGOING_MESSAGE
-import com.slyworks.medix.utils.*
 import com.slyworks.data.AppDatabase
+import com.slyworks.medix.*
+import com.slyworks.medix.utils.MChildEventListener
+import com.slyworks.medix.utils.MValueEventListener
+import com.slyworks.medix.utils.UserDataSerializer
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.FBUserDetailsWrapper
 import com.slyworks.models.room_models.Message
 import com.slyworks.models.room_models.Person
-import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.*
@@ -38,7 +41,8 @@ object UsersManager {
     private val Context.userDetailsProtoDataStore: DataStore<UserDetails> by
     dataStore(
         fileName = "user_details.pb",
-        serializer = UserDataSerializer)
+        serializer = UserDataSerializer
+    )
 
     private var mDoctorChildEventListener:ChildEventListener? = null
     private var mUserDataValueEventListener:ValueEventListener? = null
@@ -140,7 +144,7 @@ object UsersManager {
     suspend fun saveUserToDataStore(userDetails: FBUserDetails){
         //updateUserLocalData(userDetails)
             App.getContext().userDetailsProtoDataStore.updateData { details ->
-                val _details:UserDetails.Builder = details.toBuilder()
+                val _details: UserDetails.Builder = details.toBuilder()
                     .clearHistory()
                     .clearSpecialization()
                     .setAccountType(userDetails.accountType)

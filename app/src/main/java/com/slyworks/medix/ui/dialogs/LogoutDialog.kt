@@ -1,20 +1,15 @@
 package com.slyworks.medix.ui.dialogs
 
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.slyworks.medix.R
-import com.slyworks.medix.LoginManager
-import com.slyworks.medix.navigation.ActivityWrapper
-import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.managers.LoginManager
 import com.slyworks.medix.navigation.Navigator
-import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
 import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
 
 

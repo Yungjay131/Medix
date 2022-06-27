@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.fragments.chatHostFragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +13,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.slyworks.constants.KEY_UNREAD_MESSAGE_COUNT
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.utils.PreferenceManager
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope

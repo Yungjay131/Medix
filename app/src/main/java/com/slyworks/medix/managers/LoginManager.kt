@@ -1,21 +1,18 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.slyworks.constants.DEFAULT_LAST_SIGN_IN_TIME
-import com.slyworks.constants.EVENT_USER_LOGIN
 import com.slyworks.constants.KEY_LAST_SIGN_IN_TIME
 import com.slyworks.constants.KEY_LOGGED_IN_STATUS
-import com.slyworks.medix.utils.*
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.getUserDataForUIDRef
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.FBUserDetails
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 
 /**
@@ -48,7 +45,12 @@ private constructor() {
         }
     }
 
-    fun getLoginStatus():Boolean = PreferenceManager.get(KEY_LOGGED_IN_STATUS, false)
+    fun getLoginStatus():Boolean {
+        return PreferenceManager.get(KEY_LOGGED_IN_STATUS, false)  &&
+                with(PreferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())){
+                    TimeUtils.isWithin3DayPeriod(this)
+                }
+    }
 
     fun loginUser(email:String, password:String):Observable<Outcome>{
         return Observable.create { emitter ->

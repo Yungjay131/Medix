@@ -32,16 +32,12 @@ class ConnectivityCallback(private var o: PublishSubject<Boolean>?)
        o!!.onNext(false)
     }
 
-    override fun onLost(network: Network) {
-        o!!.onNext(false)
-    }
-
     override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-        //super.onCapabilitiesChanged(network, networkCapabilities)
-        val isConnected:Boolean = networkCapabilities
+        super.onCapabilitiesChanged(network, networkCapabilities)
+        /*val isConnected:Boolean = networkCapabilities
             .hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 
-        o!!.onNext(isConnected)
+        o!!.onNext(isConnected)*/
     }
 
 }

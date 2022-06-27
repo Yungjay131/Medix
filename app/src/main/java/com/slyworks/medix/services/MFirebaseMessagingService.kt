@@ -6,10 +6,10 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.slyworks.constants.*
 import com.slyworks.medix.App
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.UsersManager
-import com.slyworks.medix.utils.NotificationHelper
-import com.slyworks.medix.utils.PreferenceManager
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.UsersManager
+import com.slyworks.medix.managers.NotificationHelper
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.network.NetworkRegister
 import kotlinx.coroutines.CoroutineScope

@@ -1,5 +1,6 @@
 package com.slyworks.medix.utils
 
+import androidx.appcompat.app.AppCompatActivity
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.ui.activities.SplashActivity
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
@@ -22,35 +23,27 @@ object ActivityUtils {
     //region Vars
     private var mForegroundStatus:Boolean = true
     private var mCount:Int = 0
+    private var mCurrentActivityTag:String = ""
     //endregion
 
     fun from(simpleName:String):Class<*>{
         return when(simpleName){
             MainActivity::class.simpleName -> MainActivity::class.java
-            else -> throw IllegalArgumentException("fix the from method")
+            else -> throw IllegalArgumentException("fix the \"from\" method")
         }
     }
 
-    fun setForegroundStatus(status:Boolean){
-        mForegroundStatus = status
-    }
-
-    fun isAppInForeground():Boolean{
-        val mActivitiesList:Array<Boolean> = arrayOf(
-            RequestsActivity.getForegroundStatus(),
-            MessageActivity.getForegroundStatus(),
-            VideoCallActivity.getForegroundStatus(),
-            VoiceCallActivity.getForegroundStatus(),
-            SettingsActivity.getForegroundStatus())
-
-        val otherStatus = ActivityUtils.isThereActivityInForeground()
-
-        //if any is true, means the app in the foreground, return
-        return mActivitiesList.any { it == true }
+    fun setForegroundStatus(status:Boolean, tag:String){
+        if(status){
+            mCurrentActivityTag = tag
+            mForegroundStatus = true
+        }else{
+         if(tag == mCurrentActivityTag)
+            mForegroundStatus = status
+        }
     }
 
     fun isThereActivityInForeground():Boolean =  mForegroundStatus
-
 
     fun setCurrentActivityStatus(simpleName: String, b: Boolean) =
         ActivityWrapper.from(simpleName).setIsRunning(b)

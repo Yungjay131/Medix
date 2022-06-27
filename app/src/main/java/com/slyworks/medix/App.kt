@@ -17,6 +17,7 @@ import com.slyworks.medix.concurrency.MessageWorker
 import com.slyworks.medix.concurrency.ProfileUpdateWorker
 import com.slyworks.medix.concurrency.StartServiceWorker
 import com.slyworks.data.AppDatabase
+import com.slyworks.medix.utils.UserDetailsUtils
 
 
 /**

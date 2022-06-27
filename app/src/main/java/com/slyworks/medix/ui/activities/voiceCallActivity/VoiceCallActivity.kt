@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.activities.voiceCallActivity
 
-import android.Manifest
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,9 +8,10 @@ import android.util.Log
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.slyworks.constants.*
-import com.slyworks.medix.CallManager
+import com.slyworks.medix.managers.CallManager
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.VibrationManager
 import com.slyworks.medix.navigation.*
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.utils.*

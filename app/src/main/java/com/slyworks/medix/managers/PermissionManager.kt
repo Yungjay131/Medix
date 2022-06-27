@@ -1,4 +1,4 @@
-package com.slyworks.medix.utils
+package com.slyworks.medix.managers
 
 import android.Manifest
 import android.app.Activity
@@ -11,18 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.slyworks.medix.App
 import com.slyworks.medix.ui.dialogs.PermissionsRationaleDialog
-import com.slyworks.models.models.Outcome
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableSource
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.stream.Collector
 
 
 /**
@@ -57,7 +48,7 @@ private constructor(private val activity: Activity,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         )
 
-        fun of(activity: Activity, vararg permissions:String):PermissionManager{
+        fun of(activity: Activity, vararg permissions:String): PermissionManager {
             if(permissions.isEmpty())
                 throw IllegalArgumentException("vararg param for permissions is empty")
 

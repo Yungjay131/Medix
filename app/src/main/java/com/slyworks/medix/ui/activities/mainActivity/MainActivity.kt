@@ -18,7 +18,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.slyworks.constants.*
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.navigation.FragmentWrapper
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
@@ -26,7 +27,6 @@ import com.slyworks.medix.ui.dialogs.ExitDialog
 import com.slyworks.medix.ui.dialogs.LogoutDialog
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.chatHostFragment.ChatHostFragment
-import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.*
@@ -52,7 +52,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
     private var mFragmentMap:SimpleArrayMap<String, Int> = SimpleArrayMap()
 
-    private var mSelectedItem:Int = R.id.action_home
+    private var mSelectedItem:Int = -1
 
     private  val mViewModel: MainActivityViewModel by viewModels()
 
@@ -117,7 +117,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         } else{
             mFragmentMap.put(PatientHomeFragment::class.simpleName, R.id.action_home)
             mFragmentMap.put(ChatHostFragment::class.simpleName, R.id.action_chats)
-            mFragmentMap.put(FindDoctorsFragment::class.simpleName, R.id.action_connect)
+            mFragmentMap.put(ProfileHostFragment::class.simpleName, R.id.action_connect)
         }
     }
 
@@ -184,7 +184,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         bnvMain.setOnItemSelectedListener(::handleBnvMenuItemClick)
         bnvMain.setOnItemReselectedListener(::handleBnvMenuItemClick)
 
-        updateActiveItem(R.id.action_home)
+        //updateActiveItem(R.id.action_home)
     }
 
     private fun handleBnvMenuItemClick(item:MenuItem):Boolean {
@@ -218,16 +218,17 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     }
 
     private fun initFragment(){
-        if(UserDetailsUtils.user!!.accountType == DOCTOR)
+        updateActiveItem(R.id.action_home)
+      /*  if(UserDetailsUtils.user!!.accountType == DOCTOR)
             _inflateFragment(DoctorHomeFragment.getInstance())
         else
-            _inflateFragment(PatientHomeFragment.getInstance())
+            _inflateFragment(PatientHomeFragment.getInstance())*/
     }
     fun updateActiveItem(f:FragmentWrapper) = updateActiveItem(mFragmentMap[f]!!)
 
     private fun updateActiveItem(@IdRes id:Int){
         bnvMain.setSelectedItemId(id)
-        mSelectedItem = id
+        //mSelectedItem = id
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -261,13 +262,14 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
     /*called from outside this class*/
     fun inflateFragment(f:Fragment){
-        _inflateFragment(f)
+        //_inflateFragment(f)
         updateActiveItem(mFragmentMap[f::class.simpleName]!!)
     }
 
     private fun _inflateFragment(f: Fragment){
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+
 
         if(supportFragmentManager.findFragmentByTag(f::class.simpleName) != null){
             /*its been added before*/

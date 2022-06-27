@@ -1,11 +1,9 @@
-package com.slyworks.medix.utils
+package com.slyworks.medix.managers
 
 import android.content.SharedPreferences
-import android.os.Bundle
 import android.text.Editable
 import androidx.preference.PreferenceManager
 import com.slyworks.medix.App
-import com.slyworks.medix.utils.PreferenceManager.edit
 
 
 /**

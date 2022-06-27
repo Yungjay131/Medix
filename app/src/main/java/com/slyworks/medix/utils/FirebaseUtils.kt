@@ -8,6 +8,7 @@ import com.google.firebase.storage.StorageReference
 import com.slyworks.constants.DELIVERED
 import com.slyworks.constants.INCOMING_MESSAGE
 import com.slyworks.constants.REQUEST_PENDING
+import com.slyworks.medix.utils.UserDetailsUtils
 
 
 /**
@@ -86,19 +87,18 @@ fun getUserDataForUIDRef(params:String): DatabaseReference {
 fun getUserConsultationRequestsRef(params:String): Query {
     return FirebaseDatabase.getInstance()
         .reference
-        .child("users")
-        .child(params)
         .child("requests")
+        .child(params)
         .child("from")
+        .orderByChild("status")
         .equalTo(REQUEST_PENDING)
 }
 
-fun getUserSentConsultationRequestsRef(params:String,params2:String):DatabaseReference{
+fun getUserSentConsultationRequestsRef(params:String, params2:String):DatabaseReference{
     return FirebaseDatabase.getInstance()
         .reference
-        .child("users")
-        .child(params)
         .child("requests")
+        .child(params)
         .child("to")
         .child(params2)
 }

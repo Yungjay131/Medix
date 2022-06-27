@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.activities.loginActivity
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
@@ -22,6 +21,7 @@ import com.jakewharton.rxbinding4.InitialValueObservable
 import com.jakewharton.rxbinding4.widget.textChanges
 import com.slyworks.constants.*
 import com.slyworks.medix.*
+import com.slyworks.medix.managers.VibrationManager
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.registrationActivity.EXTRA_IS_ACTIVITY_RECREATED

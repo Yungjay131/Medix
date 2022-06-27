@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.fragments
 
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -27,9 +26,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.*
 import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.managers.CloudMessageManager
 import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.*
@@ -73,7 +74,7 @@ class ViewProfileFragment : Fragment(), Observer {
     //private lateinit var shimmer:ShimmerFrameLayout
 
     private lateinit var srlMain:SwipeRefreshLayout
-    private var ANCHOR:Int = R.id.tvHeaderSpecialization_frag_view_profile
+    private var ANCHOR:Int = R.id.divider_horizontal_3
 
     private val mSubscriptionList:MutableList<Subscription> = mutableListOf()
 
@@ -133,7 +134,9 @@ class ViewProfileFragment : Fragment(), Observer {
     }
 
     private fun initViews_1(view:View){
+        ivBack = view.findViewById(R.id.ivBack_frag_view_profile)
         ivBack2 = view.findViewById(R.id.ivBack_frag_view_profile2)
+
         ivProfileSmall = view.findViewById(R.id.ivProfile_small_frag_view_profile)
         tvNameSmall = view.findViewById(R.id.tvProfile_small_frag_view_profile)
         progress_small = view.findViewById(R.id.progress)
@@ -160,15 +163,20 @@ class ViewProfileFragment : Fragment(), Observer {
 
         appBarLayout = view.findViewById(R.id.appBarLayout_frag_view_profile)
 
-        guide_vertical_1 = view.findViewById(R.id.guide_vertical_1)
-        guide_vertical_2 = view.findViewById(R.id.guide_vertical_2)
+        guide_vertical_1 = view.findViewById(R.id.guide_vertical_2)
+        guide_vertical_2 = view.findViewById(R.id.guide_vertical_5)
 
         srlMain = view.findViewById(R.id.srlMain_frag_view_profile)
 
         ivProfile.displayImage(mUserProfile!!.imageUri)
         ivProfileSmall.displayImage(mUserProfile!!.imageUri)
 
-        ivBack2.setOnClickListener { requireActivity().onBackPressed() }
+        ivBack.setOnClickListener{
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        ivBack2.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         tvNameSmall.text = "Dr. ${mUserProfile!!.firstName} ${mUserProfile!!.lastName}"
         tvFirstName.text = mUserProfile!!.firstName
@@ -283,12 +291,14 @@ class ViewProfileFragment : Fragment(), Observer {
     private fun addTextView(text:String){
         val inflater:LayoutInflater = LayoutInflater.from(requireContext())
 
-        val layout:ConstraintLayout = inflater.inflate(R.layout.layout_textview, rootView_inner, false) as ConstraintLayout
+        //val layout:ConstraintLayout = inflater.inflate(R.layout.layout_textview, rootView_inner, false) as ConstraintLayout
+        val layout:TextView = TextView(requireContext())
+        layout.setTextColor(ContextCompat.getColor(requireContext(),R.color.appTextColor3))
         layout.setId(View.generateViewId())
-        val textView:TextView = layout.findViewById(R.id.tvText_layout_textView)
-        textView.text = text
-
-        layout.layoutParams.height = 55
+        layout.setPadding(0,8,0,8)
+        layout.maxLines = 2
+        layout.textSize = 20F
+        layout.text = text
 
         val constraintSet:ConstraintSet = ConstraintSet()
         constraintSet.clone(rootView_inner)
@@ -298,7 +308,7 @@ class ViewProfileFragment : Fragment(), Observer {
         constraintSet.constrainWidth(layout.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.constrainHeight(layout.id, ConstraintSet.WRAP_CONTENT)
 
-        constraintSet.connect(layout.id, ConstraintSet.START, guide_vertical_1.id, ConstraintSet.END)
+        constraintSet.connect(layout.id, ConstraintSet.START, guide_vertical_1.id, ConstraintSet.END, resources.getDimensionPixelSize(R.dimen.layout_size_margin6))
         constraintSet.connect(layout.id, ConstraintSet.END, guide_vertical_2.id, ConstraintSet.START)
         constraintSet.connect(
             layout.id,
@@ -307,6 +317,7 @@ class ViewProfileFragment : Fragment(), Observer {
             ConstraintSet.BOTTOM,
             resources.getDimensionPixelSize(R.dimen.layout_size_margin3))
 
+        tvSpecialization.visibility = View.VISIBLE
         constraintSet.applyTo(rootView_inner)
         ANCHOR = layout.id
     }
@@ -395,7 +406,8 @@ class ViewProfileFragment : Fragment(), Observer {
                         toggleFABStatus(true, fabSendRequest)
                         toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
                     }
-                    REQUEST_ERROR,REQUEST_FAILED -> {
+                    REQUEST_ERROR,
+                    REQUEST_FAILED -> {
                         displayMessage("oh oh something went wrong, check your network and swipe down to refresh")
                     }
                 }

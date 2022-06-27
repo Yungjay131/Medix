@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.slyworks.constants.KEY_FCM_UPLOAD_TOKEN
-import com.slyworks.medix.BuildConfig
 import com.slyworks.medix.getUserDataRef
-import com.slyworks.medix.utils.PreferenceManager
 import kotlinx.coroutines.*
 
 

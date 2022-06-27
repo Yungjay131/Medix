@@ -3,7 +3,7 @@ package com.slyworks.medix.ui.fragments.homeFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 

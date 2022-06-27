@@ -2,7 +2,7 @@ package com.slyworks.medix.ui.activities.requestsActivity
 
 import android.os.Bundle
 import com.slyworks.constants.EXTRA_LOGIN_DESTINATION
-import com.slyworks.medix.LoginManager
+import com.slyworks.medix.managers.LoginManager
 import com.slyworks.medix.R
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager

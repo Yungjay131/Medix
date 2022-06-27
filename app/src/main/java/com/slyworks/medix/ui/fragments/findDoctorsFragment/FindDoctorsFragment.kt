@@ -23,9 +23,6 @@ import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.R
 import com.slyworks.medix.Subscription
-import com.slyworks.medix.UsersManager
-import com.slyworks.medix.navigation.FragmentWrapper
-import com.slyworks.medix.navigation.NavigationManager
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.ViewProfileFragment
 import com.slyworks.models.room_models.FBUserDetails
@@ -47,7 +44,7 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
     //endregion
    companion object {
        @JvmStatic
-       fun newInstance(): FindDoctorsFragment  = FindDoctorsFragment()
+       fun getInstance(): FindDoctorsFragment  = FindDoctorsFragment()
 
    }
 

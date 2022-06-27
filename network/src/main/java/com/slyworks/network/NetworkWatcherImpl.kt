@@ -52,7 +52,9 @@ class NetworkWatcherImpl(private var context:Context?) : NetworkWatcher {
     }
 
     override fun dispose() {
-        mCm.unregisterNetworkCallback(mConnectivityCallback!!)
+        if(mConnectivityCallback != null)
+           mCm.unregisterNetworkCallback(mConnectivityCallback!!)
+
         mO = null
         mConnectivityCallback = null
     }

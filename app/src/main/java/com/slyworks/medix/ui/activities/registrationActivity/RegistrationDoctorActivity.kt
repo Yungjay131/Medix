@@ -23,9 +23,10 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.COORDINATOR
-import com.slyworks.constants.GENERAL
 import com.slyworks.constants.PROFILE_PHOTO_URI
 import com.slyworks.medix.*
+import com.slyworks.medix.managers.PermissionManager
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.ui.dialogs.ChangePhotoDialog
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
@@ -80,7 +81,7 @@ class RegistrationDoctorActivity : BaseActivity() {
     private lateinit var mImageUri: Uri
     private var mHasImageBeenSelected = false
 
-    private var mPermissionManager:PermissionManager? = null
+    private var mPermissionManager: PermissionManager? = null
     private lateinit var mViewModel:RegistrationDoctorViewModel
 
     private var mEditTextMap:MutableMap<EditText, TextWatcher> = mutableMapOf()

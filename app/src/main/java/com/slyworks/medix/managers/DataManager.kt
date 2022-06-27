@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.util.Log
 import androidx.collection.SimpleArrayMap
@@ -6,8 +6,11 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.slyworks.constants.*
-import com.slyworks.medix.utils.TimeUtils
 import com.slyworks.data.AppDatabase
+import com.slyworks.medix.*
+import com.slyworks.medix.utils.MChildEventListener
+import com.slyworks.medix.utils.MValueEventListener
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.Message
 import com.slyworks.models.room_models.Person
@@ -234,7 +237,7 @@ class DataManager{
                                 }
                             }
                     } catch (e: Exception) {
-                        val r:Outcome = Outcome.ERROR<Nothing>(error = e)
+                        val r:Outcome = Outcome.ERROR<Nothing>()
                         emitter.onNext(r)
                     }
                 }
@@ -302,6 +305,7 @@ class DataManager{
     }
 
     suspend fun sendMessage(message: Message):Boolean{
+        /*FIXME: do this with RxJava*/
         var status:Boolean = false
         val job:Deferred<Boolean> = CoroutineScope(Dispatchers.IO).async {
             val childJob:Deferred<Unit> = CoroutineScope(Dispatchers.IO).async inner_async@{

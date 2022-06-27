@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.utils
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

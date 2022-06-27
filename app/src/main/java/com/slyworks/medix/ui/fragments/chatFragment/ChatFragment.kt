@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.fragments.chatFragment
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
@@ -30,15 +28,11 @@ import com.slyworks.medix.AppController
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.R
 import com.slyworks.medix.Subscription
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.navigation.ActivityWrapper
-import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
-import com.slyworks.medix.ui.fragments.callsHistoryFragment.CallsHistoryFragment
-import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
+import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
-import com.slyworks.medix.utils.*
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
 
@@ -112,7 +106,7 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
         fabStartChat.setOnClickListener {
             val f:Fragment
             if(UserDetailsUtils.user!!.accountType == PATIENT)
-                    f = FindDoctorsFragment.newInstance()
+                    f = ProfileHostFragment.getInstance()
             else
                     f = DoctorHomeFragment.getInstance()
 
@@ -155,14 +149,14 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
                 it.isFailure  ->{
                     toggleLayoutErrorStatus(false)
                     toggleLayoutIntroStatus(true)
-                    val message:String? = it.getAdditionalInfo() as? String
-                    message?.let{it2 -> showMessage(it2, rootView) }
+                    /*val message:String? = it.getAdditionalInfo() as? String
+                    message?.let{it2 -> showMessage(it2, rootView) }*/
                 }
                 it.isError ->{
                     toggleLayoutIntroStatus(false)
-                    toggleLayoutErrorStatus(true)
-                    val message:String? = it.getAdditionalInfo() as? String
-                    message?.let{it2 -> showMessage(it2, rootView) }
+                    toggleLayoutErrorStatus(true, text = it.getTypedValue())
+                   /* val message:String? = it.getAdditionalInfo() as? String
+                    message?.let{it2 -> showMessage(it2, rootView) }*/
                 }
 
             }
@@ -178,9 +172,9 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     }
 
     private fun getData(from:Int){
-        val condition = System.currentTimeMillis() - mLastCheckTime > MIN_CHECK_TIME
+       /* val condition = System.currentTimeMillis() - mLastCheckTime > MIN_CHECK_TIME
         if(mIsBeingLoaded || !condition)
-            return
+            return*/
 
         mIsBeingLoaded = true
         mLastCheckTime = System.currentTimeMillis()
@@ -193,8 +187,10 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
         mViewModel.getChats()
     }
 
-    private fun toggleLayoutErrorStatus(status:Boolean){
+    private fun toggleLayoutErrorStatus(status:Boolean,
+                                        text:String = "oops, something went wrong on our end, please try again"){
         layout_error.isVisible = status
+        tvRetry.text = text
     }
     private fun toggleLayoutIntroStatus(status:Boolean){
         layout_chat_empty.isVisible = status

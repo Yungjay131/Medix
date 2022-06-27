@@ -1,4 +1,4 @@
-package com.slyworks.medix.utils
+package com.slyworks.medix.managers
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat

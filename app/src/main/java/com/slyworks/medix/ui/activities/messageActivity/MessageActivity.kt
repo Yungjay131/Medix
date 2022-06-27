@@ -20,9 +20,9 @@ import com.slyworks.constants.*
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.R
 import com.slyworks.medix.Subscription
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.ui.activities.BaseActivity
-import com.slyworks.models.room_models.Message
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager
 import com.slyworks.medix.ui.custom_views.EdgeItemDecorator

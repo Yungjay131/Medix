@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

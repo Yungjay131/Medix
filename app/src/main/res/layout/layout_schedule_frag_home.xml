@@ -39,7 +39,7 @@
                 app:layout_constraintTop_toTopOf="@id/ivProfile_layout_schedule_frag_home"
                 app:layout_constraintBottom_toTopOf="@id/tvProfileDetails_layout_schedule_frag_home"
                 app:layout_constraintHorizontal_bias="0"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="16dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textStyle="bold"
@@ -57,10 +57,10 @@
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_layout_schedule_frag_home"
                 app:layout_constraintHorizontal_bias="0"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="16dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/appGrey"
                 android:text="Dentist" />
 

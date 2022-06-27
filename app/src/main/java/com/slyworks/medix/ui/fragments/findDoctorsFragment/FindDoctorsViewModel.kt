@@ -2,15 +2,12 @@ package com.slyworks.medix.ui.fragments.findDoctorsFragment
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.slyworks.medix.App
-import com.slyworks.medix.UsersManager
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.network.NetworkRegister
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 
 /**

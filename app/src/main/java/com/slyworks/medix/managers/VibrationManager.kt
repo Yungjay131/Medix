@@ -1,4 +1,4 @@
-package com.slyworks.medix.utils
+package com.slyworks.medix.managers
 
 import android.content.Context
 import android.os.Build

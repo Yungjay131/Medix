@@ -1,8 +1,9 @@
-package com.slyworks.medix
+package com.slyworks.medix.utils
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import androidx.datastore.preferences.protobuf.InvalidProtocolBufferException
+import com.slyworks.medix.UserDetails
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -16,7 +17,7 @@ object UserDataSerializer : Serializer<UserDetails> {
         get() = UserDetails.getDefaultInstance()
     //endregion
 
-    override suspend fun readFrom(input: InputStream): UserDetails{
+    override suspend fun readFrom(input: InputStream): UserDetails {
         try{
             return UserDetails.parseFrom(input)
         }catch(ipbe: InvalidProtocolBufferException){

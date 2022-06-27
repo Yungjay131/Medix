@@ -10,6 +10,9 @@ import com.slyworks.constants.EVENT_LISTEN_FOR_CONSULTATION_REQUESTS
 import com.slyworks.constants.EVENT_NEW_MESSAGE_RECEIVED
 import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.managers.DataManager
+import com.slyworks.medix.managers.MessageManager
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.models.models.ConsultationRequest
 import com.slyworks.models.models.Observer
 import com.slyworks.models.room_models.Message

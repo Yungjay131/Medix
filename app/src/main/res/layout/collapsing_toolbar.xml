@@ -122,8 +122,8 @@
 
                     <ImageView
                         android:id="@+id/ivToggle_collapsing_toolbar"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:src="@drawable/ic_hamburger_menu"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -170,8 +170,6 @@
                         android:id="@+id/ivProfile_collapsing_toolbar"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
-                        app:civ_border_color="@color/appBlue_light"
-                        app:civ_border_width="1dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/__guide_vertical_2"
                         app:layout_constraintTop_toTopOf="parent" />

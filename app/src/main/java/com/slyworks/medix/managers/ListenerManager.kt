@@ -1,9 +1,9 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.graphics.Bitmap
 import com.bumptech.glide.Glide
 import com.slyworks.constants.REQUEST_PENDING
-import com.slyworks.medix.utils.NotificationHelper
+import com.slyworks.medix.App
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -11,8 +11,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 /**
  *Created by Joshua Sylvanus, 7:30 PM, 20/05/2022.
  */
-class ListenerManager
-private constructor(){
+class ListenerManager(){
     //region Vars
     private var mSubscriptions:CompositeDisposable = CompositeDisposable()
     //endregion
@@ -28,15 +27,14 @@ private constructor(){
         }
     }
 
-    init {
+    fun start(){
         observeNewConsultationRequests()
         observeIncomingVideoCalls()
         observeIncomingVoiceCalls()
     }
 
-    fun nullify(){
+    fun stop(){
         mSubscriptions.clear()
-        instance = null
     }
 
     private fun observeNewConsultationRequests(){
@@ -44,12 +42,10 @@ private constructor(){
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe {
-                NotificationHelper.createConsultationResponseNotification(
+                NotificationHelper.createConsultationRequestNotification(
                     it.details.firebaseUID,
                     it.toUID,
-                    message = "${it.details.fullName} would like a consultation with you",
-                    REQUEST_PENDING,
-                    it.details.fullName)
+                    message = "${it.details.fullName} would like a consultation with you")
             }
 
         mSubscriptions.add(d)

@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.managers
 
 import android.content.BroadcastReceiver
 import android.util.Log
@@ -7,6 +7,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.slyworks.constants.*
+import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.getUserConsultationRequestsRef
+import com.slyworks.medix.getUserSentConsultationRequestsRef
+import com.slyworks.medix.network.ApiClient
 import com.slyworks.models.models.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -30,6 +35,9 @@ object CloudMessageManager {
     //endregion
 
     private val mConsultationRequestChildEventListener:ChildEventListener = object : ChildEventListener{
+        override fun onChildRemoved(snapshot: DataSnapshot) { }
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) { }
+        override fun onCancelled(error: DatabaseError) { }
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
             //means request was accepted or declined
             CoroutineScope(Dispatchers.IO).launch {
@@ -37,14 +45,13 @@ object CloudMessageManager {
                 AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS_ACCEPT, request)
             }
         }
-        override fun onChildRemoved(snapshot: DataSnapshot) { }
-        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) { }
-        override fun onCancelled(error: DatabaseError) { }
+
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             CoroutineScope(Dispatchers.IO).launch {
                 val request: ConsultationRequest = snapshot.getValue(ConsultationRequest::class.java)!!
+                AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS, request)
+
                 o.onNext(request)
-               //AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS, request)
             }
 
         }
@@ -105,53 +112,56 @@ object CloudMessageManager {
     }
 
     fun sendConsultationRequestResponse(response: ConsultationResponse,
-                                        pendingResult: BroadcastReceiver.PendingResult? = null,
-                                        mode: MessageMode = MessageMode.CLOUD_MESSAGE){
+                                        mode: MessageMode = MessageMode.CLOUD_MESSAGE):Observable<Outcome>
 
-       CoroutineScope(Dispatchers.IO).launch {
-           val job:Deferred<Unit> = CoroutineScope(Dispatchers.IO).async {
-               val fcMessage: FirebaseCloudMessage = mapConsultationResponseToFCMessage(response)
+       =  Observable.create<Outcome> { emitter ->
+           val fcMessage:FirebaseCloudMessage = mapConsultationResponseToFCMessage(response)
 
-               ApiClient().getApiInterface()
-                   .sendCloudMessage(fcMessage)
-                   .enqueue(object : Callback<ResponseBody> {
-                       override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                           if (response.isSuccessful) {
-                               Log.e(TAG, "onResponse: cloud message consultation request sent successfully")
-                           } else {
-                               Log.e(TAG, "onResponse: cloud message consultation request did not send successfully")
-                           }
+            ApiClient().getApiInterface()
+                .sendCloudMessage(fcMessage)
+                .enqueue(object : Callback<ResponseBody>{
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        if (response.isSuccessful) {
+                            Log.e(TAG, "onResponse: cloud message consultation request sent successfully")
+                            emitter.onNext(Outcome.SUCCESS(null))
+                            emitter.onComplete()
+                        } else {
+                            Log.e(TAG, "onResponse: cloud message consultation request did not send successfully")
+                            emitter.onNext(Outcome.FAILURE(null))
+                            emitter.onComplete()
 
-                           this@async.cancel()
-                       }
+                        }
+                    }
 
-                       override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                           Log.e(TAG, "onFailure: sending cloud message response failed", t)
-                           this@async.cancel()
-                       }
-                   })
-           }
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Log.e(TAG, "onFailure: sending cloud message response failed", t)
+                        emitter.onNext(Outcome.ERROR(null))
+                        emitter.onComplete()
+                    }
+                })
+        }
 
-           job.await()
+    fun sendConsultationRequestResponseToDB(response: ConsultationResponse):Observable<Outcome> =
+        Observable.create<Outcome> { emitter ->
+            val childNodeUpdate:HashMap<String, Any> = hashMapOf(
+                "/requests/${UserDetailsUtils.user!!.firebaseUID}/to/${response.toUID}/status" to response.status,
+                "/requests/${response.toUID}/from/${UserDetailsUtils.user!!.firebaseUID}/status" to response.status)
 
-           val childNodeUpdate:HashMap<String, Any> = hashMapOf(
-               "/requests/${UserDetailsUtils.user!!.firebaseUID}/to/${response.toUID}/status" to response.status,
-               "/requests/${response.toUID}/from/${UserDetailsUtils.user!!.firebaseUID}/status" to response.status)
+            mFirebaseDatabase.reference
+                .updateChildren(childNodeUpdate)
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        Log.e(TAG, "sendConsultationRequestResponse: success")
+                        emitter.onNext(Outcome.SUCCESS(null))
+                        emitter.onComplete()
+                    }else{
+                        Log.e(TAG, "sendConsultationRequestResponse", it.exception)
+                        emitter.onNext(Outcome.FAILURE(null))
+                        emitter.onComplete()
+                    }
+                }
+        }
 
-           mFirebaseDatabase.reference
-               .updateChildren(childNodeUpdate)
-               .addOnCompleteListener {
-                   if(it.isSuccessful){
-                       AppController.notifyObservers(EVENT_SEND_REQUEST, true)
-                   }else{
-                       Log.e(TAG, "sendRequest: sending request failed", it.exception)
-                       AppController.notifyObservers(EVENT_SEND_REQUEST, false)
-                   }
-
-                   pendingResult?.finish()
-               }
-       }
-    }
 
     fun sendConsultationRequest(request: ConsultationRequest, mode: MessageMode = MessageMode.DB_MESSAGE){
         when(mode){
@@ -185,19 +195,19 @@ object CloudMessageManager {
                 .enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         if(response.isSuccessful) {
-                            AppController.notifyObservers(EVENT_SEND_CLOUD_MESSAGE, true)
+                            AppController.notifyObservers(EVENT_SEND_REQUEST, true)
 
                             updateRequestSender(fcMessage.to, REQUEST_PENDING)
                             updateRequestReceiver(UserDetailsUtils.user!!.firebaseUID, REQUEST_PENDING)
                         }
                         else
-                            AppController.notifyObservers(EVENT_SEND_CLOUD_MESSAGE, false)
+                            AppController.notifyObservers(EVENT_SEND_REQUEST, false)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         Log.e(TAG, "onFailure: sending Cloud message request failed",t)
 
-                        AppController.notifyObservers(EVENT_SEND_CLOUD_MESSAGE, false)
+                        AppController.notifyObservers(EVENT_SEND_REQUEST, false)
                     }
                 })
         }

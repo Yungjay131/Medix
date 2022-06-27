@@ -30,7 +30,7 @@
         <!--TODO:find an error lottie file to use here-->
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/ivRetry_content_chat"
-            android:layout_width="240dp"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +58,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivRetry_content_chat"
-            android:text="oops, something went wrong on our end, please try again"
+            tools:text="oops, something went wrong on our end, please try again"
             android:textSize="20sp"
             android:gravity="center"/>
 
@@ -84,58 +84,37 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_no_messages_content_chat"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
         android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/ivChat_frag_chat"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/_guide_horizontal_1"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/chat_empty"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/_guide_horizontal_1"
-            app:layout_constraintBottom_toTopOf="@id/_guide_horizontal_2"
+            android:gravity="center_vertical|center_horizontal|center"
+            android:lineSpacingMultiplier="1"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:text="It seems you have no messages- but not too worry, click the 'chat'icon on the screen and let's get you started"
+            android:text="It seems you have no messages. Click the 'chat' icon on the screen and let's get you started"
             android:textSize="18sp"
-            android:lineSpacingMultiplier="1"
-            android:gravity="center_vertical|center_horizontal|center"/>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/_guide_horizontal_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent=".7"/>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/_guide_horizontal_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivChat_frag_chat" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/ivChat_frag_chat"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent=".98"/>
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/chat_empty" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

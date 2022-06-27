@@ -10,7 +10,6 @@ import com.slyworks.medix.ui.fragments.ViewProfileFragment
 import com.slyworks.medix.ui.fragments.chatFragment.ChatFragment
 import com.slyworks.medix.ui.fragments.chatHostFragment.ChatHostFragment
 import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
-import com.slyworks.medix.ui.fragments.homeFragment.HomeFragment
 import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.isLastItem
 import kotlinx.parcelize.IgnoredOnParcel
@@ -28,7 +27,7 @@ enum class FragmentWrapper:Parcelable {
     },
     FIND_DOCTORS {
         override fun getInstance(args:Any?): Fragment {
-            return FindDoctorsFragment.newInstance()
+            return FindDoctorsFragment.getInstance()
         }
     },
     CHAT_HOST {

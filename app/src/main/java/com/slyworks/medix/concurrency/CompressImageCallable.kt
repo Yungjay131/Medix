@@ -25,8 +25,8 @@ class CompressImageCallable(val uri: Uri) : Callable<ByteArray> {
         private fun getByteArray(bitmap:Bitmap):ByteArray{
             var imageByteArray:ByteArray? = null
             for(index in 1..10){
-              var imageQuality:Int = 100/index
-              var bytes:ByteArray = _getBytesFromBitmap(bitmap,imageQuality)
+              val imageQuality:Int = 100/index
+              val bytes:ByteArray = _getBytesFromBitmap(bitmap,imageQuality)
 
                 Log.e(TAG, "CompressImageCallable.call(): megabytes: (" + (11 - index) + "0%) " + bytes.size / MB + " MB")
 

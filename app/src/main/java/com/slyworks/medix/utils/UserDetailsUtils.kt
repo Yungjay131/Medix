@@ -1,5 +1,6 @@
-package com.slyworks.medix
+package com.slyworks.medix.utils
 
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.models.room_models.FBUserDetails
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -23,7 +24,6 @@ object UserDetailsUtils {
        observeUser()
     }
 
-
     private fun observeUser(){
         CoroutineScope(Dispatchers.IO).launch {
             UsersManager.getUserFromDataStore()
@@ -39,9 +39,7 @@ object UserDetailsUtils {
     }
 
     /*for something like profile picture change,for it to happen immediately*/
-    fun observeUserDetails(): Observable<FBUserDetails> {
-        return o.hide()
-    }
+    fun observeUserDetails(): Observable<FBUserDetails>  = o.hide()
 
     /*for log out situations*/
     fun clearUserData(){

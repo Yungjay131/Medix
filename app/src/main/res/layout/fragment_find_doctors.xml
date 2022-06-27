@@ -6,11 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+  <include
+    layout="@layout/collapsing_toolbar_frag_find_doctors"/>
+
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/layout_intro_frag_find_doctors"
       android:layout_width="match_parent"
       android:layout_height="600dp"
-      android:layout_gravity="top">
+      android:layout_gravity="top"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
     <ImageView
         android:id="@+id/ivFindDoctors_layout_intro"
@@ -76,6 +80,7 @@
       android:layout_height="match_parent"
       tools:context=".ui.fragments.findDoctorsFragment.FindDoctorsFragment"
       android:id="@+id/rootView"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
       android:visibility="gone">
 
     <androidx.recyclerview.widget.RecyclerView

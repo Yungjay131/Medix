@@ -2,7 +2,6 @@ package com.slyworks.medix.ui.activities.registrationActivity
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -23,7 +22,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
 import com.slyworks.medix.*
-import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.managers.PermissionManager
+import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
@@ -35,13 +35,11 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.AccountType
 import com.slyworks.models.models.Gender
-import com.slyworks.models.models.Observer
 import com.slyworks.models.models.TempUserDetails
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -84,7 +82,7 @@ class RegistrationPatientActivity : BaseActivity() {
     private lateinit var mImageUri:Uri
     private var mHasImageBeenSelected = false
 
-    private var mPermissionManager:PermissionManager? = null
+    private var mPermissionManager: PermissionManager? = null
     private lateinit var mViewModel: RegistrationPatientViewModel
 
     private var mEditTextMap:MutableMap<EditText, TextWatcher> = mutableMapOf()

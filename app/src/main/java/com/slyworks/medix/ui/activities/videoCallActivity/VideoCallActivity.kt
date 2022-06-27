@@ -1,6 +1,5 @@
 package com.slyworks.medix.ui.activities.videoCallActivity
 
-import android.Manifest
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -20,9 +19,10 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.util.concurrent.ListenableFuture
 import com.slyworks.constants.*
-import com.slyworks.medix.CallManager
+import com.slyworks.medix.managers.CallManager
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.VibrationManager
 import com.slyworks.medix.navigation.ActivityWrapper
 import com.slyworks.medix.navigation.NavigationManager
 import com.slyworks.medix.ui.activities.BaseActivity
@@ -36,7 +36,6 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import io.agora.rtc.video.VideoEncoderConfiguration
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 
 class VideoCallActivity : BaseActivity() {
     //region Vars

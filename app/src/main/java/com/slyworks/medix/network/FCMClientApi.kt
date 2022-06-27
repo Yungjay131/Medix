@@ -1,5 +1,6 @@
-package com.slyworks.medix
+package com.slyworks.medix.network
 
+import com.slyworks.medix.BuildConfig
 import com.slyworks.models.models.FirebaseCloudMessage
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -13,5 +14,6 @@ interface FCMClientApi {
     @POST("send")
     @Headers("Content-type:application/json")
     fun sendCloudMessage(@Body message: FirebaseCloudMessage,
-                         @Header("Authorization:key") key:String = BuildConfig.SERVER_KEY): Call<ResponseBody>
+                         @Header("Authorization:key") key:String = BuildConfig.SERVER_KEY
+    ): Call<ResponseBody>
 }

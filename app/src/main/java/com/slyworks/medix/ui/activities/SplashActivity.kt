@@ -8,12 +8,12 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
-import com.slyworks.constants.DEFAULT_LAST_SIGN_IN_TIME
 import com.slyworks.constants.KEY_LAST_SIGN_IN_TIME
-import com.slyworks.constants.MAX_LAST_SIGN_IN_TIME
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
-import com.slyworks.medix.UsersManager
+import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.managers.PreferenceManager
+import com.slyworks.medix.managers.TimeUtils
+import com.slyworks.medix.managers.UsersManager
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
 import com.slyworks.medix.utils.*

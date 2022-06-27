@@ -3,20 +3,14 @@ package com.slyworks.medix.ui.activities.loginActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.slyworks.constants.EVENT_SEND_PASSWORD_RESET_EMAIL
-import com.slyworks.constants.EVENT_USER_LOGIN
 import com.slyworks.medix.*
-import com.slyworks.medix.AppController.clearAndRemove
-import com.slyworks.models.models.NotifyMethod
-import com.slyworks.models.models.Observer
+import com.slyworks.medix.managers.LoginManager
+import com.slyworks.medix.managers.RegistrationManager
 import com.slyworks.models.models.Outcome
 import com.slyworks.network.NetworkRegister
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 /**

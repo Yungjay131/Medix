@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.medix.R
-import com.slyworks.medix.UserDetailsUtils
+import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.custom_views.HorizontalSpacingItemDecorator
 import com.slyworks.medix.utils.ViewUtils.displayImage
@@ -79,10 +79,7 @@ class DoctorHomeFragment : Fragment() {
 
         initData()
         initViews(view)
-        stopActivityProgressBar()
     }
-
-    private fun stopActivityProgressBar() = mParentActivity.toggleProgressBar(false)
 
     private fun initData(){
         mViewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
@@ -104,7 +101,7 @@ class DoctorHomeFragment : Fragment() {
 
         searchView = view.findViewById(R.id.searchView_frag_home)
 
-        actionMessages = view.findViewById(R.id.quick_action_messages)
+        actionMessages = view.findViewById(R.id.quick_action_message)
         actionConsultations = view.findViewById(R.id.quick_action_consultations)
         actionHealthCareCenters = view.findViewById(R.id.quick_action_healthcare_centers)
         actionReminder = view.findViewById(R.id.quick_action_reminder)
@@ -119,7 +116,7 @@ class DoctorHomeFragment : Fragment() {
         tvTime_cardSchedule = view.findViewById(R.id.tvTime_layout_schedule_frag_home)
 
         tvName_cardSchedule.setText("Josh Sylvanus")
-        tvDetails_cardSchedule.setText("Abuja,Nigeria")
+        tvDetails_cardSchedule.setText("Abuja, Nigeria")
 
         tvNotificationCount.setText(1.toString())
 
