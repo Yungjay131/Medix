@@ -10,6 +10,7 @@ class MChildEventListener
      private var onChildMovedFunc:((snapshot: DataSnapshot) ->Unit)? = null,
      private var onChildRemovedFunc:((snapshot: DataSnapshot) -> Unit)? = null,
      private var onCancelledFunc: ((error: DatabaseError) -> Unit)? = null): ChildEventListener {
+
     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
         onChildAddedFunc?.invoke(snapshot)
     }

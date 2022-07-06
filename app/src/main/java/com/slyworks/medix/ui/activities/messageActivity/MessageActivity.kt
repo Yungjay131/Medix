@@ -1,44 +1,41 @@
 package com.slyworks.medix.ui.activities.messageActivity
 
-import android.app.Activity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxbinding4.widget.textChanges
 import com.slyworks.constants.*
-import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.R
-import com.slyworks.medix.Subscription
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.ui.activities.BaseActivity
-import com.slyworks.medix.navigation.ActivityWrapper
-import com.slyworks.medix.navigation.NavigationManager
+import com.slyworks.medix.navigation.Navigator
+import com.slyworks.medix.navigation.Navigator.Companion.getParcelable
+import com.slyworks.medix.navigation.addExtra
+import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
 import com.slyworks.medix.ui.custom_views.EdgeItemDecorator
 import com.slyworks.medix.ui.custom_views.SpacingItemDecorator
 import com.slyworks.medix.ui.custom_views.StickyHeaderItemDecorator
 import com.slyworks.medix.utils.*
+import com.slyworks.medix.utils.ViewUtils.closeKeyboard3
 import com.slyworks.medix.utils.ViewUtils.displayImage
-import com.slyworks.models.models.Observer
 import com.slyworks.models.room_models.FBUserDetails
+import com.slyworks.models.room_models.Message
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-class MessageActivity : BaseActivity(), Observer {
+class MessageActivity : BaseActivity() {
     //region Vars
     private lateinit var rootView:ConstraintLayout
 
@@ -60,92 +57,84 @@ class MessageActivity : BaseActivity(), Observer {
     private lateinit var fabSend:FloatingActionButton
     private lateinit var fabVoiceNote:FloatingActionButton
 
-    private lateinit var progress:ConstraintLayout
+    private lateinit var progress:ProgressBar
 
-    private val mSubscriptionsList:MutableList<Subscription> = mutableListOf()
+    private val mSubscriptions:CompositeDisposable = CompositeDisposable()
 
     private lateinit var mAdapter:RVMessageAdapter
 
     private lateinit var mUserProfile: FBUserDetails
     private lateinit var mViewModel:MessageViewModel
-
     //endregion
 
-    companion object{
-        private var mIsInForeground:Boolean = false
-        fun getForegroundStatus():Boolean = mIsInForeground
-    }
-
-    override fun onStart() {
-        super.onStart()
-        super.onStop(this)
-        mIsInForeground = true
-    }
-
-    override fun onStop() {
-        super.onStop()
-        super.onStop(this)
-        mIsInForeground = false
-    }
-
     override fun onDestroy() {
-        mSubscriptionsList.forEach { it.clearAndRemove() }
-        super.onDestroy(this)
         super.onDestroy()
+        mSubscriptions.clear()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_message)
 
+        initViews1()
         initViews2()
         initData()
-
-        super.onCreate(this)
     }
 
     private fun setUserData(userDetails: FBUserDetails){
         ivProfile.displayImage(userDetails.imageUri)
 
-        val name = if(userDetails.accountType == "DOCTOR") "Dr. ${userDetails.fullName}"
-        else userDetails.fullName
-
+        val name =
+            if(userDetails.accountType == "DOCTOR")
+                "Dr. ${userDetails.fullName}"
+            else
+                userDetails.fullName
         tvName.text = name
     }
 
     private fun initData(){
         //fixme:could be a FBUserDetails object with some values missing if it comes from ChatFragment and not ViewProfileActivity
-        mUserProfile = intent.getParcelableExtra<FBUserDetails>(EXTRA_USER_PROFILE_FBU)!!
+        mUserProfile = intent.getParcelable<FBUserDetails>(EXTRA_USER_PROFILE_FBU)
         setUserData(mUserProfile)
 
+        this.onBackPressedDispatcher
+            .addCallback(this, MOnBackPressedCallback(this))
+
         mViewModel = ViewModelProvider(this).get(MessageViewModel::class.java)
-        mViewModel.observeConnectionStatus(mUserProfile.firebaseUID).observe(this){
-            if(it != "online")
-                tvConnectionStatus.setTextColor(ContextCompat.getColor(this, R.color.appGrey_li_message_from))
-            else
-                tvConnectionStatus.setTextColor(ContextCompat.getColor(this, R.color.appGreen_text))
+        mViewModel.observeConnectionStatus(mUserProfile.firebaseUID)
+                  .observe(this){
+                      if (it != "online")
+                          tvConnectionStatus.setTextColor(
+                              ContextCompat.getColor(this, R.color.appGrey_li_message_from)
+                          )
+                      else
+                          tvConnectionStatus.setTextColor(
+                              ContextCompat.getColor(this, R.color.appGreen_text)
+                          )
 
-            tvConnectionStatus.setText(it)
-
+                      tvConnectionStatus.setText(it)
         }
 
-        mViewModel.observeMessagesForUID(mUserProfile.firebaseUID).observe(this) {
-            progress.visibility = View.GONE
-
-            if (it.isNullOrEmpty()){
-                showMessage("error occurred retrieving messages", rootView)
-                return@observe
-            }
-            mAdapter.setMessageList(it)
+        mViewModel.observeMessagesForUID(mUserProfile.firebaseUID)
+                  .observe(this) {
+                      mAdapter.setMessageList(it)
         }
 
-        mViewModel.observeUserDetails(mUserProfile.firebaseUID).observe(this){
-            setUserData(it)
+        mViewModel.observeUserDetails(mUserProfile.firebaseUID)
+            .observe(this){
+                setUserData(it)
         }
 
+        mViewModel.mProgressLiveData.observe(this){
+            progress.isVisible = it
+        }
+
+        mViewModel.mStatusLiveData.observe(this){
+            showMessage(it,rootView)
+        }
     }
 
-    private fun initViews2(){
+    private fun initViews1(){
         rootView = findViewById(R.id.rootView)
         ivBack = findViewById(R.id.ivback_frag_message)
         ivProfile = findViewById(R.id.ivProfile_frag_message)
@@ -168,75 +157,27 @@ class MessageActivity : BaseActivity(), Observer {
         fabVoiceNote = findViewById(R.id.fab_record_layout_message)
 
         progress = findViewById(R.id.progress_layout)
+    }
+
+    private fun initViews2(){
         progress.visibility = View.VISIBLE
 
         ivBack.setOnClickListener {
-           NavigationManager.inflateActivity(
-               this@MessageActivity,
-               ActivityWrapper.MAIN,
-               removeCurrentFromBackStack = true)
+           onBackPressedDispatcher.onBackPressed()
         }
 
         mAdapter = RVMessageAdapter(rvMessages)
         rvMessages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvMessages.addItemDecoration(SpacingItemDecorator())
-        rvMessages.addItemDecoration(EdgeItemDecorator())
-        rvMessages.addItemDecoration(StickyHeaderItemDecorator())
+        //rvMessages.addItemDecoration(EdgeItemDecorator())
+        //rvMessages.addItemDecoration(StickyHeaderItemDecorator())
         rvMessages.adapter = mAdapter
-        rvMessages.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
 
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(6_000)
-
-                    fabScrollUp.visibility = View.GONE
-                    fabScrollDown.visibility = View.GONE
-                }
+        val d = etMessage.textChanges()
+            .subscribe {
+                toggleFabSendVisibility(it.isNotEmpty())
             }
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when(newState){
-                    RecyclerView.SCROLL_STATE_IDLE ->{}
-                    RecyclerView.SCROLL_STATE_SETTLING ->{}
-                    RecyclerView.SCROLL_STATE_DRAGGING ->{
-                        val currentFirstVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                        val currentLastVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-
-                        if(currentFirstVisibleItem > 0){
-                            //means the first item is not visible
-                            fabScrollUp.visibility = View.VISIBLE
-                        }
-                        if(currentLastVisibleItem < recyclerView.adapter!!.itemCount - 1){
-                            //means the last item is not visible
-                            fabScrollDown.visibility = View.VISIBLE
-                        }
-
-                        if (currentFirstVisibleItem == 0){
-                            fabScrollUp.visibility = View.GONE
-                        }
-
-                        if(currentLastVisibleItem == recyclerView.adapter!!.itemCount - 1)
-                            fabScrollDown.visibility = View.GONE
-
-                    }
-                }
-            }
-
-        })
-
-        etMessage.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if(p0.toString().isNotEmpty()) {
-                   toggleFabSendVisibility(true)
-                }else{
-                    toggleFabSendVisibility(false)
-                }
-
-            }
-        })
+        mSubscriptions.add(d)
 
         //implement in the adapter
         fabScrollUp.setOnClickListener { mAdapter.scrollToTop() }
@@ -249,25 +190,22 @@ class MessageActivity : BaseActivity(), Observer {
                 return@setOnClickListener
             }
 
-            NavigationManager.inflateActivity(
-                this@MessageActivity,
-                ActivityWrapper.VIDEO_CALL,
-                isToBeFinished = true,
-                extras = Bundle().apply {
-                    putString(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-                    putParcelable(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
-                })
+            /*fixme:VideoCallActivity is expecting a Bundle, fix that*/
+            Navigator.intentFor<VideoCallActivity>(this)
+                .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+                .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
+                .finishCaller()
+                .navigate()
         }
 
         fabSend.setOnClickListener {
-            val _content:String = etMessage.text.toString().trim()
-            val message: com.slyworks.models.room_models.Message = com.slyworks.models.room_models.Message(
+            val message: Message = Message(
                 type = OUTGOING_MESSAGE,
                 fromUID = UserDetailsUtils.user!!.firebaseUID,
                 toUID = mUserProfile.firebaseUID,
                 senderFullName = UserDetailsUtils.user!!.fullName,
                 receiverFullName = mUserProfile.fullName,
-                content = _content,
+                content = etMessage.text.toString().trim(),
                 timeStamp = TimeUtils.getCurrentDate().toString(),
                 messageID = IDUtils.generateNewMessageID(),
                 status = NOT_SENT,
@@ -279,33 +217,16 @@ class MessageActivity : BaseActivity(), Observer {
             mViewModel.sendMessage(message)
 
             etMessage.getText().clear()
-            closeKeyboard()
+            closeKeyboard3()
         }
     }
 
     private fun toggleFabSendVisibility(status:Boolean){
-        if(status){
-            fabSend.visibility = View.VISIBLE
-            fabVoiceNote.visibility = View.GONE
-        }else{
-            fabSend.visibility = View.GONE
-            fabVoiceNote.visibility = View.VISIBLE
-        }
+        fabSend.isVisible = status
+        fabVoiceNote.isVisible = !status
     }
 
-    private fun closeKeyboard(){
-        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(rootView.windowToken, 0)
-    }
-
-    private fun displayMessage(message:String){
+    private fun displayMessage(message:String) =
         Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show();
-    }
-    override fun <T> notify(event: String, data: T?) {}
 
-    override fun onBackPressed() {
-        NavigationManager.onBackPressed(this,
-            shouldFinishCurrent = true,
-            fallbackActivity = ActivityWrapper.MAIN)
-    }
 }

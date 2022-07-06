@@ -16,12 +16,11 @@ class SpacingItemDecorator:RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val currentViewHolder: RVMessageAdapter.MViewHolder =
             parent.getChildViewHolder(view) as RVMessageAdapter.MViewHolder
-        val previousViewHolder: RVMessageAdapter.MViewHolder =
-            parent.findViewHolderForAdapterPosition(currentViewHolder.bindingAdapterPosition - 1) as RVMessageAdapter.MViewHolder
-        val nextViewHolder: RVMessageAdapter.MViewHolder? =
-            parent.findViewHolderForAdapterPosition(currentViewHolder.bindingAdapterPosition + 1) as RVMessageAdapter.MViewHolder
 
-        var isDifferentViewHolder:Boolean = false
+        val nextViewHolder: RVMessageAdapter.MViewHolder? =
+            parent.findViewHolderForAdapterPosition(currentViewHolder.bindingAdapterPosition + 1)
+                    as RVMessageAdapter.MViewHolder ?: return
+
         var isLastInGroup:Boolean = false
         if(nextViewHolder == null){
             isLastInGroup = true

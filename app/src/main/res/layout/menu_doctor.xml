@@ -6,6 +6,7 @@
     android:layout_height="80dp"
     android:layout_width="match_parent"
     app:menu="@menu/main_bnv_menu_doctor"
+    app:layout_insetEdge="none"
     app:itemActiveIndicatorStyle="@style/AppTheme.Main.BNV"
     app:itemBackground="@color/appGrey"
     app:itemTextColor="@color/appBlue"

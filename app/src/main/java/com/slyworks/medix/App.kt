@@ -109,12 +109,13 @@ class App: Application() {
                     profileUpdateWorkRequest)
         }
     }
+
     override fun onCreate() {
         super.onCreate()
         initContext()
-        initStartServiceWork()
         initRoom()
         initUserDetailsUtils()
+        initStartServiceWork()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             initNotificationChannels()
@@ -125,16 +126,7 @@ class App: Application() {
         mContext = this;
     }
 
-
-    private fun initReceiveNetworkUpdates(){
-        /*adding the event at startup so anyone can observe it without
-        * specifically creating this Event*/
-        AppController.addEvent(EVENT_GET_NETWORK_UPDATES)
-    }
-
-    private fun initUserDetailsUtils(){
-        UserDetailsUtils
-    }
+    private fun initUserDetailsUtils() = UserDetailsUtils
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initNotificationChannels(){
@@ -180,11 +172,5 @@ class App: Application() {
     private fun initFirebase(){
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
     }
-
-
-
-
-
-
 
 }

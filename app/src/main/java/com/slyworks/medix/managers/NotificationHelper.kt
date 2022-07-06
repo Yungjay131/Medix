@@ -11,8 +11,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.PRIORITY_HIGH
-import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import androidx.core.app.NotificationCompat.*
 import androidx.core.content.ContextCompat
 import com.slyworks.constants.*
 import com.slyworks.medix.App
@@ -41,6 +40,8 @@ object NotificationHelper {
     private val mChannelID1:String = App.getContext().getString(R.string.notification_channel_1_id)
     private val mChannelID2:String = App.getContext().getString(R.string.notification_channel_2_id)
     //endregion
+
+    fun cancelNotification(notificationID:Int) = notificationManager.cancel(notificationID)
 
     fun createConsultationResponseNotification(fromUID:String,
                                                toUID:String,
@@ -81,14 +82,16 @@ object NotificationHelper {
     }
 
     fun createConsultationRequestNotification(fromUID:String,
-                                              toUID:String,
+                                              toFCMRegistrationToken:String,
+                                              fullName:String,
                                               message:String){
 
         val intent = Intent(App.getContext(), RequestsActivity::class.java).apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
-                putString(EXTRA_CLOUD_MESSAGE_TO_UID, toUID)
                 putString(EXTRA_CLOUD_MESSAGE_STATUS, REQUEST_PENDING)
+                putString(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
+                putString(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN, toFCMRegistrationToken)
             }
             putExtra(EXTRA_ACTIVITY, b)
             setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -99,18 +102,24 @@ object NotificationHelper {
 
         val intentAccept = Intent(App.getContext(), CloudMessageBroadcastReceiver::class.java).apply {
             putExtra(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
-            putExtra(EXTRA_CLOUD_MESSAGE_TO_UID, toUID)
-            setAction("com.slyworks.medix.BROADCAST_CLOUD_MESSAGE")
             putExtra(EXTRA_CLOUD_MESSAGE_TYPE_ACCEPT, REQUEST_ACCEPTED)
+            putExtra(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
+            putExtra(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN, toFCMRegistrationToken)
+            putExtra(EXTRA_NOTIFICATION_IDENTIFIER, NOTIFICATION_CONSULTATION_REQUEST)
+
+            setAction("com.slyworks.medix.BROADCAST_CLOUD_MESSAGE")
 
             notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST)
         }
 
         val intentDecline = Intent(App.getContext(), CloudMessageBroadcastReceiver::class.java).apply {
             putExtra(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
-            putExtra(EXTRA_CLOUD_MESSAGE_TO_UID, toUID)
-            setAction("com.slyworks.medix.BROADCAST_CLOUD_MESSAGE")
             putExtra(EXTRA_CLOUD_MESSAGE_TYPE_DECLINE, REQUEST_DECLINED)
+            putExtra(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
+            putExtra(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN, toFCMRegistrationToken)
+            putExtra(EXTRA_NOTIFICATION_IDENTIFIER, NOTIFICATION_CONSULTATION_REQUEST)
+
+            setAction("com.slyworks.medix.BROADCAST_CLOUD_MESSAGE")
 
             notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST)
         }
@@ -136,7 +145,10 @@ object NotificationHelper {
                .addAction(R.drawable.ic_close2,"Decline Request",pendingIntentDecline)
 
 
-            notificationManager.notify(NOTIFICATION_CONSULTATION_REQUEST, builder.build())
+        val notification = builder.build()
+        notification.flags = notification.flags or Notification.FLAG_AUTO_CANCEL
+
+        notificationManager.notify(NOTIFICATION_CONSULTATION_REQUEST, notification)
     }
 
     fun createAppServiceNotification(): Notification {

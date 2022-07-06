@@ -2,6 +2,8 @@ package com.slyworks.medix
 
 import com.slyworks.models.models.NotifyMethod
 import com.slyworks.models.models.Observer
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /**
@@ -20,7 +22,7 @@ object AppController {
     //endregion
 
 
-    fun addEvent(event:String){
+    private fun addEvent(event:String){
         if(mEvents.contains(event)) return
 
         mEvents.add(event)
@@ -33,6 +35,9 @@ object AppController {
     }
 
     fun subscribeTo(event:String, observer: Observer, notifyMethod: NotifyMethod = NotifyMethod.PUSH_IMMEDIATELY): Subscription {
+        if(!mEvents.contains(event))
+            addEvent(event)
+
         val s = Subscription(event, observer, notifyMethod)
         mObservers[event]!!.add(s)
         return s
@@ -82,11 +87,32 @@ object AppController {
             return
         }
 
-        mEventMap[event] = Pair<DataHolder,MutableSet<Subscription>>(DataHolder(data), mutableSetOf(subscriber))
+        mEventMap[event] = Pair<DataHolder,MutableSet<Subscription>>(
+            DataHolder(data), mutableSetOf(subscriber) )
     }
 
     fun <T>pullData(event:String,observer: Observer):T{
         return mEventMap[event]?.first?.data as T
     }
 
+    private var mTopicList:MutableList<String> = mutableListOf()
+    private var mTopicObservers:MutableMap<String, PublishSubject<Any>> = mutableMapOf()
+    fun addTopic(topic:String){
+        if(mTopicList.contains(topic))
+            return
+
+        mTopicList.add(topic)
+        mTopicObservers.put(topic, PublishSubject.create<Any>())
+    }
+
+    fun <T> pushToTopic(topic:String, data:T){
+        mTopicObservers.get(topic)?.onNext(topic)
+    }
+
+    fun <T> subscribeTo(topic:String): Observable<T>{
+        if(!mTopicList.contains(topic))
+            addTopic(topic)
+
+        return mTopicObservers.get(topic)!!.hide() as Observable<T>
+    }
 }

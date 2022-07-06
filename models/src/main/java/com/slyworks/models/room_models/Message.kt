@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.slyworks.constants.INCOMING_MESSAGE
 import com.slyworks.constants.NOT_SENT
 import kotlinx.parcelize.Parcelize
 
@@ -43,6 +44,24 @@ data class Message(
         accountType = "",
         FCMRegistrationToken = "")
 
+    companion object{
+        fun cloneFrom(message:Message):Message{
+            return Message(
+                type = INCOMING_MESSAGE,
+                fromUID = message.fromUID,
+                toUID = message.toUID,
+                senderFullName = message.senderFullName,
+                receiverFullName = message.receiverFullName,
+                content = message.content,
+                timeStamp = message.timeStamp,
+                messageID = message.messageID,
+                status = message.status,
+                senderImageUri = message.senderImageUri,
+                accountType = message.accountType,
+                FCMRegistrationToken = message.FCMRegistrationToken
+            )
+        }
+    }
     override fun compareTo(other: Message): Int {
         val otherTimeStamp:Long = other.timeStamp.toLong()
         if(this.timeStamp.toLong() > otherTimeStamp)
@@ -52,6 +71,6 @@ data class Message(
         else if(this.timeStamp.toLong() == otherTimeStamp)
             return 0
         else
-            return 0
+            throw UnsupportedOperationException("cannot sort unknown order of value")
     }
 }

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -46,9 +46,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
 
+
     def room_version = "2.4.0"
     api "androidx.room:room-ktx:$room_version"
     api "androidx.room:room-runtime:$room_version"
+    api "androidx.room:room-rxjava3:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     testImplementation 'junit:junit:4.13.2'

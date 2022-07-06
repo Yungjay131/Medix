@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.slyworks.constants.APP_SERVICE_ID
+import com.slyworks.medix.App
 import com.slyworks.medix.managers.ListenerManager
 import com.slyworks.medix.managers.NotificationHelper
 import com.slyworks.medix.utils.*
@@ -16,6 +17,7 @@ import com.slyworks.medix.utils.*
 class ListenerService : Service() {
     //region Vars
     private var mListenerManager: ListenerManager? = null
+    private var shouldWorkerBeReInitialized:Boolean = false
     //endregion
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -30,6 +32,7 @@ class ListenerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(ActivityUtils.isThereActivityInForeground()){
             stopSelf()
+            shouldWorkerBeReInitialized = false
             return START_NOT_STICKY
         }
 
@@ -49,6 +52,7 @@ class ListenerService : Service() {
         }
 
         /*re-queueing Work for WorkManager*/
-       // App.initStartServiceWork()
+        if(shouldWorkerBeReInitialized)
+           App.initStartServiceWork()
     }
 }

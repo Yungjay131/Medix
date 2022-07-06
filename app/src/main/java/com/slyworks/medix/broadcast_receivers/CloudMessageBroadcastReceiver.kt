@@ -3,17 +3,14 @@ package com.slyworks.medix.broadcast_receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.google.firebase.database.FirebaseDatabase
 import com.slyworks.constants.*
 import com.slyworks.medix.managers.CloudMessageManager
+import com.slyworks.medix.managers.NotificationHelper
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.ConsultationResponse
 import com.slyworks.models.models.Outcome
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 /**
@@ -21,10 +18,12 @@ import kotlinx.coroutines.launch
  */
 class CloudMessageBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
+        /*TODO:cancel notification*/
 
         val fromUID:String = intent!!.getStringExtra(EXTRA_CLOUD_MESSAGE_FROM_UID)!!
-        val toUID:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TO_UID)!!
-        val fullName:String? = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_FULLNAME)
+        val toFCMRegistrationToken:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN)!!
+        val fullName:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_FULLNAME)!!
+        val notificationID:Int = intent.getIntExtra(EXTRA_NOTIFICATION_IDENTIFIER, -1)
 
         var responseType:String = REQUEST_PENDING
         val response_accept = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TYPE_ACCEPT)
@@ -38,10 +37,11 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
         val pendingResult: PendingResult = goAsync()
         Observable.just(
             ConsultationResponse(
-                UserDetailsUtils.user!!.firebaseUID,
-                toUID,
-                responseType,
-                fullName!!)
+                fromUID = UserDetailsUtils.user!!.firebaseUID,
+                toUID = fromUID,
+                toFCMRegistrationToken = toFCMRegistrationToken,
+                status = responseType,
+                fullName = fullName)
            )
             .flatMap {
                 Observable.combineLatest(
@@ -49,30 +49,20 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
                     CloudMessageManager.sendConsultationRequestResponseToDB(it),
                     { o1: Outcome, o2: Outcome ->
                         if (o1.isSuccess && o2.isSuccess)
-                            Observable.just(Outcome.SUCCESS(null, additionalInfo = "response delivered"))
+                            Observable.just(Outcome.SUCCESS<Nothing>(additionalInfo = "response delivered"))
                         else
-                            Observable.just(Outcome.FAILURE(null, reason = "response was not successfully delivered"))
+                            Observable.just(Outcome.FAILURE<Nothing>(reason = "response was not successfully delivered"))
                     }
                 )
             }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe{
+                NotificationHelper.cancelNotification(notificationID)
                 pendingResult.finish()
             }
 
 
     }
 
-    private fun uploadRequestResponseToDB(responseType:String,fromUID:String, toUID:String, pendingResult: PendingResult ){
-        val childNodeUpdate:HashMap<String, Any> = hashMapOf(
-            "/requests/$fromUID/to/$toUID/status" to responseType,
-            "/requests/$toUID/from/$fromUID/status" to responseType)
-
-        FirebaseDatabase.getInstance().reference
-            .updateChildren(childNodeUpdate)
-            .addOnCompleteListener {
-                pendingResult.finish()
-            }
-    }
 }

@@ -5,9 +5,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.slyworks.constants.DELIVERED
-import com.slyworks.constants.INCOMING_MESSAGE
-import com.slyworks.constants.REQUEST_PENDING
+import com.slyworks.constants.*
 import com.slyworks.medix.utils.UserDetailsUtils
 
 
@@ -84,7 +82,27 @@ fun getUserDataForUIDRef(params:String): DatabaseReference {
         .child("details")
 }
 
-fun getUserConsultationRequestsRef(params:String): Query {
+fun getUserSentConsultationRequestsRef1(params: String):Query{
+    return FirebaseDatabase.getInstance()
+        .reference
+        .child("requests")
+        .child(params)
+        .child("to")
+        .child("status")
+        .equalTo(REQUEST_ACCEPTED)
+}
+
+fun getUserSentConsultationRequestsRef2(params: String):Query{
+    return FirebaseDatabase.getInstance()
+        .reference
+        .child("requests")
+        .child(params)
+        .child("to")
+        .child("status")
+        .equalTo(REQUEST_DECLINED)
+}
+
+fun getUserReceivedConsultationRequestsRef(params:String): Query {
     return FirebaseDatabase.getInstance()
         .reference
         .child("requests")

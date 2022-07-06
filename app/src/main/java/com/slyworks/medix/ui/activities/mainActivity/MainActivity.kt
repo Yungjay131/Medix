@@ -22,6 +22,7 @@ import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.navigation.FragmentWrapper
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
 import com.slyworks.medix.ui.dialogs.ExitDialog
 import com.slyworks.medix.ui.dialogs.LogoutDialog
@@ -217,13 +218,8 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         }
     }
 
-    private fun initFragment(){
-        updateActiveItem(R.id.action_home)
-      /*  if(UserDetailsUtils.user!!.accountType == DOCTOR)
-            _inflateFragment(DoctorHomeFragment.getInstance())
-        else
-            _inflateFragment(PatientHomeFragment.getInstance())*/
-    }
+    private fun initFragment() = updateActiveItem(R.id.action_home)
+
     fun updateActiveItem(f:FragmentWrapper) = updateActiveItem(mFragmentMap[f]!!)
 
     private fun updateActiveItem(@IdRes id:Int){
@@ -266,28 +262,41 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         updateActiveItem(mFragmentMap[f::class.simpleName]!!)
     }
 
-    private fun _inflateFragment(f: Fragment){
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+    private fun _inflateFragment(f:Fragment){
+        Navigator.transactionFrom(supportFragmentManager)
+          .into(R.id.fragment_container_main)
+          .show(f, mCurrentFragmentTag)
+          .after {
+              mCurrentFragmentTag = f::class.simpleName
+              mFragmentTagList = mFragmentTagList.filter{ it != f::class.simpleName } as MutableList<String>
+              mFragmentTagList.add(mCurrentFragmentTag!!)
+          }
+          .navigate()
+    }
+
+    private fun _inflateFragment2(f: Fragment){
+     val transaction = supportFragmentManager.beginTransaction()
+       transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 
 
-        if(supportFragmentManager.findFragmentByTag(f::class.simpleName) != null){
-            /*its been added before*/
-            transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
-            transaction.show(supportFragmentManager.findFragmentByTag(f::class.simpleName)!!)
-        }
-        else{
-            if(mCurrentFragmentTag != null)
-               transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
+       if(supportFragmentManager.findFragmentByTag(f::class.simpleName) != null){
+           /*its been added before*/
+           transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
+           transaction.show(supportFragmentManager.findFragmentByTag(f::class.simpleName)!!)
+       }
+       else{
+           if(mCurrentFragmentTag != null)
+              transaction.hide(supportFragmentManager.findFragmentByTag(mCurrentFragmentTag!!)!!)
 
-            transaction.addToBackStack("${f::class.simpleName}")
-            transaction.add(R.id.fragment_container_main, f, "${f::class.simpleName}")
-        }
+           transaction.addToBackStack("${f::class.simpleName}")
+           transaction.add(R.id.fragment_container_main, f, "${f::class.simpleName}")
+       }
 
-        transaction.commit()
-        mCurrentFragmentTag = f::class.simpleName
-        mFragmentTagList = mFragmentTagList.filter{ it != f::class.simpleName} as MutableList<String>
-        mFragmentTagList.add(mCurrentFragmentTag!!)
+       transaction.commit()
+       mCurrentFragmentTag = f::class.simpleName
+       mFragmentTagList = mFragmentTagList.filter{ it != f::class.simpleName} as MutableList<String>
+       mFragmentTagList.add(mCurrentFragmentTag!!)
+
     }
 
     fun toggleProgressBar(status:Boolean) {

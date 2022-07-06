@@ -21,7 +21,8 @@ data class CallHistory(
     @ColumnInfo(name = "name")var callerName:String = "",
     @ColumnInfo(name = "sender_image_uri")var senderImageUri:String = "",
     @PrimaryKey
-    @ColumnInfo(name = "time_stamp")var timeStamp:String = "" ):Parcelable, Comparable<CallHistory>{
+    @ColumnInfo(name = "time_stamp") var timeStamp:String = "",
+    @ColumnInfo(name = "duration") var duration:String = ""):Parcelable, Comparable<CallHistory>{
 
     constructor():this(
         type = NOT_SET,
@@ -29,7 +30,8 @@ data class CallHistory(
         callerUID = "",
         callerName = "",
         senderImageUri = "",
-        timeStamp = "")
+        timeStamp = "",
+        duration = "")
 
     override fun compareTo(other: CallHistory): Int {
         val otherTimeStamp: Long = other.timeStamp.toLong()
@@ -40,6 +42,6 @@ data class CallHistory(
         else if (this.timeStamp.toLong() == otherTimeStamp)
             return 0
         else
-            return 0
+            throw UnsupportedOperationException("cannot sort order of unknown value")
     }
 }

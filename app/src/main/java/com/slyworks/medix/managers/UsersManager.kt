@@ -221,7 +221,74 @@ object UsersManager {
     }
 
 
-    fun updateUserInfo(details: FBUserDetails) {
+    fun updateUserInfo(details: FBUserDetails):Observable<Boolean> =
+        getMessagesForUIDObservable(details)
+            .flatMap {
+                if(it)
+                    getUpdatePersonObservable(details)
+                else
+                    Observable.just(false)
+            }
+
+    private fun getMessagesForUIDObservable(details: FBUserDetails):Observable<Boolean> =
+        Observable.create { emitter ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val l:List<Message> =
+                    AppDatabase.getInstance(App.getContext())
+                        .getMessageDao()
+                        .getMessagesForUID(details.firebaseUID)
+
+                if(l.isNullOrEmpty()){
+                    emitter.onNext(false)
+                    emitter.onComplete()
+                    this.cancel()
+                }
+
+                l.map {
+                    it.accountType = details.accountType
+                    it.senderImageUri = details.imageUri
+                    if(it.type == OUTGOING_MESSAGE)
+                        it.senderFullName = details.fullName
+                    else
+                        it.receiverFullName = details.fullName
+
+                    it
+                }
+
+                AppDatabase.getInstance(App.getContext())
+                    .getMessageDao()
+                    .updateMessage(*l.toTypedArray())
+
+                emitter.onNext(true)
+                emitter.onComplete()
+                this.cancel()
+            }
+        }
+
+    private fun getUpdatePersonObservable(details: FBUserDetails):Observable<Boolean> =
+        Observable.create { emitter ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val p: Person? = AppDatabase.getInstance(App.getContext())
+                    .getPersonDao()
+                    .getPersonByID(details.firebaseUID)
+
+                if(p == null){
+                    emitter.onNext(false)
+                    emitter.onComplete()
+                    this.cancel()
+                }
+
+                p!!
+                p.fullName = details.fullName
+                p.senderImageUri = details.imageUri
+
+                AppDatabase.getInstance(App.getContext())
+                    .getPersonDao()
+                    .updatePerson(p)
+            }
+        }
+
+    fun updateUserInfo2(details: FBUserDetails) {
         /*update user details in Person and Messages*/
         /*TODO:do from WorkManager*/
         CoroutineScope(Dispatchers.IO).launch {
@@ -265,8 +332,4 @@ object UsersManager {
         }
 
     }
-
-
-
-
 }

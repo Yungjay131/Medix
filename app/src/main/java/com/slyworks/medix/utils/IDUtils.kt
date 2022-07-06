@@ -39,28 +39,6 @@ object IDUtils {
         return TaskManager.runOnSingleThread(Callable<String>{ generateNewMessageID() })
     }
 
-    private fun generateRandomID(limit:Int):String{
-        val selctionArray_limit = selectionArray.size - 1
-        val numberArray_limit = numberArray.size - 1
-        val lowercaseArray_limit = lowercaseLettersArray.size - 1
-        val uppercaseArray_limit = uppercaseLettersArray.size - 1
 
-        val selctionArray_range = (0..selctionArray_limit)
-        val numberArray_range = (0..numberArray_limit)
-        val lowercaseArray_range = (0..lowercaseArray_limit)
-        val uppercaseArray_range = (0..uppercaseArray_limit)
-
-
-        var ID:String = ""
-        for(index in 0..limit){
-            when(selctionArray_range.random()){
-                0 -> { ID = ID.plus(numberArray.get(numberArray_range.random())) }
-                1 ->{ ID = ID.plus(lowercaseLettersArray.get(lowercaseArray_range.random())) }
-                2 ->{ ID = ID.plus(uppercaseLettersArray.get(uppercaseArray_range.random())) }
-            }
-        }
-
-        return ID
-    }
 
 }

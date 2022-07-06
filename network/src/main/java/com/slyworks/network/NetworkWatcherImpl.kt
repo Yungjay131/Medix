@@ -36,7 +36,7 @@ class NetworkWatcherImpl(private var context:Context?) : NetworkWatcher {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getNetworkStatus(): Boolean {
-        val network: Network? = mCm.activeNetwork ?: return false
+        val network: Network = mCm.activeNetwork ?: return false
         val capabilities = mCm.getNetworkCapabilities(network)
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }

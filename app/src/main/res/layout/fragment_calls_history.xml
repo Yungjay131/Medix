@@ -10,6 +10,7 @@
     tools:context=".ui.fragments.callsHistoryFragment.CallsHistoryFragment">
 
     <include
+        android:id="@+id/progress_layout"
         layout="@layout/layout_progressbar"
         android:layout_height="60dp"
         android:layout_width="60dp"
@@ -22,32 +23,42 @@
         tools:listitem="@layout/li_call_history"
         android:visibility="gone"/>
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/ivError_frag_calls_history"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_gravity="top"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/error"/>
+        android:layout_height="match_parent"
+        android:id="@+id/errorLayout_frag_calls_history">
 
-    <TextView
-        android:id="@+id/tvError_frag_calls_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_anchor="@id/ivError_frag_calls_history"
-        app:layout_anchorGravity="bottom"
-        android:text="You have no calls. Click the 'Phone' icon to get started"
-        android:textSize="20sp"
-        android:gravity="center"/>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/ivError_frag_calls_history"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/error"/>
+
+        <TextView
+            android:id="@+id/tvError_frag_calls_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivError_frag_calls_history"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            tools:text="You have no calls. Click the 'call' icon to get started"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_start_new_call"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginEnd="16dp"
         android:layout_gravity="bottom|end"
         app:backgroundTint="@color/appGreen"

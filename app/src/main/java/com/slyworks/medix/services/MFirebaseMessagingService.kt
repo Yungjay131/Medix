@@ -14,6 +14,7 @@ import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.network.NetworkRegister
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -28,14 +29,15 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
-        CoroutineScope(Dispatchers.IO).launch {
+        GlobalScope.launch(Dispatchers.IO) {
             /*TODO:save offline to DB, maybe use WorkManager*/
-            if(NetworkRegister(this@MFirebaseMessagingService).getNetworkStatus()) {
+            if(NetworkRegister(App.getContext()).getNetworkStatus()) {
+                PreferenceManager.set(KEY_FCM_REGISTRATION, token)
                 UsersManager.sendFCMTokenToServer(token)
             }else{
-                /*enqueue task for upload since there is no network*/
-                App.initFCMTokenUploadWork(token)
+                /*enqueue task for upload since there is no network connection*/
                 PreferenceManager.set(KEY_FCM_REGISTRATION, token)
+                App.initFCMTokenUploadWork(token)
             }
         }
     }
@@ -44,9 +46,10 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
        when(getMessageType(remoteMessage)){
            FCM_REQUEST ->{
              val fromUID:String = remoteMessage.data["fromUID"]!!
-             val toUID:String = UserDetailsUtils.user!!.firebaseUID
+             val toFCMRegistrationToken:String = remoteMessage.data["toFCMRegistrationToken"]!!
+             val fullName:String = remoteMessage.data["fullName"]!!
              val message:String = remoteMessage.data["message"]!!
-             NotificationHelper.createConsultationRequestNotification( fromUID, toUID, message  )
+             NotificationHelper.createConsultationRequestNotification( fromUID, fullName, message, toFCMRegistrationToken)
            }
            FCM_RESPONSE_ACCEPTED, FCM_RESPONSE_DECLINED ->{
                val fromUID:String = remoteMessage.data["fromUID"]!!

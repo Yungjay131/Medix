@@ -26,14 +26,12 @@ object PreferenceManager {
         with(mPrefs){
             when(value){
                 is Editable -> {
-                    if(value.toString() != ""){
+                    if(value.toString().isNotEmpty())
                         edit { it.putString(key, value.toString()) }
-                    }
                 }
                 is String -> {
-                    if(value != ""){
+                    if(value != "")
                         edit { it.putString(key, value) }
-                    }
                 }
                 is Int -> edit { it.putInt(key, value) }
                 is Boolean -> edit { it.putBoolean(key, value) }

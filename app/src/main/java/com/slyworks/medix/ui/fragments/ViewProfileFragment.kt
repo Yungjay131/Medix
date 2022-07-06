@@ -2,6 +2,7 @@ package com.slyworks.medix.ui.fragments
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -28,6 +30,7 @@ import com.slyworks.medix.*
 import com.slyworks.medix.AppController.clearAndRemove
 import com.slyworks.medix.managers.CloudMessageManager
 import com.slyworks.medix.navigation.Navigator
+import com.slyworks.medix.navigation.addExtra
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
 import com.slyworks.medix.utils.UserDetailsUtils
@@ -36,6 +39,7 @@ import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.*
 import com.slyworks.models.room_models.FBUserDetails
 import de.hdodenhof.circleimageview.CircleImageView
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class ViewProfileFragment : Fragment(), Observer {
     //region Vars
@@ -49,7 +53,6 @@ class ViewProfileFragment : Fragment(), Observer {
 
     private lateinit var rootView:CoordinatorLayout
     private lateinit var progress:ProgressBar
-    private lateinit var scrollView: NestedScrollView
     private lateinit var ivProfile:ImageView
     private lateinit var tvFirstName:TextView
     private lateinit var tvLastName:TextView
@@ -71,19 +74,16 @@ class ViewProfileFragment : Fragment(), Observer {
     private lateinit var guide_vertical_1:Guideline
     private lateinit var guide_vertical_2:Guideline
 
-    //private lateinit var shimmer:ShimmerFrameLayout
-
-    private lateinit var srlMain:SwipeRefreshLayout
     private var ANCHOR:Int = R.id.divider_horizontal_3
 
+    private lateinit var mViewModel:ViewProfileViewModel
+
     private val mSubscriptionList:MutableList<Subscription> = mutableListOf()
+    private val mSubscriptions:CompositeDisposable = CompositeDisposable()
 
     private var mUserProfile: FBUserDetails? = null
 
     private var mAreFABsDisplayed:Boolean = false
-
-    private val MIN_TIME = 5_000
-    private var LAST_CHECK_TIME = 0L
     //endregion
 
     companion object {
@@ -98,27 +98,9 @@ class ViewProfileFragment : Fragment(), Observer {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        /*TODO:make fullscreen*/
-       /* requireActivity()
-            .window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS )*/
-    }
-
-    override fun onStop() {
-        super.onStop()
-        /*TODO:exit fullscreen*/
-        /*requireActivity()
-            .window
-            .setFlags(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT )*/
-    }
-
     override fun onDestroy() {
         mSubscriptionList.forEach { it.clearAndRemove() }
+        mSubscriptions.clear()
         super.onDestroy()
     }
 
@@ -129,21 +111,21 @@ class ViewProfileFragment : Fragment(), Observer {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_view_profile, container, false)
+        initViews_0(view)
         initViews_1(view)
         return view
     }
 
-    private fun initViews_1(view:View){
+    private fun initViews_0(view:View){
         ivBack = view.findViewById(R.id.ivBack_frag_view_profile)
         ivBack2 = view.findViewById(R.id.ivBack_frag_view_profile2)
 
         ivProfileSmall = view.findViewById(R.id.ivProfile_small_frag_view_profile)
         tvNameSmall = view.findViewById(R.id.tvProfile_small_frag_view_profile)
         progress_small = view.findViewById(R.id.progress)
-        
+
         rootView = view.findViewById(R.id.rootView)
         progress = view.findViewById(R.id.progress_frag_view_profile)
-        scrollView = view.findViewById(R.id.scrollView_frag_view_profile)
         ivProfile = view.findViewById(R.id.ivProfile_frag_view_profile)
         tvFirstName = view.findViewById(R.id.tvFirstName_frag_view_profile)
         tvLastName = view.findViewById(R.id.tvLastName_frag_view_profile)
@@ -166,7 +148,11 @@ class ViewProfileFragment : Fragment(), Observer {
         guide_vertical_1 = view.findViewById(R.id.guide_vertical_2)
         guide_vertical_2 = view.findViewById(R.id.guide_vertical_5)
 
-        srlMain = view.findViewById(R.id.srlMain_frag_view_profile)
+    }
+
+    private fun initViews_1(view:View){
+        progress.visibility = View.VISIBLE
+        rootView.setChildViewsStatus(false)
 
         ivProfile.displayImage(mUserProfile!!.imageUri)
         ivProfileSmall.displayImage(mUserProfile!!.imageUri)
@@ -228,12 +214,6 @@ class ViewProfileFragment : Fragment(), Observer {
         }
 
         fabSendRequest.setOnClickListener {
-            val message:String = "Hi i'm ${UserDetailsUtils.user!!.fullName}. Please i would like a consultation with you"
-            val data: ConsultationRequestData = ConsultationRequestData(message, UserDetailsUtils.user!!.firebaseUID, FCM_REQUEST)
-            val fcmMessage: FirebaseCloudMessage = FirebaseCloudMessage(mUserProfile!!.FCMRegistrationToken, data)
-            //CloudMessageManager.sendCloudMessage(fcmMessage)
-
-            val request: Request = Request(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!.firebaseUID, message)
             val request2: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
             CloudMessageManager.sendConsultationRequest(request2)
 
@@ -250,26 +230,15 @@ class ViewProfileFragment : Fragment(), Observer {
         }
 
         fabMessage.setOnClickListener {
-            /*val intent:Intent = Intent(requireContext(), MessageActivity::class.java)
-            intent.putExtra(EXTRA_USER_PROFILE_FBU, mUserProfile)
-            startActivity(intent)
-            requireActivity().finish()*/
             Navigator.intentFor<MessageActivity>(requireActivity())
-                .addExtra(EXTRA_USER_PROFILE_FBU, mUserProfile)
+                .addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, mUserProfile!!)
                 .finishCaller()
                 .navigate()
         }
 
-        fabVoiceCall.setOnClickListener {
-
-        }
+        fabVoiceCall.setOnClickListener {}
 
         fabVideoCall.setOnClickListener {
-           /*  val intent:Intent = Intent(requireContext(), VideoCallActivity::class.java)
-             intent.putExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-             intent.putExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
-             startActivity(intent)
-             requireActivity().finish()*/
             Navigator.intentFor<VideoCallActivity>(requireActivity())
                 .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
                 .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
@@ -289,9 +258,6 @@ class ViewProfileFragment : Fragment(), Observer {
     }
 
     private fun addTextView(text:String){
-        val inflater:LayoutInflater = LayoutInflater.from(requireContext())
-
-        //val layout:ConstraintLayout = inflater.inflate(R.layout.layout_textview, rootView_inner, false) as ConstraintLayout
         val layout:TextView = TextView(requireContext())
         layout.setTextColor(ContextCompat.getColor(requireContext(),R.color.appTextColor3))
         layout.setId(View.generateViewId())
@@ -322,33 +288,61 @@ class ViewProfileFragment : Fragment(), Observer {
         ANCHOR = layout.id
     }
 
-    private fun initViews_2(view:View){
-        progress.visibility = View.VISIBLE
-        scrollView.setChildViewsStatus(false)
-        srlMain.setOnRefreshListener { refresh() }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initData()
-        initViews_2(view)
     }
 
     private fun initData(){
-        AppController.addEvent(EVENT_GET_CONSULTATION_REQUEST)
-        val subscription_1: Subscription = AppController.subscribeTo(EVENT_GET_CONSULTATION_REQUEST, this)
-
-        AppController.addEvent(EVENT_SEND_REQUEST)
         val subscription_2: Subscription = AppController.subscribeTo(EVENT_SEND_REQUEST, this)
-
-        mSubscriptionList.add(subscription_1)
         mSubscriptionList.add(subscription_2)
+        val d = AppController.subscribeTo<Boolean>(EVENT_SEND_REQUEST)
+            .subscribe{
+                if(it)
+                  displayMessage("your request was successfully sent")
+                else
+                  displayMessage("your request was not sent successfully")
+            }
+        mSubscriptions.add(d)
 
-        CloudMessageManager.checkRequestStatus(mUserProfile!!.firebaseUID)
+
+
+        mViewModel = ViewModelProvider(this).get(ViewProfileViewModel::class.java)
+        mViewModel.consultationRequestStatusLiveData.observe(viewLifecycleOwner){
+            progress.visibility = View.GONE
+            rootView.setChildViewsStatus(true)
+
+            when(it){
+                REQUEST_PENDING -> {
+                    toggleFABStatus(false, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
+                    displayMessage("you have a pending request. you cannot message or video call this user until your request is accepted")
+                }
+                REQUEST_ACCEPTED -> {
+                    toggleFABStatus(true, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
+                    displayMessage("${mUserProfile!!.fullName} accepted your consultation request")
+                }
+                REQUEST_DECLINED -> {
+                    toggleFABStatus(true, fabSendRequest)
+                    toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
+                    displayMessage("Sorry this user declined your consultation request. You can still send another consultation request")
+                }
+                REQUEST_NOT_SENT -> {
+                    toggleFABStatus(true, fabSendRequest)
+                    toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
+                }
+                REQUEST_ERROR,
+                REQUEST_FAILED -> {
+                    displayMessage("oh oh something went wrong, check your network and swipe down to refresh")
+                }
+            }
+        }
+        mViewModel.observeConsultationRequestStatus(mUserProfile!!.firebaseUID)
+
     }
+
     private fun toggleFABStatus(status:Boolean,vararg FAB:FloatingActionButton) {
-        val color_black = ContextCompat.getColor(requireContext(), android.R.color.black)
+        val color_black = ContextCompat.getColor(requireContext(), R.color.appTextColor3)
         val color_grey = ContextCompat.getColor(requireContext(), R.color.appGrey_shimmer)
         if (status) {
             FAB.forEach {
@@ -365,53 +359,12 @@ class ViewProfileFragment : Fragment(), Observer {
      }
     }
 
-    private fun refresh(){
-        val currentTime = System.currentTimeMillis()
-        if(currentTime - LAST_CHECK_TIME < MIN_TIME) return
-
-        srlMain.isRefreshing = true
-        LAST_CHECK_TIME = currentTime
-        CloudMessageManager.checkRequestStatus(mUserProfile!!.firebaseUID)
-
-    }
     private fun displayMessage(message:String){
         Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show();
     }
 
-
-
     override fun <T> notify(event: String, data: T?) {
         when(event){
-            EVENT_GET_CONSULTATION_REQUEST ->{
-                if(srlMain.isRefreshing) srlMain.isRefreshing = false
-
-                progress.visibility = View.GONE
-                scrollView.setChildViewsStatus(true)
-
-                val result = data as String?
-                when(result){
-                    REQUEST_PENDING -> {
-                        toggleFABStatus(false, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
-                        displayMessage("you have a pending request. you cannot message or video call this user until your request is accepted")
-                    }
-                    REQUEST_ACCEPTED -> {
-                        toggleFABStatus(true, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
-                    }
-                    REQUEST_DECLINED -> {
-                        toggleFABStatus(true, fabSendRequest)
-                        toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
-                        displayMessage("Sorry this user declined your consultation request. You can still send another consultation request")
-                    }
-                    REQUEST_NOT_SENT -> {
-                        toggleFABStatus(true, fabSendRequest)
-                        toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
-                    }
-                    REQUEST_ERROR,
-                    REQUEST_FAILED -> {
-                        displayMessage("oh oh something went wrong, check your network and swipe down to refresh")
-                    }
-                }
-            }
             EVENT_SEND_REQUEST ->{
                 displayMessage("your request was successfully sent")
             }

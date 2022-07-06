@@ -28,11 +28,11 @@
         <ImageView
             android:id="@+id/ivEmoji"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             app:layout_constraintStart_toEndOf="@id/__guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/__guide_vertical_3"
             app:layout_constraintBottom_toTopOf="@id/__view_horizontal_1"
-            android:src="@drawable/ic_emoji" />
+            android:src="@drawable/emoji_2" />
 
         <EditText
             android:id="@+id/etMessage_message"
@@ -50,7 +50,7 @@
         <ImageView
             android:id="@+id/ivAttachment"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             app:layout_constraintStart_toEndOf="@id/__guide_vertical_6"
             app:layout_constraintEnd_toStartOf="@id/__guide_vertical_2"
             app:layout_constraintBottom_toTopOf="@id/__view_horizontal_1"
@@ -132,8 +132,8 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_send_layout_message"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/_guide_vertical_3"
         app:layout_constraintEnd_toStartOf="@id/_guide_vertical_4"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -141,22 +141,24 @@
         android:backgroundTint="@color/appGreen"
         android:src="@drawable/ic_send"
         android:tint="@color/white"
-        app:maxImageSize="25dp"
-        app:fabCustomSize="45dp"
+        app:fabSize="normal"
+        app:rippleColor="#388E3C"
+        app:elevation="4dp"
         android:visibility="gone"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_record_layout_message"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/_guide_vertical_3"
         app:layout_constraintEnd_toStartOf="@id/_guide_vertical_4"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/appGreen"
         android:src="@drawable/ic_mic"
-        app:maxImageSize="25dp"
-        app:fabCustomSize="45dp"
+        app:fabSize="normal"
+        app:rippleColor="#388E3C"
+        app:elevation="4dp"
         android:tint="@color/white"/>
 
     <androidx.constraintlayout.widget.Guideline
@@ -167,7 +169,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".02"/>
+        app:layout_constraintGuide_percent=".00"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/_guide_vertical_2"

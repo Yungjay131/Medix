@@ -1,20 +1,18 @@
 package com.slyworks.medix.managers
 
-import android.content.BroadcastReceiver
 import android.util.Log
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.slyworks.constants.*
 import com.slyworks.medix.AppController
 import com.slyworks.medix.utils.UserDetailsUtils
-import com.slyworks.medix.getUserConsultationRequestsRef
+import com.slyworks.medix.getUserReceivedConsultationRequestsRef
 import com.slyworks.medix.getUserSentConsultationRequestsRef
 import com.slyworks.medix.network.ApiClient
+import com.slyworks.medix.utils.MChildEventListener
+import com.slyworks.medix.utils.MValueEventListener
 import com.slyworks.models.models.*
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.core.ObservableEmitter
 import kotlinx.coroutines.*
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -31,84 +29,63 @@ object CloudMessageManager {
 
     private var mFirebaseDatabase:FirebaseDatabase = FirebaseDatabase.getInstance()
 
-    private val o:PublishSubject<ConsultationRequest> = PublishSubject.create()
+    private lateinit var mConsultationRequestsValueEventListener:ValueEventListener
+    private lateinit var mConsultationRequestChildEventListener:ChildEventListener
+
     //endregion
 
-    private val mConsultationRequestChildEventListener:ChildEventListener = object : ChildEventListener{
-        override fun onChildRemoved(snapshot: DataSnapshot) { }
-        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) { }
-        override fun onCancelled(error: DatabaseError) { }
-        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            //means request was accepted or declined
-            CoroutineScope(Dispatchers.IO).launch {
-                val request: ConsultationRequest = snapshot.getValue(ConsultationRequest::class.java)!!
-                AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS_ACCEPT, request)
-            }
+    /*TODO:there is a function that observes the consultation request for a SPECIFIC user,
+    *   create one that listens for ALL consultation request status,
+    *  the refs have been created in FirebaseUtils*/
+    fun listenForConsultationRequests():Observable<ConsultationRequest> =
+        Observable.create { emitter:ObservableEmitter<ConsultationRequest> ->
+            mConsultationRequestChildEventListener =
+                MChildEventListener(
+                    onChildAddedFunc = { snapshot ->
+                        val request: ConsultationRequest = snapshot.getValue(ConsultationRequest::class.java)!!
+                        emitter.onNext(request)
+                    })
+
+            getUserReceivedConsultationRequestsRef(UserDetailsUtils.user!!.firebaseUID)
+                .addChildEventListener(mConsultationRequestChildEventListener)
         }
-
-        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val request: ConsultationRequest = snapshot.getValue(ConsultationRequest::class.java)!!
-                AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS, request)
-
-                o.onNext(request)
-            }
-
-        }
-    }
-
-    private fun _listenForConsultationRequests(){
-       getUserConsultationRequestsRef(UserDetailsUtils.user!!.firebaseUID)
-            .addChildEventListener(mConsultationRequestChildEventListener)
-    }
-
-    fun listenForConsultationRequests():Observable<ConsultationRequest>{
-        _listenForConsultationRequests()
-        return o.hide()
-    }
-
-    fun getConsultationRequests(){
-        getUserConsultationRequestsRef(UserDetailsUtils.user!!.firebaseUID)
-            .get()
-            .addOnCompleteListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if(it.isSuccessful){
-                        if(it.getResult()?.getValue() == null) return@launch
-                        val result = it.result
-                        result!!.children.forEach{
-                            val consultationRequest: ConsultationRequest = it.getValue(ConsultationRequest::class.java)!!
-                            AppController.notifyObservers(EVENT_LISTEN_FOR_CONSULTATION_REQUESTS, consultationRequest)
-                        }
-                    }
-                    else{
-                        Log.e(TAG, "getConsultationRequests: getting consultation request from DB failed", it.exception )
-                    }
-                }
-            }
-
-    }
 
     fun detachConsultationRequestListener(){
-       getUserConsultationRequestsRef(UserDetailsUtils.user!!.firebaseUID)
+       getUserReceivedConsultationRequestsRef(UserDetailsUtils.user!!.firebaseUID)
             .removeEventListener(mConsultationRequestChildEventListener)
     }
 
-    fun checkRequestStatus(UID:String){
-             getUserSentConsultationRequestsRef(params = UserDetailsUtils.user!!.firebaseUID, params2 = UID)
-            .get()
-            .addOnCompleteListener {
-                if(it.isSuccessful){
-                    //"REQUEST_PENDING,REQUEST_ACCEPTED,REQUEST_DECLINED,("NOT_SENT")
-                    val result: ConsultationRequest? = it.result!!.getValue<ConsultationRequest>(
-                        ConsultationRequest::class.java)
-                    val status:String = if(result == null) REQUEST_NOT_SENT else if(result.status == null) REQUEST_NOT_SENT else result.status
-                    AppController.notifyObservers(EVENT_GET_CONSULTATION_REQUEST, status)
-                }else{
-                    Log.e(TAG, "checkRequestStatus: getting request status failed")
-                    AppController.notifyObservers(EVENT_GET_CONSULTATION_REQUEST, REQUEST_FAILED)
-                }
-            }
+    fun observeConsultationRequestStatus(UID:String):Observable<String> =
+        Observable.create<String>{ emitter ->
+            mConsultationRequestsValueEventListener =
+                MValueEventListener(
+                    onDataChangeFunc = {
+                        //"REQUEST_PENDING,REQUEST_ACCEPTED,REQUEST_DECLINED,("NOT_SENT")
+                        val result: ConsultationRequest? = it.getValue<ConsultationRequest>(
+                            ConsultationRequest::class.java)
+                        val status:String =
+                            if(result == null)
+                                REQUEST_NOT_SENT
+                            else if(result.status == null)
+                                REQUEST_NOT_SENT
+                            else result.status
 
+                        emitter.onNext(status)
+                    })
+
+            getUserSentConsultationRequestsRef(
+                params = UserDetailsUtils.user!!.firebaseUID,
+                params2 = UID
+            )
+            .addValueEventListener(mConsultationRequestsValueEventListener)
+        }
+
+    fun detachCheckRequestStatusListener(UID:String){
+        getUserSentConsultationRequestsRef(
+            params = UserDetailsUtils.user!!.firebaseUID,
+            params2 = UID
+        )
+            .removeEventListener(mConsultationRequestsValueEventListener)
     }
 
     fun sendConsultationRequestResponse(response: ConsultationResponse,
@@ -135,7 +112,7 @@ object CloudMessageManager {
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         Log.e(TAG, "onFailure: sending cloud message response failed", t)
-                        emitter.onNext(Outcome.ERROR(null))
+                        emitter.onNext(Outcome.ERROR(null, additionalInfo = t.message))
                         emitter.onComplete()
                     }
                 })
@@ -144,8 +121,8 @@ object CloudMessageManager {
     fun sendConsultationRequestResponseToDB(response: ConsultationResponse):Observable<Outcome> =
         Observable.create<Outcome> { emitter ->
             val childNodeUpdate:HashMap<String, Any> = hashMapOf(
-                "/requests/${UserDetailsUtils.user!!.firebaseUID}/to/${response.toUID}/status" to response.status,
-                "/requests/${response.toUID}/from/${UserDetailsUtils.user!!.firebaseUID}/status" to response.status)
+                "/requests/${UserDetailsUtils.user!!.firebaseUID}/from/${response.toUID}/status" to response.status,
+                "/requests/${response.toUID}/to/${UserDetailsUtils.user!!.firebaseUID}/status" to response.status)
 
             mFirebaseDatabase.reference
                 .updateChildren(childNodeUpdate)
@@ -195,44 +172,57 @@ object CloudMessageManager {
                 .enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         if(response.isSuccessful) {
-                            AppController.notifyObservers(EVENT_SEND_REQUEST, true)
+                            //AppController.notifyObservers(EVENT_SEND_REQUEST, true)
+                            AppController.pushToTopic(EVENT_SEND_REQUEST, true)
 
-                            updateRequestSender(fcMessage.to, REQUEST_PENDING)
-                            updateRequestReceiver(UserDetailsUtils.user!!.firebaseUID, REQUEST_PENDING)
+                            sendConsultationRequestResponseToDB(
+                                ConsultationResponse(toUID = fcMessage.to,
+                                                     fromUID = UserDetailsUtils.user!!.firebaseUID,
+                                                     fullName = request.details.fullName))
                         }
                         else
-                            AppController.notifyObservers(EVENT_SEND_REQUEST, false)
+                            //AppController.notifyObservers(EVENT_SEND_REQUEST, false)
+                            AppController.pushToTopic(EVENT_SEND_REQUEST, true)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         Log.e(TAG, "onFailure: sending Cloud message request failed",t)
 
-                        AppController.notifyObservers(EVENT_SEND_REQUEST, false)
+                        //AppController.notifyObservers(EVENT_SEND_REQUEST, false)
+                        AppController.pushToTopic(EVENT_SEND_REQUEST, true)
                     }
                 })
         }
     }
 
     private fun mapConsultationResponseToFCMessage(response: ConsultationResponse): FirebaseCloudMessage {
-        val type:String = if(response.status == REQUEST_ACCEPTED) FCM_RESPONSE_ACCEPTED else FCM_RESPONSE_DECLINED
+        val _type:String = if(response.status == REQUEST_ACCEPTED) FCM_RESPONSE_ACCEPTED else FCM_RESPONSE_DECLINED
         val action:String = if(response.status == REQUEST_ACCEPTED) "accepted" else "declined"
         val message:String = "${response.fullName} $action your request for consultation"
-        val data: ConsultationRequestData =
-            ConsultationRequestData(message, response.fromUID, type = type)
-        return FirebaseCloudMessage(response.toUID, data)
+        val data: Data =
+            ConsultationRequestData(message = message,
+                                    fromUID =  response.fromUID,
+                                     fullName = response.fullName,
+                                      toFCMRegistrationToken = response.toFCMRegistrationToken,
+                                     type = _type)
+        return FirebaseCloudMessage(response.toFCMRegistrationToken, data)
     }
 
     private fun mapConsultationRequestToFCMessage(request: ConsultationRequest): FirebaseCloudMessage {
         val message: String = "Hi i'm ${UserDetailsUtils.user!!.fullName}. Please i would like a consultation with you"
-        val data: ConsultationRequestData =
-            ConsultationRequestData(message, request.details.firebaseUID, type = FCM_REQUEST)
-        return FirebaseCloudMessage(request.toUID, data)
+        val data: Data =
+            ConsultationRequestData(message = message,
+                                    fromUID = request.details.firebaseUID,
+                                    fullName = request.details.fullName,
+                                     toFCMRegistrationToken = request.details.FCMRegistrationToken,
+                                    type = FCM_REQUEST)
+        return FirebaseCloudMessage(request.details.FCMRegistrationToken, data)
     }
 
     fun updateRequestSender(toUID:String, status:String){
         val childNodes:HashMap<String, Any> = hashMapOf(
-            "/users/${UserDetailsUtils.user!!.firebaseUID}/requests/to/$toUID" to status,
-            "/users/$toUID/requests/from/${UserDetailsUtils.user!!.firebaseUID}" to status )
+            "/requests/${UserDetailsUtils.user!!.firebaseUID}/to/$toUID/status" to status,
+            "/requests/$toUID/from/${UserDetailsUtils.user!!.firebaseUID}/status" to status )
 
         mFirebaseDatabase.reference
             .updateChildren(childNodes)
@@ -243,20 +233,6 @@ object CloudMessageManager {
                     Log.e(TAG, "updateRequest_sender: update REQUEST status in DB failed", it.exception )
             }
 
-    }
-    fun updateRequestReceiver(fromUID:String, status: String){
-        val childNodes:HashMap<String, Any> = hashMapOf(
-            "/users/${UserDetailsUtils.user!!.firebaseUID}/requests/from/$fromUID" to status,
-            "/users/$fromUID/requests/to/${UserDetailsUtils.user!!.firebaseUID}" to status )
-
-        mFirebaseDatabase.reference
-            .updateChildren(childNodes)
-            .addOnCompleteListener {
-                if(it.isSuccessful)
-                    Log.e(TAG, "updateRequest_receive: updates REQUEST status in DB successful" )
-                else
-                    Log.e(TAG, "updateRequest-receive: update REQUEST status in DB failed", it.exception )
-            }
     }
 
 

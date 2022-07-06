@@ -26,6 +26,9 @@ interface PersonDao {
     fun observePersons(): Flow<MutableList<Person>>
 
     @Query("SELECT * FROM Person where firebase_uid == :firebaseUID LIMIT 1")
+    fun observePerson(firebaseUID: String):Flow<Person>
+
+    @Query("SELECT * FROM Person where firebase_uid == :firebaseUID LIMIT 1")
     suspend fun getPersonByID(firebaseUID:String): Person
 
     @Query("SELECT COUNT(*) FROM Message")

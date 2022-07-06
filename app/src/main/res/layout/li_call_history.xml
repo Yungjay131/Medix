@@ -26,7 +26,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textSize="20sp"
-        android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"
         tools:text="Dr. Joshua Sylvanus"/>
@@ -65,6 +64,14 @@
         android:maxLines="1"
         android:ellipsize="end"
         tools:text="(3) 11:54 AM, May 8"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider_horizontal_1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toEndOf="@id/guide_vertical_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_horizontal_1"

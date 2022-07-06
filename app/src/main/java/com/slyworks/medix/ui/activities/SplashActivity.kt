@@ -1,7 +1,5 @@
 package com.slyworks.medix.ui.activities
 
-import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
@@ -14,6 +12,7 @@ import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.PreferenceManager
 import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.managers.UsersManager
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
 import com.slyworks.medix.utils.*
@@ -31,11 +30,6 @@ class SplashActivity : BaseActivity() {
         mHandler!!.removeCallbacksAndMessages(null)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-      /*  setTheme(R.style.AppTheme_splash3)
-        setContentView(R.layout.activity_splash)*/
-        super.onCreate(savedInstanceState)
-    }
 
     private fun initViews(){
         val iv:ImageView = findViewById(R.id.ivLogo_splash)
@@ -48,30 +42,27 @@ class SplashActivity : BaseActivity() {
         * in the SplashScreen, to ensure proper functioning*/
     override fun onResume() {
         super.onResume()
-
-        //initViews()
         mHandler!!.post { _startActivity() }
     }
 
     private fun _startActivity() {
         lifecycleScope.launch {
-            val destination:Class<*>
+            val navigator:Navigator.ActivityContinuation
             val status = checkUserDetailsAvailability()
 
-            destination =
+            navigator =
                      if(status){
                         if(isLoginSessionValid())
-                            MainActivity::class.java
+                            Navigator.intentFor<MainActivity>(this@SplashActivity)
                         else
-                            OnBoardingActivity::class.java
-                     }else{
-                         OnBoardingActivity::class.java
-                     }
+                            Navigator.intentFor<OnBoardingActivity>(this@SplashActivity)
+                     }else
+                         Navigator.intentFor<OnBoardingActivity>(this@SplashActivity)
 
-            val intent = Intent(this@SplashActivity, destination)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
+
+            navigator.newAndClearTask()
+                .finishCaller()
+                .navigate()
         }
     }
 

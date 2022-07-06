@@ -33,6 +33,9 @@ class StickyHeaderItemDecorator:RecyclerView.ItemDecoration() {
                 .filter { it is RVMessageAdapter.HeaderViewHolder }
                 .map { it as RVMessageAdapter.HeaderViewHolder }
 
+        if(stickyViewHolders.toList().isEmpty())
+            return
+
         stickyViewHolders.forEach { it.itemView.alpha = 1f }
 
         /*take first StickyViewHolder and its params*/

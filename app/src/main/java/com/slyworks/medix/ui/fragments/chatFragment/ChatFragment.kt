@@ -2,7 +2,6 @@ package com.slyworks.medix.ui.fragments.chatFragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
@@ -33,15 +31,14 @@ import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
+import com.slyworks.models.models.Observer
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
 
 
-class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
+class ChatFragment : Fragment(), Observer {
     //region Vars
     private val TAG: String? = ChatFragment::class.simpleName
-
-    private lateinit var srlMain:SwipeRefreshLayout
 
     private lateinit var layout_chat_empty:ConstraintLayout
     private lateinit var rvChats:RecyclerView
@@ -59,24 +56,12 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
 
     private var mSubscriptionsList:MutableList<Subscription> = mutableListOf()
 
-    private var mIsBeingLoaded:Boolean = false
-    private val MIN_CHECK_TIME:Long = 5_000
-    private var mLastCheckTime:Long = System.currentTimeMillis()
     //endregion
     companion object {
         @JvmStatic
         fun newInstance(): ChatFragment {
             return ChatFragment()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -91,8 +76,6 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
     }
 
     private fun initViews1(view:View){
-        srlMain = view.findViewById(R.id.srlChatFragment)
-
         layout_chat_empty = view.findViewById(R.id.layout_no_messages_content_chat)
         rvChats = view.findViewById(R.id.rvChats_frag_chat)
         fabStartChat = view.findViewById(R.id.fabStatChat_frag_chat)
@@ -114,10 +97,7 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
                 .inflateFragment(f)
         }
 
-        srlMain.setOnRefreshListener { getData(0) }
-
         btnRetry.setOnClickListener { getData(1) }
-
     }
 
     private fun initViews2(view:View){
@@ -127,59 +107,39 @@ class ChatFragment : Fragment(), com.slyworks.models.models.Observer {
         rvChats.adapter = mAdapter2
     }
     private fun initData(){
-        AppController.addEvent(EVENT_OPEN_MESSAGE_ACTIVITY)
-        AppController.addEvent(EVENT_OPEN_MESSAGE_ACTIVITY_2)
         val subscription = AppController.subscribeTo(EVENT_OPEN_MESSAGE_ACTIVITY, this)
         val subscription2 = AppController.subscribeTo(EVENT_OPEN_MESSAGE_ACTIVITY_2, this)
+
         mSubscriptionsList.add(subscription)
         mSubscriptionsList.add(subscription2)
 
         mViewModel = ViewModelProvider(this).get(ChatFragmentViewModel::class.java)
-        mViewModel.getPersonsListLiveData().observe(viewLifecycleOwner){
-            Log.e(TAG, "initData#getPersonsListLiveData: running on ${Thread.currentThread().name}")
-            when{
-                it.isSuccess ->{
-                    toggleLayoutIntroStatus(false)
-                    toggleLayoutErrorStatus(false)
-
-                    //noinspection unchecked
-                    val data:MutableList<Person> = it.getValue() as MutableList<Person>
-                    mAdapter2.submitList(data)
-                }
-                it.isFailure  ->{
-                    toggleLayoutErrorStatus(false)
-                    toggleLayoutIntroStatus(true)
-                    /*val message:String? = it.getAdditionalInfo() as? String
-                    message?.let{it2 -> showMessage(it2, rootView) }*/
-                }
-                it.isError ->{
-                    toggleLayoutIntroStatus(false)
-                    toggleLayoutErrorStatus(true, text = it.getTypedValue())
-                   /* val message:String? = it.getAdditionalInfo() as? String
-                    message?.let{it2 -> showMessage(it2, rootView) }*/
-                }
-
+        mViewModel.successStateLiveData.observe(viewLifecycleOwner){
+            mAdapter2.submitList(it)
+        }
+        mViewModel.intoStateLiveData.observe(viewLifecycleOwner){
+            toggleLayoutIntroStatus(it)
+        }
+        mViewModel.errorStateLiveData.observe(viewLifecycleOwner){
+            if(it){
+              val text = mViewModel.errorDataLiveData.value!!
+              toggleLayoutErrorStatus(it, text)
+              return@observe
             }
 
-            srlMain.isRefreshing = false
-            progress.visibility = View.GONE
-            progress_retry.visibility = View.GONE
-            mLastCheckTime = System.currentTimeMillis()
-            mIsBeingLoaded = false
+            toggleLayoutErrorStatus(it)
+        }
+        mViewModel.progressStateLiveData.observe(viewLifecycleOwner){
+            progress.isVisible = it
+            if(!it && progress_retry.isVisible)
+              progress_retry.visibility = View.GONE
         }
 
         getData(2)
     }
 
     private fun getData(from:Int){
-       /* val condition = System.currentTimeMillis() - mLastCheckTime > MIN_CHECK_TIME
-        if(mIsBeingLoaded || !condition)
-            return*/
-
-        mIsBeingLoaded = true
-        mLastCheckTime = System.currentTimeMillis()
         when(from){
-            0 -> srlMain.isRefreshing = true
             1 -> progress_retry.isVisible = true
             2 -> progress.isVisible = true
         }

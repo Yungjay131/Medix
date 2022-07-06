@@ -2,6 +2,7 @@ package com.slyworks.models.room_models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 
 /**
@@ -9,7 +10,9 @@ import androidx.room.Entity
  */
 @Entity
 data class FCMToken(
-    @ColumnInfo(name = "token") var token:String = "") {
+    @ColumnInfo(name = "token")
+    @PrimaryKey
+    var token:String = "") {
     constructor():this(
         token = "")
 }

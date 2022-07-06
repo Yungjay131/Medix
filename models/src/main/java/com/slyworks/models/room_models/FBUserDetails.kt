@@ -30,5 +30,17 @@ data class FBUserDetails(
     @Ignore var history: MutableList<String>? = mutableListOf(),
     @Ignore var specialization: MutableList<String>? = mutableListOf() ): Parcelable {
     constructor():
-            this("","","","","", "","","","","","", mutableListOf(), mutableListOf())
+            this(accountType= "",
+                firstName = "",
+                lastName = "",
+                fullName = "",
+                email = "",
+                sex = "",
+                age ="",
+                firebaseUID = "",
+                agoraUID = "",
+                FCMRegistrationToken = "",
+                imageUri = "",
+                history = mutableListOf(),
+                specialization = mutableListOf())
 }

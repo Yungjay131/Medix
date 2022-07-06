@@ -26,7 +26,6 @@ data class Person(
     @ColumnInfo(name = "unread_message_count") var unreadMessageCount:Int = 0,
     @ColumnInfo(name = "fcm_registration_token") var FCMRegistrationToken:String = "",
 
-
 ):Parcelable {
     constructor() : this(
         firebaseUID = "",

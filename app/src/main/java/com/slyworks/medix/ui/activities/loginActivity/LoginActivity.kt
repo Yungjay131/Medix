@@ -30,6 +30,7 @@ import com.slyworks.medix.ui.activities.registrationActivity.TextWatcherImpl
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
 import com.slyworks.medix.ui.dialogs.ForgotPasswordBSDialog
 import com.slyworks.medix.utils.*
+import com.slyworks.medix.utils.ViewUtils.closeKeyboard3
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -155,20 +156,7 @@ class LoginActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        closeKeyboard()
-    }
-
-    private fun closeKeyboard3(){
-        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(currentFocus?.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)
-    }
-    private fun closeKeyboard2(){
-        //to show soft keyboard
-        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-    private fun closeKeyboard(){
-        this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+        closeKeyboard3()
     }
 
     private fun initViews(){

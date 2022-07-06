@@ -11,6 +11,10 @@ import io.reactivex.rxjava3.subjects.PublishSubject
  */
 class ConnectivityCallback(private var o: PublishSubject<Boolean>?)
     : ConnectivityManager.NetworkCallback(){
+    override fun onLost(network: Network) {
+        super.onLost(network)
+
+    }
 
     override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
         super.onLinkPropertiesChanged(network, linkProperties)

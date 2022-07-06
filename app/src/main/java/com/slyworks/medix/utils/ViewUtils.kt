@@ -1,10 +1,14 @@
 package com.slyworks.medix.utils
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
@@ -105,5 +109,22 @@ object ViewUtils {
             Snackbar.LENGTH_SHORT
         )
             .show()
+    }
+
+    fun Activity.closeKeyboard(){
+        this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+    }
+    fun Activity.closeKeyboard2(){
+        //to show soft keyboard
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+    fun Activity.closeKeyboard3(){
+        val inputManager = getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(currentFocus?.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+    fun Activity.closeKeyboard4(rootView:View){
+        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(rootView.windowToken, 0)
     }
 }

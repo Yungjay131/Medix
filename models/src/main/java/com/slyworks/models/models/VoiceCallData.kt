@@ -16,7 +16,7 @@ data class VoiceCallData(
     val agoraUID:String,
     val fcmRegistrationToken:String,
     val imageUri:String,
-    override var type: String = FCM_VOICE_CALL_REQUEST,): Data() {
+    override var type: String = FCM_VOICE_CALL_REQUEST): Data {
         companion object{
             fun from(details: FBUserDetails): VoiceCallData {
                 return VoiceCallData(
@@ -35,4 +35,5 @@ data class VoiceCallData(
                 )
             }
         }
-    }
+
+}

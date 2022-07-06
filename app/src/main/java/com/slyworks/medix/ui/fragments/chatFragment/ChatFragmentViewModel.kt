@@ -3,14 +3,10 @@ package com.slyworks.medix.ui.fragments.chatFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.slyworks.constants.EVENT_GET_ALL_MESSAGES
 import com.slyworks.medix.App
-import com.slyworks.medix.AppController
-import com.slyworks.medix.AppController.clearAndRemove
-import com.slyworks.medix.managers.DataManager
-import com.slyworks.medix.Subscription
-import com.slyworks.models.models.Observer
+import com.slyworks.medix.managers.MessageManager
 import com.slyworks.models.models.Outcome
+import com.slyworks.models.room_models.Person
 import com.slyworks.network.NetworkRegister
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -20,27 +16,35 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 /**
  *Created by Joshua Sylvanus, 11:27 AM, 1/18/2022.
  */
-class ChatFragmentViewModel : ViewModel(), Observer {
+class ChatFragmentViewModel : ViewModel(){
     //region Vars
-    private val mSubscriptionList:MutableList<Subscription> = mutableListOf()
     private val mSubscriptions:CompositeDisposable = CompositeDisposable()
 
-    private val _mPersonListLiveData:MutableLiveData<Outcome> = MutableLiveData()
+    private val _successStateLiveData:MutableLiveData<List<Person>> = MutableLiveData()
+    val successStateLiveData:LiveData<List<Person>>
+    get() = _successStateLiveData
 
-    private var mDataManager: DataManager? = null
-    private var mNetworkRegister:NetworkRegister? = null
+    private val _introStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val intoStateLiveData:LiveData<Boolean>
+    get() = _introStateLiveData
+
+    private val _errorStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val errorStateLiveData:LiveData<Boolean>
+    get() = _errorStateLiveData
+
+    private val _errorDataLiveData:MutableLiveData<String> = MutableLiveData()
+    val errorDataLiveData:LiveData<String>
+    get() = _errorDataLiveData
+
+    private val _progressStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val progressStateLiveData:LiveData<Boolean>
+    get() = _progressStateLiveData
+
+
+    private var mNetworkRegister:NetworkRegister? = NetworkRegister(App.getContext())
+
+    private var isMessageManagerInitialized:Boolean = false
     //endregion
-
-    init {
-        AppController.addEvent(EVENT_GET_ALL_MESSAGES)
-        val subscription = AppController.subscribeTo(EVENT_GET_ALL_MESSAGES, this)
-         mSubscriptionList.add(subscription)
-
-        mDataManager = DataManager()
-        mNetworkRegister = NetworkRegister(App.getContext())
-    }
-
-    fun getPersonsListLiveData():LiveData<Outcome> = _mPersonListLiveData
 
     fun getChats(){
        val d = Observable.merge(
@@ -49,37 +53,47 @@ class ChatFragmentViewModel : ViewModel(), Observer {
        )
            .flatMap {
                if(!it)
-                   Observable.just(Outcome.ERROR(value = "no network connection detected"))
-               else
-                   mDataManager!!.observeMessagePersonsFromFB()
+                   Observable.just(Outcome.ERROR<Nothing>(additionalInfo = "no network connection"))
+               else {
+                   isMessageManagerInitialized = true
+                   MessageManager.observeMessagePersons()
+               }
            }
            .subscribeOn(Schedulers.io())
            .observeOn(Schedulers.io())
            .subscribe {
-               _mPersonListLiveData.postValue(it)
+               _progressStateLiveData.postValue(false)
+
+               when{
+                   it.isSuccess ->{
+                       _introStateLiveData.postValue(false)
+                       _errorStateLiveData.postValue(false)
+                       _successStateLiveData.postValue(it.getTypedValue())
+                   }
+                   it.isFailure ->{
+                       _errorStateLiveData.postValue(false)
+                       _introStateLiveData.postValue(true)
+                   }
+                   it.isError ->{
+                       _introStateLiveData.postValue(false)
+                       _errorDataLiveData.postValue(it.getAdditionalInfo())
+                       _errorStateLiveData.postValue(true)
+                   }
+               }
            }
 
         mSubscriptions.add(d)
     }
 
-    fun cleanup(){
-        mSubscriptions.clear()
-        mDataManager!!.detachMessagesPersonsFromFBListener()
-    }
-
-    override fun <T> notify(event: String, data: T?) {
-        when(event){
-            EVENT_GET_ALL_MESSAGES -> {}
-        }
-    }
+   fun getNetworkStatus():Boolean = mNetworkRegister!!.getNetworkStatus()
 
     override fun onCleared() {
         super.onCleared()
-        mSubscriptionList.forEach { it.clearAndRemove() }
         mSubscriptions.clear()
 
-        //mDataManager!!.detachMessagesPersonsFromFBListener()
-        mDataManager = null
+        if(isMessageManagerInitialized)
+            MessageManager.detachObserveMessagePersonsListener()
+
         mNetworkRegister!!.unsubscribeToNetworkUpdates()
         mNetworkRegister = null
 

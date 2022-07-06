@@ -1,7 +1,10 @@
 package com.slyworks.medix.network
 
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 
 /**
@@ -17,6 +20,12 @@ class ApiClient {
             INSTANCE = Retrofit.Builder()
                                .baseUrl(BASE_URL)
                                .addConverterFactory(GsonConverterFactory.create())
+                               .client(
+                                   /*trying to fix FirebaseCloudMessage Api error*/
+                                   OkHttpClient.Builder()
+                                       .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                                       .build()
+                               )
                                .build()
         }
 

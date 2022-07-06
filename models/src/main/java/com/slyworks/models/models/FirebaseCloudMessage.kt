@@ -1,3 +1,9 @@
 package com.slyworks.models.models
 
-data class FirebaseCloudMessage(var to:String, var data: Data)
+import com.google.gson.annotations.SerializedName
+
+data class FirebaseCloudMessage(
+    @SerializedName("to")
+    var to:String,
+    @SerializedName("data")
+    var data: Data)

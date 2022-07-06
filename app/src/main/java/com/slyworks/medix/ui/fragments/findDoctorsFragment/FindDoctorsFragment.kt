@@ -61,10 +61,7 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
         //initViews_2(view)
     }
     private fun initData(){
-        AppController.addEvent(EVENT_GET_DOCTOR_USERS)
         val subscription_1 = AppController.subscribeTo(EVENT_GET_DOCTOR_USERS, this)
-
-        AppController.addEvent(EVENT_OPEN_VIEW_PROFILE_FRAGMENT)
         val subscription_2: Subscription = AppController.subscribeTo(EVENT_OPEN_VIEW_PROFILE_FRAGMENT, this)
 
         mSubscriptionsList.add(subscription_1)

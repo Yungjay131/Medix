@@ -15,9 +15,9 @@ import com.slyworks.medix.ui.activities.registrationActivity.RegistrationActivit
 import com.slyworks.medix.ui.activities.registrationActivity.RegistrationDoctorActivity
 import com.slyworks.medix.ui.activities.registrationActivity.RegistrationPatientActivity
 import com.slyworks.medix.utils.ActivityUtils
-import com.slyworks.network.NetworkBroadcastReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
@@ -27,10 +27,10 @@ import kotlin.system.exitProcess
  */
 
 open class BaseActivity : AppCompatActivity() {
-    private var mBroadcastReceiver: NetworkBroadcastReceiver? = null
+    //region Vars
     private var mListenerManager: ListenerManager? = null
+    //endregion
 
-    private lateinit var mCurrentActivityTag:String
     protected open fun onCreate(activity: Activity){
         throw UnsupportedOperationException("please remove this method from your class")
     }
@@ -38,6 +38,15 @@ open class BaseActivity : AppCompatActivity() {
     protected open fun onDestroy(activity: Activity){
         throw UnsupportedOperationException("please remove this method from your class")
     }
+
+    protected open fun onStop(activity: Activity){
+        throw UnsupportedOperationException("please remove this method from your class")
+    }
+
+    protected open fun onStart(activity:Activity){
+        throw UnsupportedOperationException("please remove this method from your class")
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -65,33 +74,22 @@ open class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        ActivityUtils.setForegroundStatus(true, this::class.simpleName!!)
+        ActivityUtils.setForegroundStatus(true, this@BaseActivity::class.simpleName!!)
 
-        if(isCurrentActivityValid())
-          initListenerManager()
+        if(isCurrentActivityValid()) {
+            if(!ListenerManager.isInitialised)
+                ListenerManager.observeMyConnectionStatusChanges()
+            initListenerManager()
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        /*
-        * i noticed that onStop() is called for the exiting activity after onStart()
-        * has been called for the new activity, thereby cancelling the new activity's ListenerManager
-        * instance and setting the ForegroundStatus wrongly*/
-       /* if(this::class.simpleName != mCurrentActivityTag)
-            return*/
 
-        ActivityUtils.setForegroundStatus(false, this::class.simpleName!!)
+        ActivityUtils.setForegroundStatus(false, this@BaseActivity::class.simpleName!!)
 
         if(isCurrentActivityValid())
-           stopListenerManager()
-    }
-
-    protected open fun onStop(activity: Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
-    }
-
-    protected open fun onStart(activity:Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
+            stopListenerManager()
     }
 
     private fun initListenerManager(){

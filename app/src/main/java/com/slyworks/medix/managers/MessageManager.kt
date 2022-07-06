@@ -1,353 +1,471 @@
 package com.slyworks.medix.managers
 
-import android.content.Context
-import android.util.Log
 import com.google.firebase.database.*
 import com.slyworks.constants.*
 import com.slyworks.data.AppDatabase
 import com.slyworks.data.daos.MessageDao
 import com.slyworks.data.daos.MessagePersonDao
-import com.slyworks.medix.AppController
+import com.slyworks.data.daos.PersonDao
+import com.slyworks.medix.App
+import com.slyworks.medix.utils.MChildEventListener
+import com.slyworks.medix.utils.MValueEventListener
 import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.*
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.tasks.asDeferred
-import java.util.concurrent.atomic.AtomicReference
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 /**
  *Created by Joshua Sylvanus, 8:33 PM, 1/8/2022.
  */
 
-class MessageManager(private var context: Context) {
+object MessageManager {
     //region Vars
     private val TAG: String? = MessageManager::class.simpleName
 
-    private var mFirebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var mMessageDao: MessageDao = AppDatabase.getInstance(context).getMessageDao()
-    private var mMessagePersonDao: MessagePersonDao = AppDatabase.getInstance(context).getMessagePersonDao()
+    private var mMessageDao: MessageDao = AppDatabase.getInstance(App.getContext()).getMessageDao()
+    private var mPersonDao: PersonDao = AppDatabase.getInstance(App.getContext()).getPersonDao()
 
-    private val mListenerMap:MutableMap<String, ChildEventListener> = mutableMapOf()
+    private var mHandleChangedMessagesDisposable:CompositeDisposable = CompositeDisposable()
+    private var mHandleNewMessagesDisposable: CompositeDisposable = CompositeDisposable()
 
-    private val o:PublishSubject<Boolean> = PublishSubject.create()
-    //endregion
+    private var observeNewMessagesForUIDJob:Job? = null
+    private var observeNewMessagePersonsJob:Job? = null
 
-    private val mSingleUIDNewMessageChildEventListener:ChildEventListener = object : ChildEventListener{
-        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-        override fun onChildRemoved(snapshot: DataSnapshot) {}
-        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-        override fun onCancelled(error: DatabaseError) {}
-        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            //new message
-            val message: Message = snapshot.getValue(Message::class.java)!!
-            if(message.type == OUTGOING_MESSAGE) return
+    private lateinit var mUIDValueEventListener: ValueEventListener
+    private lateinit var mUIDChildEventListener:ChildEventListener
+   //endregion
 
-            addMessageToDB(message)
-            addMessagePersonToDB(mapMessageToMessagePerson(message, INCOMING_MESSAGE))
+    fun detachMessagesForUIDListener(firebaseUID: String){
+        observeNewMessagesForUIDJob?.cancel()
+        mHandleChangedMessagesDisposable.clear()
+
+        FirebaseDatabase.getInstance()
+            .reference
+            .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
+            .orderByChild("from_uid")
+            .equalTo(firebaseUID)
+            .removeEventListener(mUIDValueEventListener)
+    }
+
+    fun observeMessagesForUID(firebaseUID:String):Observable<Outcome> =
+      Observable.create { emitter ->
+          mUIDValueEventListener = MValueEventListener(onDataChangeFunc = ::handleChangedMessages)
+
+          FirebaseDatabase.getInstance()
+              .reference
+              .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
+              .orderByChild("from_uid")
+              .equalTo(firebaseUID)
+              .addValueEventListener(mUIDValueEventListener)
+
+          observeNewMessagesForUIDJob =
+              CoroutineScope(Dispatchers.IO).launch {
+                  mMessageDao
+                      .observeMessagesForUID(firebaseUID)
+                      .distinctUntilChanged()
+                      .collectLatest {
+                          if (it.isNotEmpty()) {
+                              it.sort()
+                              val r: Outcome = Outcome.SUCCESS<MutableList<Message>>(it)
+                              emitter.onNext(r)
+                          } else {
+                              val r: Outcome = Outcome.FAILURE<Nothing>(reason = "no messages")
+                              emitter.onNext(r)
+                          }
+                      }
+              }
+      }
+
+    private fun handleChangedMessages(snapshot: DataSnapshot){
+        val l: MutableList<Message> = mutableListOf()
+        snapshot.children.forEach {
+            val m: Message = it.getValue(Message::class.java)!!
+            l.add(m)
         }
-    }
 
-    private val mNewMessageChildEventListener:ChildEventListener =  object :ChildEventListener{
-        override fun onChildRemoved(snapshot: DataSnapshot) {}
-        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-        override fun onCancelled(error: DatabaseError) {}
-        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            val lastMessage: Message = snapshot.children.last().getValue(Message::class.java)!!
-            if(lastMessage.type == OUTGOING_MESSAGE) return
-
-            //AppController.notifyObservers(EVENT_NEW_MESSAGE_RECEIVED, null )
-            o.onNext(true)
-        }
-
-        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            val lastMessage: Message = snapshot.children.last().getValue(Message::class.java)!!
-            if(lastMessage.type == OUTGOING_MESSAGE) return
-
-            // AppController.notifyObservers(EVENT_NEW_MESSAGE_RECEIVED, null )
-        }
-    }
-    fun listenForNewMessages(firebaseUID: String = UserDetailsUtils.user!!.firebaseUID){
-        mFirebaseDatabase.reference
-            .child("users")
-            .child(firebaseUID)
-            .child("messages")
-            .addChildEventListener(mNewMessageChildEventListener)
-    }
-
-    fun listenForNewMessages2(firebaseUID: String = UserDetailsUtils.user!!.firebaseUID): Observable<Boolean>{
-        listenForNewMessages(firebaseUID)
-        return o.hide()
-    }
-
-    fun observeNewMessages(){
-        mFirebaseDatabase.reference
-            .child("users")
-            .child(UserDetailsUtils.user!!.firebaseUID)
-            .child("messages")
-            .addChildEventListener(object: ChildEventListener{
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onChildRemoved(snapshot: DataSnapshot) {}
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onCancelled(error: DatabaseError) {}
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        //person with list of messages
-                        val messagePerson: MessagePerson =
-                            MessagePerson(firebaseUID = snapshot.key!!)
-                        val list:MutableList<Message> = mutableListOf()
-                        snapshot.children.forEach{
-                            val message: Message = it.getValue(Message::class.java)!!
-                            list.add(message)
-                        }
-                        //would trigger getAllMessagePersonWithMessages()???
-                        //maybe if it fro service drop notification
-                        mMessagePersonDao.addMessagePerson(messagePerson)
-                        mMessageDao.addMessage(*list.toTypedArray())
-                    }
-                }
-            })
-    }
-
-
-
-
-    //measureTimeInMillis{}
-    fun getAllMessagePersonWithMessages() {
-            val mpwmList: MutableList<MessagePersonWithMessages> = mutableListOf()
-
-            var status:Boolean = false
-            var message:String? = "an error occurred retrieving messages"
-            var triple:Triple<Boolean, String, MutableList<MessagePersonWithMessages>?>
-
-            mFirebaseDatabase.reference
-                .child("users")
-                .child(UserDetailsUtils.user!!.firebaseUID)
-                .child("messages")
-                .get()
-                .addOnCompleteListener { mpwmL ->
-                    CoroutineScope(Dispatchers.IO).launch outer_launch@{
-                        if(!mpwmL.isSuccessful){
-                            triple = Triple(false, "retrieving messages did not complete", null)
-                            AppController.notifyObservers(EVENT_GET_ALL_MESSAGES, triple)
-                            return@outer_launch
-                        }
-
-                        //means here onwards it was successful
-                        if (mpwmL.result?.getValue() == null){
-                            triple = Triple(true, "you have no messages at this time", null)
-                            AppController.notifyObservers(EVENT_GET_ALL_MESSAGES, triple)
-                            return@outer_launch
-                        }
-
-                            mpwmL.result!!.children.forEach { it ->
-                                val firebaseUID: String = it.key!!
-                                val messagePerson: MessagePerson =
-                                    MessagePerson(firebaseUID)
-                                val details:AtomicReference<FBUserDetails?> = AtomicReference(null)
-                                val messageDetails: MessageDetails
-                                val messageList: MutableList<Message> = mutableListOf()
-
-                                val result = mFirebaseDatabase.reference
-                                            .child("users")
-                                            .child(firebaseUID)
-                                            .child("details")
-                                            .get()
-                                            .asDeferred()
-                                            .await()
-
-                                message = "error occurred getting a message person's details"
-
-                                details.set(result.getValue(FBUserDetails::class.java))
-                                if (details.get() == null){
-                                    triple = Triple(false, message!!, null)
-                                    AppController.notifyObservers(EVENT_GET_ALL_MESSAGES, triple)
-                                    return@outer_launch
-                                }
-
-                                it.children.forEach { it3 ->
-                                    val _message: Message = it3.getValue(Message::class.java)!!
-                                    messageList.add(_message)
-                                }
-
-                                val lastMessage: Message = messageList.last()
-                                val _details: FBUserDetails = details.get()!!
-                                messageDetails = MessageDetails(
-                                    userAccountType = _details.accountType,
-                                    lastMessageType = lastMessage.type,
-                                    lastMessageContent = lastMessage.content,
-                                    lastMessageStatus = lastMessage.status,
-                                    lastMessageTimeStamp = lastMessage.timeStamp,
-                                    senderImageUri = _details.imageUri,
-                                    fullName = _details.fullName
-                                )
-
-                                val mpwm: MessagePersonWithMessages = MessagePersonWithMessages(
-                                    person = messagePerson,
-                                    details = messageDetails,
-                                    messages = messageList
-                                )
-
-                                mpwmList.add(mpwm)
-
-                                mMessageDao.addMessage(*messageList.toTypedArray())
-                                mMessagePersonDao.addMessagePerson(messagePerson)
-                            }
-
-                            triple = Triple(true, "messages successfully retrieved", mpwmList)
-                        AppController.notifyObservers(EVENT_GET_ALL_MESSAGES, triple)
-                    }
-                }
-
-       }
-
-    fun observeMessagesForUID(firebaseUID:String): Flow<MutableList<Message>> {
-        return mMessageDao.observeMessagesForUID(firebaseUID)
-    }
-
-    fun addListenerForUID(firebaseUID: String){
-        val listener:ChildEventListener = mFirebaseDatabase.reference
-            .child("users")
-            .child(UserDetailsUtils.user!!.firebaseUID)
-            .child("messages")
-            .child(firebaseUID)
-            .addChildEventListener(mSingleUIDNewMessageChildEventListener)
-
-        mListenerMap.put(firebaseUID, listener)
-    }
-
-    fun getMessagesForUID(firebaseUID: String){
-        mFirebaseDatabase.reference
-            .child("users")
-            .child(UserDetailsUtils.user!!.firebaseUID)
-            .child("messages")
-            .child(firebaseUID)
-            .get()
-            .addOnCompleteListener {
-                if(it.isSuccessful){
-                    if (it.result?.getValue() == null) return@addOnCompleteListener
-
-                    val list:MutableList<Message> = mutableListOf()
-                    it.result!!.children.forEach { data ->
-                        val message: Message = data.getValue(Message::class.java)!!
-                        list.add(message)
-                    }
-
-                    addMessageToDB(*list.toTypedArray())
-                }
-            }
-    }
-
-    fun sendMessage(message: Message) {
-        message.status = DELIVERED
-
-        val message2: Message = message.copy()
-        message2.type = INCOMING_MESSAGE
-
-        val senderMessageNodeKey = mFirebaseDatabase.reference
-            .child("users")
-            .child(UserDetailsUtils.user!!.firebaseUID)
-            .child("messages")
-            .child(message.toUID)
-            .push()
-            .key
-
-        val receiverMessageNodeKey = mFirebaseDatabase.reference
-            .child("users")
-            .child(message.toUID)
-            .child("messages")
-            .child(message.fromUID)
-            .push()
-            .key
-
-        if(senderMessageNodeKey == null || receiverMessageNodeKey == null){
-            //first messages do manually
-         mFirebaseDatabase.reference
-                .child("users")
-                .child(UserDetailsUtils.user!!.firebaseUID)
-                .child("messages")
-                .child(message.toUID)
-                .setValue(message)
-                .continueWith {
-                     mFirebaseDatabase.reference
-                        .child("users")
-                        .child(message.toUID)
-                        .child("messages")
-                        .child(message.fromUID)
-                        .setValue(message2)
-                }.addOnCompleteListener {
-                 if(it.isSuccessful){
-                     addMessageToDB(message)
-                     addMessagePersonToDB(mapMessageToMessagePerson(message, OUTGOING_MESSAGE))
-                 }else{
-                     addMessageToDB(message)
-                     addMessagePersonToDB(mapMessageToMessagePerson(message, OUTGOING_MESSAGE))
-                 }
-             }.addOnFailureListener {
-                 Log.e(TAG, "sendMessage: sending message to Firebase DB failed", it )
-             }
-
+        if(l.isNullOrEmpty())
             return
+
+        val d = addMessagesToDB(*l.toTypedArray())
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe{ _ -> }
+
+        mHandleChangedMessagesDisposable.add(d)
+    }
+
+    fun detachObserveMessagePersonsListener(){
+        observeNewMessagePersonsJob?.cancel()
+
+        FirebaseDatabase.getInstance()
+            .reference
+            .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
+            .removeEventListener(mUIDChildEventListener)
+    }
+
+    fun observeMessagePersons():Observable<Outcome> =
+        Observable.create { emitter ->
+             mUIDChildEventListener = MChildEventListener(onChildAddedFunc = ::handleNewMessages)
+
+             FirebaseDatabase.getInstance()
+                 .reference
+                 .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
+                 .addChildEventListener(mUIDChildEventListener)
+
+             observeNewMessagePersonsJob =
+                 CoroutineScope(Dispatchers.IO).launch {
+                     mPersonDao
+                         .observePersons()
+                         .distinctUntilChanged()
+                         .collectLatest {
+                             if (it.isNotEmpty()) {
+                                 val r: Outcome = Outcome.SUCCESS<MutableList<Person>>(it)
+                                 emitter.onNext(r)
+                             } else {
+                                 val r: Outcome = Outcome.FAILURE<Nothing>(reason = "you don't seem to have any messages at the moment")
+                                 emitter.onNext(r)
+                             }
+                         }
+                 }
         }
 
-        val childNode:HashMap<String, Any> = hashMapOf(
-            "/users/${message.fromUID}/messages/${message.toUID}/$senderMessageNodeKey" to message,
-            "/users/${message.toUID}/messages/${message.fromUID}/$receiverMessageNodeKey" to message2)
+    private fun handleNewMessages(snapshot: DataSnapshot){
+        val d = getPersonSetObservable()
+            .flatMap {
+                getMessageListObservable(snapshot)
+                    .map(::mapUIDToMessageList)
+                    .map(::mapUIDMapToPersonList)
+            }
+            .flatMap {
+                getPersonsObservable(it)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe { _ -> }
 
-        mFirebaseDatabase.reference
-            .updateChildren(childNode)
-            .addOnCompleteListener {
-               if(it.isSuccessful){
-                   message.status = DELIVERED
-                   addMessageToDB(message)
-                   if(message.fromUID != UserDetailsUtils.user!!.firebaseUID)
-                      addMessagePersonToDB(mapMessageToMessagePerson(message, OUTGOING_MESSAGE))
-               }else{
-                   message.status = NOT_SENT
-                   addMessageToDB(message)
+        mHandleNewMessagesDisposable.add(d)
+    }
 
-                   if(message.fromUID != UserDetailsUtils.user!!.firebaseUID)
-                      addMessagePersonToDB(mapMessageToMessagePerson(message, OUTGOING_MESSAGE))
-               }
-            }.addOnFailureListener {
-                Log.e(TAG, "sendMessage: sending message to Firebase DB failed", it )
+    private fun getMessageListObservable(snapshot: DataSnapshot):Observable<List<Message>> =
+        Observable.create<List<Message>> { emitter ->
+            val l:MutableList<Message> = mutableListOf()
+            for(child in snapshot.children)
+                l.add(child.getValue(Message::class.java)!!)
+
+            emitter.onNext(l)
+            emitter.onComplete()
+        }
+
+    private fun getPersonSetObservable():Observable<MutableSet<Person>> =
+        Observable.create<MutableSet<Person>> { emitter ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val s: MutableSet<Person> =
+                   mPersonDao
+                    .getPersons()
+                    .toMutableSet()
+
+                emitter.onNext(s)
+                emitter.onComplete()
+            }
+        }
+
+    private fun getPersonsObservable(personList:List<Person>):Observable<Boolean> =
+        Observable.create<Boolean> { emitter ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    mPersonDao
+                        .addPerson(*personList.toTypedArray())
+
+                    emitter.onNext(true)
+                    emitter.onComplete()
+                }catch (e:Exception){
+                    emitter.onNext(false)
+                    emitter.onComplete()
+                }
+            }
+        }
+
+    private fun mapUIDToMessageList(messageList:List<Message>)
+    :MutableMap<String, MutableList<Message>>{
+        val sm: MutableMap<String, MutableList<Message>> = mutableMapOf()
+
+        messageList.forEach { m ->
+            val key: String =
+                if (m.type == OUTGOING_MESSAGE) m.fromUID
+                else m.toUID
+
+            if (!sm.containsKey(key))
+                sm.put(key, mutableListOf())
+
+            sm.get(key)!!.add(m)
+        }
+
+        return sm
+    }
+
+    private fun mapUIDMapToPersonList(UIDMap:MutableMap<String, MutableList<Message>>)
+    :List<Person> {
+        var mList:MutableList<Message>
+        var lastMessage:Message
+        var name:String
+        var unreadMessageCount:Int = 0
+
+        val personList:MutableList<Person> = mutableListOf()
+        for(i in UIDMap.keys){
+            mList = UIDMap.get(i)!!
+            mList.sort()
+
+            lastMessage = mList.last()
+            if(lastMessage.type == OUTGOING_MESSAGE)
+                name = lastMessage.receiverFullName
+            else
+                name = lastMessage.senderFullName
+
+
+            mList.forEach { m:Message ->
+                if(m.status != READ)
+                    unreadMessageCount++
+            }
+
+            personList.add( parsePerson(lastMessage, i, name, unreadMessageCount))
+        }
+
+        return personList
+    }
+
+    private fun parsePerson(m:Message,
+                            UID:String,
+                            name:String,
+                            unreadMessageCount:Int):Person
+            =  Person(
+        firebaseUID = UID,
+        userAccountType = m.accountType,
+        lastMessageType = m.type,
+        lastMessageContent = m.content,
+        lastMessageStatus = m.status,
+        lastMessageTimeStamp = m.timeStamp,
+        senderImageUri = m.senderImageUri,
+        fullName = name,
+        unreadMessageCount = unreadMessageCount,
+        FCMRegistrationToken = m.FCMRegistrationToken )
+
+
+
+    fun sendMessage(message:Message): Observable<Boolean> {
+        /* creating 2 copies of the messages to keep sender and receiver version different */
+        //TODO: perform tests to know if this 'doubling' is necessary
+        message.status = DELIVERED
+        val message2: Message = Message.cloneFrom(message)
+
+        /* if the sender's DB message node has other messages, just add a new empty node */
+        val senderMessageNodeKey:String? = FirebaseDatabase.getInstance()
+            .reference.child("messages/${message.fromUID}")
+            .push().key
+
+        /* if the receiver's DB message node has other messages, just add a new empty node*/
+        val receiverMessageNodeKey:String? = FirebaseDatabase.getInstance()
+            .reference.child("messages/${message.toUID}")
+            .push().key
+
+        getChildNodesObservable(
+            message,
+            message2,
+            senderMessageNodeKey,
+            receiverMessageNodeKey)
+            .flatMap {
+                addMessagesToDB(
+                    if (it.isSuccess)
+                        message
+                    else
+                        message.apply { status = NOT_SENT }
+                )
+            }
+
+        /* complex RX chain that starts with checking if the sender's message node is empty
+        * if it is, start by sending the message to the sender's node
+        * then if the receiver's message node is empty,
+        * send the message to the message node
+        * if the receiver's message node is NOT empty
+        * send the message to an empty created node
+        * and save the sent message, if there was an error, set the Message#status to NOT_SENT
+        * and add to DB, if it failed it is re-queued for later
+        *
+        * if both receiver and sender message nodes are NOT empty, then just perform a
+        * simultaneous child node update */
+        //TODO && FIXME: use Completable#andThen here
+        return Observable.just(senderMessageNodeKey == null)
+            .flatMap {
+                if(it)
+                    getSenderObservable(message)
+                        .flatMap { it2 ->
+                            if(it2.isSuccess)
+                                Observable.just(receiverMessageNodeKey == null)
+                                    .flatMap { it3 ->
+                                        if(it3)
+                                            getReceiverObservable(message2)
+                                                .flatMap { it4 ->
+                                                    addMessagesToDB(
+                                                        if (it4.isSuccess)
+                                                            message
+                                                        else
+                                                            message.apply { status = NOT_SENT }
+                                                    )
+                                                }
+                                        else
+                                            getReceiverNodeObservable(message2,receiverMessageNodeKey)
+                                                .flatMap { it5 ->
+                                                    addMessagesToDB(
+                                                        if (it5.isSuccess)
+                                                            message
+                                                        else
+                                                            message.apply { status = NOT_SENT }
+                                                    )
+                                                }
+                                    }
+
+                            else
+                                Observable.just(it2)
+                        }
+                else
+                    getChildNodesObservable(message,
+                                            message2,
+                                            senderMessageNodeKey,
+                                            receiverMessageNodeKey)
+            }
+            .flatMap {
+                if(it.isSuccess)
+                    Observable.just(true)
+                else
+                    Observable.just(false)
             }
     }
-    fun mapMessageToMessagePerson(message: Message, type:String): MessagePerson {
-        var messagePerson: MessagePerson? = null
-        when(type){
-            OUTGOING_MESSAGE ->
-                messagePerson = MessagePerson(message.toUID)
-            INCOMING_MESSAGE ->
-                messagePerson = MessagePerson(message.fromUID)
 
+    private fun getSenderObservable(message:Message):Observable<Outcome> =
+        /* Observable for case when sender's message node is empty
+       i.e its the very first message for the user */
+        Observable.create<Outcome> { emitter ->
+            val key:String? = FirebaseDatabase.getInstance()
+                .reference
+                .child("messages/${message.toUID}")
+                .push()
+                .key
+
+            if(key == null){
+                emitter.onNext(Outcome.FAILURE("created message node for sender is null"))
+                emitter.onComplete()
+                return@create
+            }
+
+            FirebaseDatabase.getInstance()
+                .reference
+                .child("messages/${UserDetailsUtils.user!!.firebaseUID}/$key")
+                .setValue(message)
+                .addOnCompleteListener {
+                    if(it.isSuccessful)
+                        emitter.onNext(Outcome.SUCCESS(null))
+                    else
+                        emitter.onNext(Outcome.FAILURE(null))
+
+                    emitter.onComplete()
+                }
         }
 
-        return messagePerson!!
-    }
-    fun detachListenerForUID(firebaseUID: String){
-        mListenerMap[firebaseUID] ?: return
+    private fun getReceiverObservable(message:Message):Observable<Outcome> =
+        /* Observable for case when receiver's message node is empty
+       * i.e its the very first message for the user*/
+        Observable.create<Outcome> { emitter ->
+            val key:String? = FirebaseDatabase.getInstance()
+                .reference
+                .child("messages/${message.toUID}")
+                .push()
+                .key
 
-        mFirebaseDatabase.reference
-            .child("users")
-            .child(UserDetailsUtils.user!!.firebaseUID)
-            .child("messages")
-            .child(firebaseUID)
-            .removeEventListener(mListenerMap[firebaseUID]!!)
-    }
-    fun addMessagePersonToDB(messagePerson: MessagePerson){
-        CoroutineScope(Dispatchers.IO).launch {
-            mMessagePersonDao.addMessagePerson(messagePerson)
+            if(key == null){
+                emitter.onNext(Outcome.FAILURE("created message node for receiver is null"))
+                emitter.onComplete()
+                return@create
+            }
+
+            FirebaseDatabase.getInstance()
+                .reference
+                .child("messages/${message.toUID}/$key")
+                .setValue(message)
+                .addOnCompleteListener {
+                    if(it.isSuccessful)
+                        emitter.onNext(Outcome.SUCCESS(null))
+                    else
+                        emitter.onNext(Outcome.FAILURE(it.exception?.message))
+
+                    emitter.onComplete()
+                }
         }
-    }
 
-    fun addMessageToDB(vararg message: Message){
-        CoroutineScope(Dispatchers.IO).launch {
-            mMessageDao.addMessage(*message)
+    private fun getReceiverNodeObservable(message:Message,
+                                          receiverMessageNodeKey:String?):Observable<Outcome> =
+        /* Observable for case when the receiver's message node is *NOT*
+        * empty, hence just add an empty node and set its value to the Message being sent*/
+        Observable.create<Outcome> { emitter ->
+            FirebaseDatabase.getInstance()
+                .reference
+                .child("messages/${message.toUID}/$receiverMessageNodeKey")
+                .setValue(message)
+                .addOnCompleteListener {
+                    if(it.isSuccessful)
+                        emitter.onNext(Outcome.SUCCESS(null))
+                    else
+                        emitter.onNext(Outcome.FAILURE(null))
+
+                    emitter.onComplete()
+                }
         }
-    }
 
 
+    private fun getChildNodesObservable(message: Message,
+                                        message2:Message,
+                                        senderMessageNodeKey:String?,
+                                        receiverMessageNodeKey: String?):Observable<Outcome> =
+        /*
+       * Observable for case when both receiver and sender message nodes are NOT
+       * empty,hence perform a simultaneous child node update*/
+        Observable.create<Outcome>{ emitter ->
+            val childNode: HashMap<String, Any> = hashMapOf(
+                "/messages/${message.fromUID}/$senderMessageNodeKey" to message,
+                "/messages/${message.toUID}/$receiverMessageNodeKey" to message2
+            )
+
+            FirebaseDatabase.getInstance()
+                .reference
+                .updateChildren(childNode)
+                .addOnCompleteListener {
+                    if(it.isSuccessful)
+                        emitter.onNext(Outcome.SUCCESS(null))
+                    else
+                        emitter.onNext(Outcome.FAILURE(null))
+
+                    emitter.onComplete()
+                }
+        }
+
+    private fun addMessagesToDB(vararg message: Message):Observable<Outcome> =
+        Observable.create { emitter ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    mMessageDao
+                        .addMessage(*message)
+
+                    emitter.onNext(Outcome.SUCCESS(null))
+                    emitter.onComplete()
+                }catch (e:Exception){
+                    emitter.onNext(Outcome.FAILURE(null, reason = e.message))
+                    emitter.onComplete()
+                }
+            }
+        }
 }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -23,12 +24,11 @@ import com.slyworks.medix.managers.CallManager
 import com.slyworks.medix.R
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.VibrationManager
-import com.slyworks.medix.navigation.ActivityWrapper
-import com.slyworks.medix.navigation.NavigationManager
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.utils.*
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.models.VideoCallRequest
+import com.slyworks.models.room_models.CallHistory
 import com.slyworks.models.room_models.FBUserDetails
 import de.hdodenhof.circleimageview.CircleImageView
 import io.agora.rtc.Constants
@@ -54,18 +54,15 @@ class VideoCallActivity : BaseActivity() {
     private var mMuteStatus:Boolean = false
     private var mIsVideoSwitched:Boolean = false
 
-    private lateinit var mUser: FBUserDetails
     private lateinit var mUserDetails: FBUserDetails
+
+    private lateinit var mCallHistory: CallHistory
 
     private lateinit var mRtcEngine: RtcEngine
     
     private lateinit var mCameraProviderFuture:ListenableFuture<ProcessCameraProvider>
     //endregion
 
-    companion object{
-        private var mIsInForeground:Boolean = false
-        fun getForegroundStatus():Boolean =  mIsInForeground
-    }
     private val mRtcEventHandler: IRtcEngineEventHandler = object: IRtcEngineEventHandler(){
         override fun onUserJoined(uid: Int, elapsed: Int) {
             super.onUserJoined(uid, elapsed)
@@ -88,29 +85,20 @@ class VideoCallActivity : BaseActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        super.onStart(this)
-        mIsInForeground = true
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mIsInForeground = false
-    }
-
     override fun onDestroy() {
+        super.onDestroy()
         mRtcEngine.leaveChannel()
         RtcEngine.destroy()
-        super.onDestroy(this)
-        super.onDestroy()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_call)
 
-        super.onCreate(this)
+        initAgoraEngine()
+        initViews()
+        initData()
+        initCameraPreview()
     }
 
     private fun initCameraPreview(){
@@ -146,23 +134,31 @@ class VideoCallActivity : BaseActivity() {
 
     private fun initData(){
         //in the case of making the call or joining the call
-     //if join call,shw callers picture and name
+     //if join call,show callers picture and name
      //else show person you are calling picture
       //1-calling
        val extras:Bundle = intent.getBundleExtra(EXTRA_ACTIVITY)!!
        val type:String = extras.getString(EXTRA_VIDEO_CALL_TYPE)!!
        mUserDetails = intent.getParcelableExtra<FBUserDetails>(EXTRA_VIDEO_CALL_USER_DETAILS)!!
+        mCallHistory = CallHistory(type = VIDEO_CALL,
+            callerUID = mUserDetails.firebaseUID,
+            senderImageUri =  mUserDetails.imageUri,
+            callerName = mUserDetails.fullName,
+            timeStamp = System.currentTimeMillis().toString())
        if(type == VIDEO_CALL_OUTGOING){
+           mCallHistory.status = OUTGOING_CALL
+
            val request: VideoCallRequest =
                VideoCallRequest(UserDetailsUtils.user!!, REQUEST_PENDING)
            CallManager.processVideoCall(
                type = TYPE_REQUEST,
                firebaseUID = mUserDetails.firebaseUID,
                request = request)
-           _setViewsForOutgoingVideoCall(mUserDetails)
+           setViewsForOutgoingVideoCall(mUserDetails)
            joinChannel()
        }else{
-           _setViewsForIncomingVideoCall(mUserDetails)
+           mCallHistory.status = INCOMING_CALL
+           setViewsForIncomingVideoCall(mUserDetails)
        }
     }
 
@@ -197,12 +193,8 @@ class VideoCallActivity : BaseActivity() {
                 firebaseUID = mUserDetails.firebaseUID,
                 status = REQUEST_DECLINED)
 
-            NavigationManager.onBackPressed(this,true, ActivityWrapper.MAIN)
 
-            /*val intent:Intent = Intent(this, MainActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()*/
+            onBackPressedDispatcher.onBackPressed()
         }
 
         fabEndCall.setOnClickListener {
@@ -213,7 +205,7 @@ class VideoCallActivity : BaseActivity() {
                 firebaseUID = mUserDetails.firebaseUID,
                 status = REQUEST_DECLINED)
 
-           NavigationManager.onBackPressed(this, true, ActivityWrapper.MAIN)
+          onBackPressedDispatcher.onBackPressed()
         }
 
         fabToggleMute.setOnClickListener {
@@ -227,8 +219,7 @@ class VideoCallActivity : BaseActivity() {
         }
     }
 
-    private fun _setViewsForIncomingVideoCall(userDetails: FBUserDetails){
-        /*TODO: add vibration here to simulate a real call, with camera preview*/
+    private fun setViewsForIncomingVideoCall(userDetails: FBUserDetails){
         ivProfile.displayImage(userDetails.imageUri)
         tvProfileName.text = userDetails.fullName
 
@@ -244,7 +235,7 @@ class VideoCallActivity : BaseActivity() {
         VibrationManager.vibrate(type = INCOMING_CALL_NOTIFICATION)
     }
 
-    private fun _setViewsForOutgoingVideoCall(userDetails: FBUserDetails){
+    private fun setViewsForOutgoingVideoCall(userDetails: FBUserDetails){
         ivProfile.displayImage(userDetails.imageUri)
         tvProfileName.text = userDetails.fullName
 
@@ -321,9 +312,13 @@ class VideoCallActivity : BaseActivity() {
             IDUtils.generateNewVideoCallUserID())
 
         setupLocalVideoFeed()
+
+        CallManager.onVideoCallStarted(mCallHistory)
     }
 
     private fun leaveChannel(){
+        CallManager.onVideoCallStopped()
+
         mRtcEngine.leaveChannel()
         removeVideo(flSmallVideoContainer)
         removeVideo(flMainVideoContainer)
@@ -336,7 +331,7 @@ class VideoCallActivity : BaseActivity() {
         container.removeAllViews()
     }
     private fun onRemoteUserVideoToggle(UID:Int, state:Int){
-     /*   val videoSurface:SurfaceView = flMainVideoContainer.getChildAt(0) as SurfaceView
+        val videoSurface:SurfaceView = flMainVideoContainer.getChildAt(0) as SurfaceView
         videoSurface.visibility = if(state == 0) View.GONE else View.VISIBLE
 
         //add an icon to let other user know that remote video has been disabled
@@ -346,10 +341,10 @@ class VideoCallActivity : BaseActivity() {
 
             flMainVideoContainer.addView(ivNoCamera)
         }else{
-            val ivNoCamera:ImageView? = flMainVideoContainer.getChildAt(1) as ImageView
+            val ivNoCamera: ImageView? = flMainVideoContainer.getChildAt(1) as ImageView
             if(ivNoCamera != null )
                 flMainVideoContainer.removeView(ivNoCamera)
-        }*/
+        }
     }
 
     private fun toggleMuteStatus(status:Boolean){
@@ -388,6 +383,6 @@ class VideoCallActivity : BaseActivity() {
 
 
     override fun onBackPressed() {
-        NavigationManager.onBackPressed(this, true)
+      super.onBackPressed()
     }
 }

@@ -14,5 +14,11 @@ data class MessageDetails(
     var lastMessageTimeStamp:String? = "",
     var senderImageUri:String = "",
     var fullName:String = ""){
-    constructor():this("","","",NOT_SENT,"", "")
+    constructor():this(
+        userAccountType = "",
+        lastMessageType = "",
+        lastMessageContent = "",
+        lastMessageStatus = NOT_SENT,
+        lastMessageTimeStamp = "",
+        senderImageUri = "")
 }

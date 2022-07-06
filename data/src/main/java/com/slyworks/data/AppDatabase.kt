@@ -25,7 +25,8 @@ import com.slyworks.models.room_models.Person
         Message::class,
         CallHistory::class,
     ],
-    version = 1, exportSchema = true )
+    version = 1,
+    exportSchema = true )
 abstract class AppDatabase : RoomDatabase(){
     companion object{
         //region Vars

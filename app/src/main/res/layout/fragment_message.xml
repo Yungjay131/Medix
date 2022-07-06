@@ -5,17 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootView">
-
-    <include
-        android:id="@+id/layout_invite"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        layout="@layout/layout_video_call_invite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
+    android:id="@+id/rootView"
+    android:fitsSystemWindows="true">
 
    <androidx.constraintlayout.widget.ConstraintLayout
        android:id="@+id/layout_toolbar_frag_chat"
@@ -24,7 +15,17 @@
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
        app:layout_constraintTop_toTopOf="parent"
-       android:background="@color/appGrey">
+       android:background="@color/appGrey"
+       android:fitsSystemWindows="true">
+
+       <ProgressBar
+           android:id="@+id/progress_layout"
+           android:layout_height="60dp"
+           android:layout_width="60dp"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           android:visibility="gone"/>
 
        <ImageView
            android:id="@+id/ivback_frag_message"
@@ -60,11 +61,10 @@
            app:layout_constraintBottom_toTopOf="@id/__barrier_horizontal_1"
            android:gravity="center_vertical"
            android:textColor="@color/appTextColor3"
-           android:textSize="20sp"
+           android:textSize="18sp"
            android:maxLines="1"
            android:ellipsize="end"
-           android:text="Joshua"
-           android:textStyle="bold"/>
+           android:text="Joshua" />
 
        <TextView
            android:id="@+id/tvConnectionStatus_frag_message"
@@ -74,6 +74,7 @@
            app:layout_constraintEnd_toStartOf="@id/_guide_vertical_2"
            app:layout_constraintTop_toBottomOf="@id/__barrier_horizontal_1"
            app:layout_constraintBottom_toBottomOf="parent"
+           android:layout_marginBottom="1dp"
            android:textColor="@color/appGreen"
            tools:text="online" />
 
@@ -145,7 +146,7 @@
            app:layout_constraintTop_toTopOf="parent"
            app:layout_constraintBottom_toBottomOf="parent"
            android:orientation="vertical"
-           app:layout_constraintGuide_percent=".12"/>
+           app:layout_constraintGuide_percent=".11"/>
 
        <androidx.constraintlayout.widget.Guideline
            android:id="@+id/_guide_vertical_6"
@@ -155,7 +156,7 @@
            app:layout_constraintTop_toTopOf="parent"
            app:layout_constraintBottom_toBottomOf="parent"
            android:orientation="vertical"
-           app:layout_constraintGuide_percent=".24"/>
+           app:layout_constraintGuide_percent=".21"/>
 
        <androidx.constraintlayout.widget.Guideline
            android:id="@+id/_guide_vertical_7"
@@ -165,7 +166,7 @@
            app:layout_constraintTop_toTopOf="parent"
            app:layout_constraintBottom_toBottomOf="parent"
            android:orientation="vertical"
-           app:layout_constraintGuide_percent=".26"/>
+           app:layout_constraintGuide_percent=".22"/>
 
        <androidx.constraintlayout.widget.Guideline
            android:id="@+id/_guide_vertical_2"
@@ -296,17 +297,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guide_horizontal_1"
         app:layout_constraintVertical_bias="1.0" />
-
-    <include
-        android:id="@+id/progress_layout"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        layout="@layout/layout_progressbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="70dp"
-        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_horizontal_1"

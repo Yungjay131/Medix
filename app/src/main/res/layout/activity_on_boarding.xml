@@ -298,7 +298,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:paddingBottom="48dp">
 
                 <ImageView
@@ -342,7 +342,7 @@
                     android:id="@+id/btnLogin_onboarding"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/btn_login_selector_normal"
                     android:fontFamily="@font/chivo_regular"
                     android:stateListAnimator="@xml/btn_state_list_animator"
@@ -382,7 +382,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent=".52"
+        app:layout_constraintGuide_percent=".50"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -393,7 +393,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent=".56"
+        app:layout_constraintGuide_percent=".52"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

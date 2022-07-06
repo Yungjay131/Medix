@@ -2,6 +2,8 @@ package com.slyworks.medix.managers
 
 import android.graphics.Bitmap
 import com.bumptech.glide.Glide
+import com.slyworks.constants.REQUEST_ACCEPTED
+import com.slyworks.constants.REQUEST_DECLINED
 import com.slyworks.constants.REQUEST_PENDING
 import com.slyworks.medix.App
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -17,13 +19,16 @@ class ListenerManager(){
     //endregion
 
     companion object{
-        private var instance: ListenerManager? = null
+        /*should be set only once per app creation, preferably from the Application class
+        * or from MainActivity (BaseActivity)*/
+        var isInitialised:Boolean = false
+        fun observeMyConnectionStatusChanges(){
+            ConnectionStatusManager.setMyConnectionStatusHandler()
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe { _ -> }
 
-        fun getInstance(): ListenerManager {
-           if(instance == null)
-               instance = ListenerManager()
-
-            return instance!!
+            isInitialised = true
         }
     }
 
@@ -43,8 +48,9 @@ class ListenerManager(){
             .subscribeOn(Schedulers.io())
             .subscribe {
                 NotificationHelper.createConsultationRequestNotification(
-                    it.details.firebaseUID,
-                    it.toUID,
+                    fromUID = it.details.firebaseUID,
+                    fullName = it.details.fullName,
+                    toFCMRegistrationToken = it.details.FCMRegistrationToken,
                     message = "${it.details.fullName} would like a consultation with you")
             }
 

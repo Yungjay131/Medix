@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.FragmentTransaction
 import com.slyworks.medix.R
+import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 
 class ProfileHostFragment : Fragment() {
@@ -41,6 +42,14 @@ class ProfileHostFragment : Fragment() {
         }
     }
     fun inflateFragment2(f:Fragment){
+        Navigator.transactionFrom(childFragmentManager)
+            .into(R.id.fragment_container_profile_host)
+            .hideCurrent()
+            .show(f)
+            .navigate()
+    }
+
+    fun inflateFragment3(f:Fragment){
         val transaction:FragmentTransaction = childFragmentManager.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
 

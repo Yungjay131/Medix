@@ -19,7 +19,8 @@ import com.slyworks.models.room_models.Person
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = MDiffUtilCallback()) :ListAdapter<Person, RVChatAdapter2.ViewHolder>(diffUtil) {
+class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = PersonDiffUtilCallback())
+    : ListAdapter<Person, RVChatAdapter2.ViewHolder>(diffUtil) {
     //region Vars
     //endregion
 
@@ -55,6 +56,8 @@ class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = MDiffUtilCallback
         //endregion
 
         fun bind(entity: Person){
+            ivProfile.displayImage(entity.senderImageUri)
+
             var name:String = entity.fullName
             if(entity.userAccountType == "DOCTOR")
                 name = "Dr $name"

@@ -13,8 +13,7 @@
       android:id="@+id/layout_intro_frag_find_doctors"
       android:layout_width="match_parent"
       android:layout_height="600dp"
-      android:layout_gravity="top"
-      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+      android:layout_marginTop="?attr/actionBarSize">
 
     <ImageView
         android:id="@+id/ivFindDoctors_layout_intro"
@@ -78,9 +77,9 @@
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
       tools:context=".ui.fragments.findDoctorsFragment.FindDoctorsFragment"
       android:id="@+id/rootView"
-      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
       android:visibility="gone">
 
     <androidx.recyclerview.widget.RecyclerView

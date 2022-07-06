@@ -8,6 +8,7 @@ import com.slyworks.medix.managers.DataManager
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.UsersManager
 import com.slyworks.data.AppDatabase
+import com.slyworks.medix.managers.MessageManager
 import com.slyworks.models.room_models.FBUserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -28,37 +29,8 @@ class MessageWorker(private var context: Context, params:WorkerParameters) : Cor
             .getMessageDao()
             .getUnsentMessages()
 
-        if(l.isNullOrEmpty()) {
-            /*re-enqueuing MessageWork*/
-            App.initMessageWork()
-            return Result.success()
-        }
-
-        val job: Deferred<Result> = CoroutineScope(Dispatchers.IO).async {
-                val _l:MutableList<Boolean> = mutableListOf()
-                l.forEach { message ->
-                    /*TODO:make sure that any Message with NOT_SENT originated from you*/
-                    val userDetails: FBUserDetails
-                    UsersManager.getUserFromDataStore()
-                        .collectLatest {
-                           UserDetailsUtils.user = it
-                        }
-
-                    val status = dataManager.sendMessage(message)
-                    _l.add(status)
-                }
-
-            if(_l.any{ !it }) {
-                App.initMessageWork()
-                return@async Result.retry()
-            }
-            else{
-                App.initMessageWork()
-                return@async Result.success()
-            }
-        }
-
-        return job.await()
+            /*TODO:make sure that any Message with NOT_SENT originated from you*/
+         return Result.success()
     }
 
 }

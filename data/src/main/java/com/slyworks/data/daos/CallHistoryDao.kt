@@ -2,6 +2,9 @@ package com.slyworks.data.daos
 
 import androidx.room.*
 import com.slyworks.models.room_models.CallHistory
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Maybe
 import kotlinx.coroutines.flow.Flow
 
 
@@ -11,17 +14,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CallHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCallHistory(vararg callHistories:CallHistory)
+    fun addCallHistory(vararg callHistories:CallHistory): Completable
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateCallHistory(callHistory:CallHistory):Int
+    fun updateCallHistory(callHistory:CallHistory):Completable
 
     @Delete
-    suspend fun deleteCallHistory(vararg callHistories: CallHistory):Int
+    fun deleteCallHistory(vararg callHistories: CallHistory): Completable
 
     @Query("SELECT * FROM CallHistory")
-    fun observeCallHistory(): Flow<MutableList<CallHistory>>
+    fun observeCallHistory(): Flow<List<CallHistory>>
 
     @Query("SELECT * FROM CallHistory")
-    suspend fun getCallHistory():MutableList<CallHistory>
+     fun getCallHistory(): Maybe<List<CallHistory>>
 }

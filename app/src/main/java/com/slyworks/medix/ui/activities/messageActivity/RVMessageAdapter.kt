@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.slyworks.constants.*
 import com.slyworks.medix.App
 import com.slyworks.medix.R
 import com.slyworks.medix.managers.TimeUtils
+import com.slyworks.medix.ui.fragments.chatFragment.MessageDiffUtilCallback
+import com.slyworks.medix.ui.fragments.chatFragment.PersonDiffUtilCallback
 import com.slyworks.models.room_models.Message
 import com.slyworks.medix.utils.ViewUtils.displayImage
 
@@ -19,9 +19,11 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 /**
  *Created by Joshua Sylvanus, 1:36 AM, 1/19/2022.
  */
-class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVMessageAdapter.MViewHolder>() {
+class RVMessageAdapter(var recyclerView:RecyclerView,
+                       diffUtil:DiffUtil.ItemCallback<Message> = MessageDiffUtilCallback()
+) : ListAdapter<Message, RVMessageAdapter.MViewHolder>(diffUtil) {
+
     //region Vars
-    private var mList:MutableList<Message> = mutableListOf()
     //endregion
 
     companion object{
@@ -83,11 +85,12 @@ class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVM
         smoothScroller.targetPosition = toPosition
         recyclerView.layoutManager!!.startSmoothScroll(smoothScroller)
     }
+
     override fun getItemViewType(position: Int): Int {
-        when(mList.get(position).type){
-            INCOMING_MESSAGE -> return ITEM_TYPE_INCOMING
-            OUTGOING_MESSAGE -> return ITEM_TYPE_OUTGOING
-            HEADER -> return ITEM_TYPE_HEADER
+        return when(currentList.get(position).type){
+            INCOMING_MESSAGE -> ITEM_TYPE_INCOMING
+            OUTGOING_MESSAGE -> ITEM_TYPE_OUTGOING
+            HEADER -> ITEM_TYPE_HEADER
             else -> throw IllegalArgumentException("wrong message type")
         }
     }
@@ -107,10 +110,7 @@ class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVM
                 view = LayoutInflater.from(parent.context).inflate(R.layout.li_message_header, parent,false)
                 return HeaderViewHolder(view)
             }
-            else -> {
-               throw IllegalArgumentException("wrong message type")
-            }
-
+            else -> throw IllegalArgumentException("wrong message type")
         }
     }
 
@@ -118,21 +118,20 @@ class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVM
         val viewType = getItemViewType(position)
 
         when(viewType){
-            ITEM_TYPE_INCOMING -> holder.bind(mList.get(position))
-            ITEM_TYPE_OUTGOING -> holder.bind(mList.get(position))
-            ITEM_TYPE_HEADER -> holder.bind(mList.get(position))
+            ITEM_TYPE_INCOMING -> holder.bind(currentList.get(position))
+            ITEM_TYPE_OUTGOING -> holder.bind(currentList.get(position))
+            ITEM_TYPE_HEADER -> holder.bind(currentList.get(position))
         }
     }
 
-    override fun getItemCount(): Int {
-        return mList.size
-    }
-
-
-    fun setMessageList(messages:MutableList<Message>){
+   /* fun setMessageList(messages: MutableList<Message>) {
+        val oldIndex = mList.size
+        var op = 0
+        if (mList.size != 0)
+            op = 1
         mList = messages
-        mList.sort()
-        /*TODO:sort list*/
+        *//* mList.sort()
+         *//**//*TODO:sort list*//**//*
         val l:MutableList<Message> = mutableListOf()
         for(i in 0 until mList.size){
             if(i+1 != mList.size - 1) {
@@ -149,12 +148,16 @@ class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVM
                 }
             }
 
-        }
+        }*//*
 
-        mList = l
-        notifyDataSetChanged()
-        smoothScroll(mList.size - 1)
-    }
+        if (op == 1)
+            notifyItemRangeInserted(oldIndex, mList.size - oldIndex)
+        else
+            notifyDataSetChanged()
+
+        if (mList.size > 1)
+            smoothScroll(mList.size - 1)
+    }*/
 
     fun scrollToTop(){
       smoothScroll(0)
@@ -162,8 +165,6 @@ class RVMessageAdapter(var recyclerView:RecyclerView) : RecyclerView.Adapter<RVM
     fun scrollToBottom(){
         smoothScroll(itemCount - 1)
     }
-
-
 
     abstract class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         abstract fun bind(entity: Message)
