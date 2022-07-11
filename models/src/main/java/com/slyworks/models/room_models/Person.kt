@@ -21,12 +21,12 @@ data class Person(
     @ColumnInfo(name = "last_message_content") var lastMessageContent:String? = "",
     @ColumnInfo(name = "last_message_status") var lastMessageStatus:Double = NOT_SENT,
     @ColumnInfo(name = "last_message_timestamp") var lastMessageTimeStamp:String = "",
-    @ColumnInfo(name = "sender_image_uri") var senderImageUri:String = "",
+    @ColumnInfo(name = "image_uri") var imageUri:String = "",
     @ColumnInfo(name = "fullname") var fullName:String = "",
     @ColumnInfo(name = "unread_message_count") var unreadMessageCount:Int = 0,
     @ColumnInfo(name = "fcm_registration_token") var FCMRegistrationToken:String = "",
 
-):Parcelable {
+    ):Parcelable {
     constructor() : this(
         firebaseUID = "",
         userAccountType = "",
@@ -34,7 +34,7 @@ data class Person(
         lastMessageContent = "",
         lastMessageStatus = NOT_SENT,
         lastMessageTimeStamp = "",
-        senderImageUri = "",
+        imageUri = "",
         fullName = "",
         unreadMessageCount = 0,
         FCMRegistrationToken = "")

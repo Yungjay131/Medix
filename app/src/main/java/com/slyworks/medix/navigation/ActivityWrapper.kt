@@ -1,10 +1,7 @@
 package com.slyworks.medix.navigation
 
-import android.os.Message
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.SimpleArrayMap
-import androidx.fragment.app.FragmentManager
-import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.*
 import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
@@ -14,20 +11,16 @@ import com.slyworks.medix.ui.activities.registrationActivity.RegistrationActivit
 import com.slyworks.medix.ui.activities.registrationActivity.RegistrationDoctorActivity
 import com.slyworks.medix.ui.activities.registrationActivity.RegistrationPatientActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
-import com.slyworks.medix.ui.activities.requestsActivity.RequestsActivity
+import com.slyworks.medix.ui.activities.requestsActivity.ViewRequest
 import com.slyworks.medix.ui.activities.settingsActivity.SettingsActivity
 import com.slyworks.medix.ui.activities.voiceCallActivity.VoiceCallActivity
-import com.slyworks.medix.utils.isLastItem
 
 
 /**
  *Created by Joshua Sylvanus, 5:14 AM, 2/6/2022.
  */
 
-
-const val NOT_SET = 0
-
-sealed class ActivityWrapper {
+sealed class ActivityWrapper{
     companion object {
         private var mMap: SimpleArrayMap<String, ActivityWrapper> = SimpleArrayMap<String, ActivityWrapper>().apply {
             put(SplashActivity::class.simpleName, ActivityWrapper.SPLASH)
@@ -40,7 +33,7 @@ sealed class ActivityWrapper {
             put(MessageActivity::class.simpleName, ActivityWrapper.MESSAGE)
             put(VideoCallActivity::class.simpleName, ActivityWrapper.VIDEO_CALL)
             put(VoiceCallActivity::class.simpleName, ActivityWrapper.SPLASH)
-            put(RequestsActivity::class.simpleName, ActivityWrapper.VIEW_REQUEST)
+            put(ViewRequest::class.simpleName, ActivityWrapper.REQUESTS)
             put(SettingsActivity::class.simpleName, ActivityWrapper.SETTINGS)
         }
 
@@ -50,711 +43,53 @@ sealed class ActivityWrapper {
     }
 
     abstract fun getInstance(): Class<out AppCompatActivity>
-    abstract fun setFragmentManager(fragmentManager: FragmentManager?)
-    abstract fun getFragmentManager(): FragmentManager
-    abstract fun getFragmentContainerID(): Int
-    abstract fun addFragment(fragment: FragmentWrapper)
-    abstract fun getNextFragment(): FragmentWrapper?
-    abstract fun isThereNextItem(): Boolean
-    abstract fun setDialog(dialog: DialogWrapper?)
-    abstract fun getDialog(): DialogWrapper?
-    abstract fun setIsRunning(status:Boolean)
-    abstract fun isRunning():Boolean
-
 
     object SPLASH : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private var mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return SplashActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+        override fun getInstance(): Class<out AppCompatActivity> = SplashActivity::class.java
     }
 
     object ONBOARDING : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
+        override fun getInstance(): Class<out AppCompatActivity> = OnBoardingActivity::class.java
 
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return OnBoardingActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
     }
 
     object LOGIN : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return LoginActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-           return mIsRunning
-        }
+        override fun getInstance(): Class<out AppCompatActivity> = LoginActivity::class.java
     }
 
     object REG : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentsList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return RegistrationActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentsList.filter { it != fragment }
-            mFragmentsList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentsList.lastOrNull();
-            if (f != null)
-                mFragmentsList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentsList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+        override fun getInstance(): Class<out AppCompatActivity> = RegistrationActivity::class.java
     }
 
     object REG_PATIENT : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentsList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return RegistrationPatientActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentsList.filter { it != fragment }
-            mFragmentsList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentsList.lastOrNull();
-            if (f != null)
-                mFragmentsList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentsList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+        override fun getInstance(): Class<out AppCompatActivity> = RegistrationPatientActivity::class.java
     }
 
     object REG_DOCTOR : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return RegistrationDoctorActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+        override fun getInstance(): Class<out AppCompatActivity> = RegistrationDoctorActivity::class.java
     }
 
-    object MAIN : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return MainActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return R.id.fragment_container_main
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object MAIN : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = MainActivity::class.java
     }
 
-    object MESSAGE : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private val mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return MessageActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object MESSAGE : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = MessageActivity::class.java
     }
 
-    object VIDEO_CALL : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private var mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return VideoCallActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object VIDEO_CALL : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = VideoCallActivity::class.java
     }
 
-    object VOICE_CALL : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private var mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return VoiceCallActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object VOICE_CALL : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = VoiceCallActivity::class.java
     }
 
-    object VIEW_REQUEST : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private var mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return RequestsActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object REQUESTS : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = ViewRequest::class.java
     }
 
-    object SETTINGS : ActivityWrapper() {
-        //region Vars
-        private var mFragmentManager: FragmentManager? = null
-        private var mFragmentList: MutableList<FragmentWrapper> = mutableListOf()
-        private var mDialog: DialogWrapper? = null
-        private var mIsRunning:Boolean = false
-        //endregion
-
-        override fun getInstance(): Class<out AppCompatActivity> {
-            return RequestsActivity::class.java
-        }
-
-        override fun setFragmentManager(fragmentManager: FragmentManager?) {
-            mFragmentManager = fragmentManager
-        }
-
-        override fun getFragmentManager(): FragmentManager {
-            return mFragmentManager!!
-        }
-
-        override fun getFragmentContainerID(): Int {
-            return NOT_SET
-        }
-
-        override fun addFragment(fragment: FragmentWrapper) {
-            mFragmentList.filter { it != fragment }
-            mFragmentList.add(fragment)
-        }
-
-        override fun getNextFragment(): FragmentWrapper? {
-            val f: FragmentWrapper? = mFragmentList.lastOrNull()
-            if (f != null)
-                mFragmentList.removeLast()
-
-            return f
-        }
-
-        override fun isThereNextItem(): Boolean {
-            return mFragmentList.isLastItem()
-        }
-
-        override fun setDialog(dialog: DialogWrapper?) {
-            mDialog = dialog
-        }
-
-        override fun getDialog(): DialogWrapper? {
-            return mDialog
-        }
-
-        override fun setIsRunning(status: Boolean) {
-            mIsRunning = status
-        }
-
-        override fun isRunning(): Boolean {
-            return mIsRunning
-        }
+    object SETTINGS : ActivityWrapper(){
+        override fun getInstance(): Class<out AppCompatActivity> = SettingsActivity::class.java
     }
 }

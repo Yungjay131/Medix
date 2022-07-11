@@ -93,7 +93,6 @@ class RegistrationPatientViewModel : ViewModel(){
                 l.postValue(it)
             }
 
-        l.postValue(mNetworkRegister!!.getNetworkStatus())
         return l
     }
 

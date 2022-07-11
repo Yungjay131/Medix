@@ -18,7 +18,7 @@ import com.slyworks.medix.App
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
-import com.slyworks.medix.ui.activities.requestsActivity.RequestsActivity
+import com.slyworks.medix.ui.activities.requestsActivity.ViewRequest
 import com.slyworks.medix.broadcast_receivers.CloudMessageBroadcastReceiver
 import com.slyworks.medix.broadcast_receivers.VideoCallRequestBroadcastReceiver
 import com.slyworks.medix.broadcast_receivers.VoiceCallRequestBroadcastReceiver
@@ -48,7 +48,7 @@ object NotificationHelper {
                                                message:String,
                                                status:String,
                                                fullName:String){
-        val intent = Intent(App.getContext(), RequestsActivity::class.java).apply {
+        val intent = Intent(App.getContext(), ViewRequest::class.java).apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
                 putString(EXTRA_CLOUD_MESSAGE_TO_UID, toUID)
@@ -86,7 +86,7 @@ object NotificationHelper {
                                               fullName:String,
                                               message:String){
 
-        val intent = Intent(App.getContext(), RequestsActivity::class.java).apply {
+        val intent = Intent(App.getContext(), ViewRequest::class.java).apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
                 putString(EXTRA_CLOUD_MESSAGE_STATUS, REQUEST_PENDING)

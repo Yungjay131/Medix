@@ -24,12 +24,11 @@ import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.navigation.Navigator.Companion.getParcelable
 import com.slyworks.medix.navigation.addExtra
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
-import com.slyworks.medix.ui.custom_views.EdgeItemDecorator
 import com.slyworks.medix.ui.custom_views.SpacingItemDecorator
-import com.slyworks.medix.ui.custom_views.StickyHeaderItemDecorator
 import com.slyworks.medix.utils.*
 import com.slyworks.medix.utils.ViewUtils.closeKeyboard3
 import com.slyworks.medix.utils.ViewUtils.displayImage
+import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Message
 import de.hdodenhof.circleimageview.CircleImageView
@@ -117,21 +116,27 @@ class MessageActivity : BaseActivity() {
 
         mViewModel.observeMessagesForUID(mUserProfile.firebaseUID)
                   .observe(this) {
-                      mAdapter.setMessageList(it)
-        }
-
-        mViewModel.observeUserDetails(mUserProfile.firebaseUID)
-            .observe(this){
-                setUserData(it)
+                      mAdapter.submitList(it)
         }
 
         mViewModel.mProgressLiveData.observe(this){
             progress.isVisible = it
+            rootView.setChildViewsStatus(it)
         }
 
         mViewModel.mStatusLiveData.observe(this){
             showMessage(it,rootView)
         }
+        mViewModel.startCallStateLiveData
+            .observe(this){
+                if(it){
+                    mUserProfile = mViewModel.startCallDataLiveData.value!!
+                    startCall()
+                }
+            }
+
+        /*clearing the user's unread message count*/
+        mViewModel.updatePersonLastMessageInfo(mUserProfile.firebaseUID)
     }
 
     private fun initViews1(){
@@ -184,18 +189,7 @@ class MessageActivity : BaseActivity() {
         fabScrollDown.setOnClickListener { mAdapter.scrollToBottom() }
 
         ivVideoCall.setOnClickListener {
-            /*checking for a property to ensure its the complete FBUserDetails object at this point*/
-            if(mUserProfile.firstName.isNullOrEmpty()){
-                showMessage("incomplete user details, contact support", rootView)
-                return@setOnClickListener
-            }
-
-            /*fixme:VideoCallActivity is expecting a Bundle, fix that*/
-            Navigator.intentFor<VideoCallActivity>(this)
-                .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-                .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
-                .finishCaller()
-                .navigate()
+           startCall()
         }
 
         fabSend.setOnClickListener {
@@ -206,19 +200,35 @@ class MessageActivity : BaseActivity() {
                 senderFullName = UserDetailsUtils.user!!.fullName,
                 receiverFullName = mUserProfile.fullName,
                 content = etMessage.text.toString().trim(),
-                timeStamp = TimeUtils.getCurrentDate().toString(),
+                timeStamp = System.currentTimeMillis().toString(),
                 messageID = IDUtils.generateNewMessageID(),
                 status = NOT_SENT,
                 senderImageUri = UserDetailsUtils.user!!.imageUri,
                 accountType = UserDetailsUtils.user!!.accountType,
-                FCMRegistrationToken = UserDetailsUtils.user!!.FCMRegistrationToken
-            )
+                FCMRegistrationToken = UserDetailsUtils.user!!.FCMRegistrationToken,
+                receiverImageUri = mUserProfile.imageUri )
 
             mViewModel.sendMessage(message)
 
             etMessage.getText().clear()
             closeKeyboard3()
         }
+    }
+
+    private fun startCall(){
+        /*checking for a property to ensure its the complete FBUserDetails object at this point*/
+        if(mUserProfile.firstName.isNullOrEmpty()){
+            showMessage("setting up your call, please wait", rootView)
+            mViewModel.getUserDetails(mUserProfile.firebaseUID)
+            return
+        }
+
+        /*fixme:VideoCallActivity is expecting a Bundle, fix that*/
+        Navigator.intentFor<VideoCallActivity>(this)
+            .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+            .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
+            .finishCaller()
+            .navigate()
     }
 
     private fun toggleFabSendVisibility(status:Boolean){

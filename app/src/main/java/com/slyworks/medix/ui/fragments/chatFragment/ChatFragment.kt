@@ -22,10 +22,10 @@ import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY_2
 import com.slyworks.constants.EXTRA_USER_PROFILE_FBU
 import com.slyworks.constants.PATIENT
-import com.slyworks.medix.AppController
-import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.utils.AppController
+import com.slyworks.medix.utils.AppController.clearAndRemove
 import com.slyworks.medix.R
-import com.slyworks.medix.Subscription
+import com.slyworks.medix.utils.Subscription
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
@@ -170,7 +170,7 @@ class ChatFragment : Fragment(), Observer {
                     accountType = result.userAccountType,
                     firebaseUID = result.firebaseUID,
                     fullName = result.fullName,
-                    imageUri = result.senderImageUri
+                    imageUri = result.imageUri
                 )
 
                 startActivity(

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "05bdda61fe62dec63c489cd82ab2b8eb",
+    "identityHash": "7ead3b3c24e69c9a8d6d8d56fadbcd13",
     "entities": [
       {
         "tableName": "MessagePerson",
@@ -26,7 +26,7 @@
       },
       {
         "tableName": "Person",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`firebase_uid` TEXT NOT NULL, `account_type` TEXT NOT NULL, `last_message_type` TEXT NOT NULL, `last_message_content` TEXT, `last_message_status` REAL NOT NULL, `last_message_timestamp` TEXT NOT NULL, `sender_image_uri` TEXT NOT NULL, `fullname` TEXT NOT NULL, `unread_message_count` INTEGER NOT NULL, `fcm_registration_token` TEXT NOT NULL, PRIMARY KEY(`firebase_uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`firebase_uid` TEXT NOT NULL, `account_type` TEXT NOT NULL, `last_message_type` TEXT NOT NULL, `last_message_content` TEXT, `last_message_status` REAL NOT NULL, `last_message_timestamp` TEXT NOT NULL, `image_uri` TEXT NOT NULL, `fullname` TEXT NOT NULL, `unread_message_count` INTEGER NOT NULL, `fcm_registration_token` TEXT NOT NULL, PRIMARY KEY(`firebase_uid`))",
         "fields": [
           {
             "fieldPath": "firebaseUID",
@@ -65,8 +65,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "senderImageUri",
-            "columnName": "sender_image_uri",
+            "fieldPath": "imageUri",
+            "columnName": "image_uri",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -100,7 +100,7 @@
       },
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`type` TEXT NOT NULL, `from_uid` TEXT NOT NULL, `to_uid` TEXT NOT NULL, `sender_fullname` TEXT NOT NULL, `receiver_fullname` TEXT NOT NULL, `content` TEXT NOT NULL, `time_stamp` TEXT NOT NULL, `message_id` TEXT NOT NULL, `status` REAL NOT NULL, `sender_image_uri` TEXT NOT NULL, `account_type` TEXT NOT NULL, `sender_fcm_registration_token` TEXT NOT NULL, PRIMARY KEY(`time_stamp`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`type` TEXT NOT NULL, `from_uid` TEXT NOT NULL, `to_uid` TEXT NOT NULL, `sender_fullname` TEXT NOT NULL, `receiver_fullname` TEXT NOT NULL, `content` TEXT NOT NULL, `time_stamp` TEXT NOT NULL, `message_id` TEXT NOT NULL, `status` REAL NOT NULL, `sender_image_uri` TEXT NOT NULL, `account_type` TEXT NOT NULL, `sender_fcm_registration_token` TEXT NOT NULL, `receiver_image_uri` TEXT NOT NULL, PRIMARY KEY(`time_stamp`))",
         "fields": [
           {
             "fieldPath": "type",
@@ -173,6 +173,12 @@
             "columnName": "sender_fcm_registration_token",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "receiverImageUri",
+            "columnName": "receiver_image_uri",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -186,7 +192,7 @@
       },
       {
         "tableName": "CallHistory",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`type` INTEGER NOT NULL, `status` INTEGER NOT NULL, `caller_uid` TEXT NOT NULL, `name` TEXT NOT NULL, `sender_image_uri` TEXT NOT NULL, `time_stamp` TEXT NOT NULL, PRIMARY KEY(`time_stamp`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`type` INTEGER NOT NULL, `status` INTEGER NOT NULL, `caller_uid` TEXT NOT NULL, `name` TEXT NOT NULL, `sender_image_uri` TEXT NOT NULL, `time_stamp` TEXT NOT NULL, `duration` TEXT NOT NULL, PRIMARY KEY(`time_stamp`))",
         "fields": [
           {
             "fieldPath": "type",
@@ -223,6 +229,12 @@
             "columnName": "time_stamp",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -238,7 +250,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '05bdda61fe62dec63c489cd82ab2b8eb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7ead3b3c24e69c9a8d6d8d56fadbcd13')"
     ]
   }
 }

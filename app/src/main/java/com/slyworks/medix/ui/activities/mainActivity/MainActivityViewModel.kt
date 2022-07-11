@@ -29,10 +29,7 @@ class MainActivityViewModel: ViewModel() {
 
         mNetworkRegister = NetworkRegister(App.getContext())
         mSubscription =
-            Observable.merge(
-                Observable.just(mNetworkRegister!!.getNetworkStatus()),
-                mNetworkRegister!!.subscribeToNetworkUpdates()
-            )
+          mNetworkRegister!!.subscribeToNetworkUpdates()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe {

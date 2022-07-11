@@ -1,7 +1,6 @@
 package com.slyworks.medix.managers
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import com.google.firebase.auth.FirebaseAuth
@@ -11,10 +10,7 @@ import com.slyworks.constants.EVENT_UPDATE_FCM_REGISTRATION_TOKEN
 import com.slyworks.constants.OUTGOING_MESSAGE
 import com.slyworks.data.AppDatabase
 import com.slyworks.medix.*
-import com.slyworks.medix.utils.MChildEventListener
-import com.slyworks.medix.utils.MValueEventListener
-import com.slyworks.medix.utils.UserDataSerializer
-import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.utils.*
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.FBUserDetailsWrapper
@@ -24,6 +20,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 
 /**
@@ -58,7 +55,7 @@ object UsersManager {
         return mUserDataValueEventListener!!
     }
 
-    fun getUserDataForUID(firebaseUID:String): Observable<FBUserDetails> {
+    fun observeUserDataForUID(firebaseUID:String): Observable<FBUserDetails> {
         val o:PublishSubject<FBUserDetails> = PublishSubject.create()
 
         getUserDataForUIDRef(firebaseUID)
@@ -74,6 +71,22 @@ object UsersManager {
         mUserDataValueEventListener = null
     }
 
+    fun getUserDataForUID(firebaseUID:String):Observable<Outcome> =
+        Observable.create { emitter ->
+           getUserDataForUIDRef(firebaseUID)
+               .get()
+               .addOnCompleteListener {
+                   if (it.isSuccessful){
+                       val userDetails: FBUserDetails = it.result!!.getValue(FBUserDetails::class.java)!!
+                       emitter.onNext(Outcome.SUCCESS(value = userDetails))
+                   } else{
+                       emitter.onNext(Outcome.FAILURE(value = it.exception?.message))
+                   }
+
+                   emitter.onComplete()
+               }
+        }
+
     fun getAllDoctors(){
            getAllDoctorsRef()
            .get()
@@ -81,7 +94,7 @@ object UsersManager {
                if(it.isSuccessful){
                    val list:MutableList<FBUserDetails> = mutableListOf()
                    it.result!!.children.forEach { child ->
-                       Log.e(TAG, "getAllDoctors: $child" )
+                       Timber.e("getAllDoctors: $child" )
                        val doctor: FBUserDetailsWrapper = child.getValue(FBUserDetailsWrapper::class.java)!!
                        list.add(doctor.details)
 
@@ -91,7 +104,7 @@ object UsersManager {
                        )
                    }
                }else{
-                   Log.e(TAG, "error occurred getting doctor users from DB", it.exception)
+                   Timber.e("error occurred getting doctor users from DB", it.exception)
 
                    AppController.notifyObservers(
                        EVENT_GET_DOCTOR_USERS,
@@ -202,6 +215,7 @@ object UsersManager {
                                }
     }
 
+    /*TODO:enqueue work if the user isnt logged in yet*/
     fun sendFCMTokenToServer(token:String){
         val address:String =
         if(!UserDetailsUtils.user?.firebaseUID.isNullOrEmpty())
@@ -214,7 +228,7 @@ object UsersManager {
                 if(it.isSuccessful){
                     AppController.notifyObservers(EVENT_UPDATE_FCM_REGISTRATION_TOKEN, true)
                 }else{
-                    Log.e(TAG, "sendFCMTokenToServer: uploading FCMToken to DB failed", it.exception)
+                    Timber.e("sendFCMTokenToServer: uploading FCMToken to DB failed", it.exception)
                     AppController.notifyObservers(EVENT_UPDATE_FCM_REGISTRATION_TOKEN, true)
                 }
             }
@@ -280,7 +294,7 @@ object UsersManager {
 
                 p!!
                 p.fullName = details.fullName
-                p.senderImageUri = details.imageUri
+                p.imageUri = details.imageUri
 
                 AppDatabase.getInstance(App.getContext())
                     .getPersonDao()
@@ -321,7 +335,7 @@ object UsersManager {
                     .getPersonByID(details.firebaseUID)
 
                 p.fullName = details.fullName
-                p.senderImageUri = details.imageUri
+                p.imageUri = details.imageUri
 
                 AppDatabase.getInstance(App.getContext())
                     .getPersonDao()

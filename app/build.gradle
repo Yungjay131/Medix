@@ -47,6 +47,10 @@ android {
         jvmTarget = '1.8'
     }
 
+    viewBinding{
+        enabled = true
+    }
+
     buildFeatures {
         // Enables Jetpack Compose for this module
         //compose true

@@ -1,6 +1,5 @@
 package com.slyworks.medix.managers
 
-import android.util.Log
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -28,26 +27,17 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 
 object CallManager {
     private val TAG: String? = CallManager::class.simpleName
-
-    private var mCurrentVideoCall:CallHistory? = null
-    private var mCurrentVideoCallStartTime:Long? = null
-    private var mCurrentVideoCallEndTime:Long? = null
-
-    private var mCurrentVoiceCall:CallHistory? = null
-    private var mCurrentVoiceCallStartTime:Long? = null
-    private var mCurrentVoiceCallEndTime:Long? = null
 
     private var videoCallObserver:PublishSubject<FBUserDetails>? = PublishSubject.create()
     private var voiceCallObserver:PublishSubject<FBUserDetails>? = PublishSubject.create()
 
     private var mVideoCallRequestsChildEventListener:ChildEventListener? = null
     private var mVoiceCallRequestsChildEventListener:ChildEventListener? = null
-
-    private var mObserveCallsHistory: Job? = null
     //endregion
 
     fun listenForVideoCallRequests(): Observable<FBUserDetails> {
@@ -118,12 +108,12 @@ object CallManager {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         val r:Outcome = Outcome.SUCCESS<Nothing>()
-                        Log.e(TAG, "processVideoCall: video call status updated successfully in DB")
+                        Timber.e( "processVideoCall: video call status updated successfully in DB")
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
                         val r:Outcome = Outcome.FAILURE<Nothing>()
-                        Log.e(TAG, "processVideoCall: video call status updated with issues in DB")
+                        Timber.e( "processVideoCall: video call status updated with issues in DB")
                         emitter.onNext(r)
                         emitter.onComplete()
                     }
@@ -202,12 +192,12 @@ object CallManager {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         val r:Outcome = Outcome.SUCCESS<Nothing>()
-                        Log.e(TAG, "processVoiceCall: voice call status updated successfully in DB")
+                        Timber.e( "processVoiceCall: voice call status updated successfully in DB")
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
                         val r:Outcome = Outcome.FAILURE<Nothing>()
-                        Log.e(TAG, "processVoiceCall: voice call status updated with issues in DB")
+                        Timber.e( "processVoiceCall: voice call status updated with issues in DB")
                         emitter.onNext(r)
                         emitter.onComplete()
                     }
@@ -237,91 +227,4 @@ object CallManager {
                         }
                     })
         }
-
-
-
-
-    fun observeCallsHistory(): Observable<List<CallHistory>> =
-        Observable.create { emitter ->
-            mObserveCallsHistory =
-                CoroutineScope(Dispatchers.IO).launch {
-                    AppDatabase.getInstance(App.getContext())
-                        .getCallHistoryDao()
-                        .observeCallHistory()
-                        .distinctUntilChanged()
-                        .collectLatest {
-                            emitter.onNext(it)
-                        }
-                }
-        }
-
-
-    fun detachObserveCallsHistoryObserver(){
-        mObserveCallsHistory!!.cancel()
-        mObserveCallsHistory = null
-    }
-
-    private fun saveCallHistory(callHistory: CallHistory){
-        Observable
-
-    }
-
-    private fun saveCallHistoryToDBObservable(callHistory: CallHistory):Observable<Outcome> =
-        Observable.create { emitter ->
-            AppDatabase.getInstance(App.getContext())
-                .getCallHistoryDao()
-                .addCallHistory(callHistory)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe()
-        }
-    private fun saveCallHistoryToFBObservable(callHistory: CallHistory):Observable<Outcome> =
-        Observable.create { emitter ->
-            val key:String = FirebaseDatabase.getInstance()
-                .reference
-                .child("/call_history/${UserDetailsUtils.user!!.firebaseUID}")
-                .push()
-                .key!!
-
-            FirebaseDatabase.getInstance()
-                .reference
-                .child("/call_history/${UserDetailsUtils.user!!.firebaseUID}")
-                .child(key)
-                .setValue(callHistory)
-                .addOnCompleteListener {
-                    if(it.isSuccessful){
-                        emitter.onNext(Outcome.SUCCESS<Nothing>())
-                        emitter.onComplete()
-                    }else
-                        emitter.onNext(Outcome.FAILURE(value = it.exception?.message))
-                        emitter.onComplete()
-                }
-        }
-
-    fun onVideoCallStarted(callHistory: CallHistory){
-        mCurrentVideoCallStartTime = System.currentTimeMillis()
-        mCurrentVideoCall = callHistory
-    }
-
-    fun onVideoCallStopped(){
-        mCurrentVideoCallEndTime = System.currentTimeMillis()
-
-        val duration:Long = mCurrentVideoCallEndTime!! - mCurrentVideoCallStartTime!!
-        mCurrentVideoCall!!.duration = duration.toString()
-        saveCallHistory(mCurrentVideoCall!!)
-    }
-
-    fun onVoiceCallStarted(callHistory: CallHistory){
-        mCurrentVoiceCallStartTime = System.currentTimeMillis()
-        mCurrentVoiceCall = callHistory
-    }
-
-    fun onVoiceCallStopped(){
-        mCurrentVoiceCallEndTime = System.currentTimeMillis()
-
-        val duration:Long = mCurrentVoiceCallEndTime!! - mCurrentVoiceCallStartTime!!
-        mCurrentVoiceCall!!.duration = duration.toString()
-
-        saveCallHistory(mCurrentVoiceCall!!)
-    }
 }

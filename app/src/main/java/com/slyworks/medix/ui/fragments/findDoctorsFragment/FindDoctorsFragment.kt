@@ -19,10 +19,10 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_GET_DOCTOR_USERS
 import com.slyworks.constants.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
-import com.slyworks.medix.AppController
-import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.utils.AppController
+import com.slyworks.medix.utils.AppController.clearAndRemove
 import com.slyworks.medix.R
-import com.slyworks.medix.Subscription
+import com.slyworks.medix.utils.Subscription
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.ViewProfileFragment
 import com.slyworks.models.room_models.FBUserDetails

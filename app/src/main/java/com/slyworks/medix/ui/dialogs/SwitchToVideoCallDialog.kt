@@ -51,8 +51,11 @@ class SwitchToVideoCallDialog(private var o:PublishSubject<Boolean>?) : BaseDial
 
         btnSwitch.setOnClickListener {
             o!!.onNext(true)
+            o!!.onComplete()
         }
         btnCancel.setOnClickListener {
+            o!!.onNext(false)
+            o!!.onComplete()
             dismiss()
         }
     }

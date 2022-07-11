@@ -10,14 +10,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.work.*
 import com.google.firebase.database.FirebaseDatabase
-import com.slyworks.constants.EVENT_GET_NETWORK_UPDATES
 import com.slyworks.constants.KEY_FCM_UPLOAD_TOKEN
-import com.slyworks.medix.concurrency.FCMTokenUploadWorker
-import com.slyworks.medix.concurrency.MessageWorker
-import com.slyworks.medix.concurrency.ProfileUpdateWorker
-import com.slyworks.medix.concurrency.StartServiceWorker
+import com.slyworks.medix.concurrency.workers.FCMTokenUploadWorker
+import com.slyworks.medix.concurrency.workers.MessageWorker
+import com.slyworks.medix.concurrency.workers.ProfileUpdateWorker
+import com.slyworks.medix.concurrency.workers.StartServiceWorker
 import com.slyworks.data.AppDatabase
 import com.slyworks.medix.utils.UserDetailsUtils
+import timber.log.Timber
 
 
 /**
@@ -112,6 +112,7 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initTimber()
         initContext()
         initRoom()
         initUserDetailsUtils()
@@ -122,6 +123,23 @@ class App: Application() {
 
     }
 
+    private fun initTimber(){
+        /*to ensure logging does not occur in RELEASE builds*
+          the actual dependency is in :models*/
+        if(!BuildConfig.DEBUG)
+            return
+
+        Timber.plant(object: Timber.DebugTree(){
+            override fun createStackElementTag(element: StackTraceElement): String {
+                return String.format(
+                    "%s:%s",
+                    element.methodName,
+                    super.createStackElementTag(element)
+                )
+            }
+        })
+    }
+
     private fun initContext(){
         mContext = this;
     }
@@ -130,7 +148,7 @@ class App: Application() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initNotificationChannels(){
-        /*would be using ~2 notification channels, 2 for general app notifications, 1 for ForegroundService*/
+        /*would be using ~2 notification channels, 1 for general app notifications, 1 for ForegroundService*/
         createNotificationChannel1()
         createNotificationChannel2()
     }
@@ -166,6 +184,8 @@ class App: Application() {
     }
 
     private fun initRoom(){
+        /*doing a first time initialization of Room so that subsequent calls would be
+         to get a database instance, (should help with performance???)*/
         AppDatabase.getInstance(this)
     }
 

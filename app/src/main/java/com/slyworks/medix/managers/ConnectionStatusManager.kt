@@ -90,11 +90,8 @@ object ConnectionStatusManager {
                     val cs = it.getValue(ConnectionStatus::class.java)!!
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        val person: Person? = mPersonDao
-                            .getPersonByID(firebaseUID)
-
-                        if(person == null)
-                            return@launch
+                        val person: Person = mPersonDao
+                            .getPersonByID(firebaseUID) ?: return@launch
 
                         person.lastMessageTimeStamp = cs.timestamp.toString()
 

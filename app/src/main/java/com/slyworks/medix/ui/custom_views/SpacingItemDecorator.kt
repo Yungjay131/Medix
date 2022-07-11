@@ -19,7 +19,7 @@ class SpacingItemDecorator:RecyclerView.ItemDecoration() {
 
         val nextViewHolder: RVMessageAdapter.MViewHolder? =
             parent.findViewHolderForAdapterPosition(currentViewHolder.bindingAdapterPosition + 1)
-                    as RVMessageAdapter.MViewHolder ?: return
+                    as? RVMessageAdapter.MViewHolder
 
         var isLastInGroup:Boolean = false
         if(nextViewHolder == null){

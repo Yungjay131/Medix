@@ -44,16 +44,7 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
                 fullName = fullName)
            )
             .flatMap {
-                Observable.combineLatest(
-                    CloudMessageManager.sendConsultationRequestResponse(it),
-                    CloudMessageManager.sendConsultationRequestResponseToDB(it),
-                    { o1: Outcome, o2: Outcome ->
-                        if (o1.isSuccess && o2.isSuccess)
-                            Observable.just(Outcome.SUCCESS<Nothing>(additionalInfo = "response delivered"))
-                        else
-                            Observable.just(Outcome.FAILURE<Nothing>(reason = "response was not successfully delivered"))
-                    }
-                )
+                CloudMessageManager.sendConsultationRequestResponse(it)
             }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())

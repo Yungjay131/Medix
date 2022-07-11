@@ -3,14 +3,11 @@ package com.slyworks.medix.ui.fragments.findDoctorsFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.divider.MaterialDivider
 import com.slyworks.constants.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
 import com.slyworks.medix.App
-import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.AppController
 import com.slyworks.medix.R
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.FBUserDetails

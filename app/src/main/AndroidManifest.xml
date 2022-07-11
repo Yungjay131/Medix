@@ -32,7 +32,7 @@
             android:theme="@style/AppTheme.message"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".ui.activities.requestsActivity.RequestsActivity"
+            android:name=".ui.activities.requestsActivity.ViewRequest"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

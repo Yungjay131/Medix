@@ -5,10 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.slyworks.data.daos.CallHistoryDao
-import com.slyworks.data.daos.MessageDao
-import com.slyworks.data.daos.MessagePersonDao
-import com.slyworks.data.daos.PersonDao
+import com.slyworks.data.daos.*
+import com.slyworks.models.models.ConsultationRequest
 import com.slyworks.models.room_models.CallHistory
 import com.slyworks.models.room_models.Message
 import com.slyworks.models.room_models.MessagePerson
@@ -24,6 +22,7 @@ import com.slyworks.models.room_models.Person
         Person::class,
         Message::class,
         CallHistory::class,
+        //ConsultationRequest::class
     ],
     version = 1,
     exportSchema = true )
@@ -66,5 +65,5 @@ abstract class AppDatabase : RoomDatabase(){
     abstract fun getMessagePersonDao(): MessagePersonDao
     abstract fun getPersonDao(): PersonDao
     abstract fun getCallHistoryDao(): CallHistoryDao
-
+   // abstract fun getConsultationRequestDao(): ConsultationRequestDao
 }

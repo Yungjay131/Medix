@@ -3,7 +3,6 @@ package com.slyworks.medix.ui.fragments
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,21 +17,21 @@ import androidx.constraintlayout.widget.Group
 import androidx.constraintlayout.widget.Guideline
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.*
 import com.slyworks.medix.*
-import com.slyworks.medix.AppController.clearAndRemove
+import com.slyworks.medix.utils.AppController.clearAndRemove
 import com.slyworks.medix.managers.CloudMessageManager
 import com.slyworks.medix.navigation.Navigator
 import com.slyworks.medix.navigation.addExtra
 import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
 import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
+import com.slyworks.medix.utils.AppController
+import com.slyworks.medix.utils.Subscription
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
@@ -40,6 +39,7 @@ import com.slyworks.models.models.*
 import com.slyworks.models.room_models.FBUserDetails
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import timber.log.Timber
 
 class ViewProfileFragment : Fragment(), Observer {
     //region Vars
@@ -217,7 +217,7 @@ class ViewProfileFragment : Fragment(), Observer {
             val request2: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
             CloudMessageManager.sendConsultationRequest(request2)
 
-            Log.e(TAG, "initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
+            Timber.e("initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
         }
 
         fabSendRequest.setOnLongClickListener{
@@ -225,7 +225,7 @@ class ViewProfileFragment : Fragment(), Observer {
             val request: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, UserDetailsUtils.user!!, REQUEST_PENDING)
             CloudMessageManager.sendConsultationRequest(request, mode = MessageMode.CLOUD_MESSAGE)
 
-            Log.e(TAG, "initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
+            Timber.e("initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
             true
         }
 
@@ -261,7 +261,7 @@ class ViewProfileFragment : Fragment(), Observer {
         val layout:TextView = TextView(requireContext())
         layout.setTextColor(ContextCompat.getColor(requireContext(),R.color.appTextColor3))
         layout.setId(View.generateViewId())
-        layout.setPadding(0,8,0,8)
+        layout.setPadding(0,0,0,8)
         layout.maxLines = 2
         layout.textSize = 20F
         layout.text = text

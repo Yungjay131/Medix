@@ -3,6 +3,7 @@ package com.slyworks.medix.ui.fragments.callsHistoryFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.slyworks.medix.managers.CallHistoryManager
 import com.slyworks.medix.managers.CallManager
 import com.slyworks.models.room_models.CallHistory
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -30,7 +31,7 @@ class CallsHistoryViewModel : ViewModel() {
     fun observeCallsHistory():LiveData<List<CallHistory>>{
         val l:MutableLiveData<List<CallHistory>> = MutableLiveData()
         val d =
-            CallManager.observeCallsHistory()
+            CallHistoryManager.observeCallsHistory()
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe {
@@ -51,7 +52,7 @@ class CallsHistoryViewModel : ViewModel() {
     }
 
     fun stop(){
-        CallManager.detachObserveCallsHistoryObserver()
+        CallHistoryManager.detachObserveCallsHistoryObserver()
         mSubscriptions.clear()
     }
 

@@ -3,7 +3,6 @@ package com.slyworks.medix.ui.activities.messageActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.slyworks.medix.managers.*
 import com.slyworks.models.models.Observer
 import com.slyworks.models.room_models.Message
@@ -12,8 +11,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 /**
@@ -28,26 +25,67 @@ class MessageViewModel : ViewModel(), Observer {
     private val mConnectionStatusLiveData:MutableLiveData<String> = MutableLiveData()
     private val mUserDetailsLiveData:MutableLiveData<FBUserDetails> = MutableLiveData()
 
+    private val _startCallDataLiveData:MutableLiveData<FBUserDetails> = MutableLiveData()
+    val startCallDataLiveData:LiveData<FBUserDetails>
+    get() = _startCallDataLiveData
+
+    private val _startCallStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val startCallStateLiveData:LiveData<Boolean>
+    get() = _startCallStateLiveData
+
     val mProgressLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val mStatusLiveData:MutableLiveData<String> = MutableLiveData()
     //endregion
+
+    fun getUserDetails(firebaseUID:String){
+        val d =
+            UsersManager.getUserDataForUID(firebaseUID)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    mProgressLiveData.postValue(true)
+                }
+                .subscribe {
+                    mProgressLiveData.postValue(false)
+
+                    when{
+                        it.isSuccess ->{
+                            _startCallDataLiveData.postValue(it.getTypedValue())
+                            _startCallStateLiveData.postValue(true)
+                        }
+                        it.isFailure ->{
+                            mStatusLiveData.postValue(it.getAdditionalInfo())
+                        }
+                    }
+                }
+    }
 
     fun sendMessage(message: Message) {
           val d =
               MessageManager.sendMessage(message)
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .subscribe { _ ->
+                .doOnSubscribe {
                     mMessageListLiveData.value?.add(message)
-                    mMessageListLiveData.setValue(mMessageListLiveData.value)
+                    mMessageListLiveData.postValue(mMessageListLiveData.value)
+
+                    updatePersonLastMessageTimeStamp(firebaseUID = message.toUID, message.timeStamp)
+                }
+                .subscribe { it:Message ->
+                    mMessageListLiveData.value?.last()?.status = it.status
+                    mMessageListLiveData.postValue(mMessageListLiveData.value)
                 }
 
         mSubscriptions.add(d)
     }
 
+    fun updatePersonLastMessageTimeStamp(firebaseUID: String, timeStamp:String) = PersonsManager.updateLastMessageTimeStamp(firebaseUID, timeStamp)
+    fun updatePersonLastMessageInfo(firebaseUID:String) = PersonsManager.updateLastMessageInfo(firebaseUID)
+
+
     fun observeUserDetails(firebaseUID: String):LiveData<FBUserDetails>{
        val d =
-           UsersManager.getUserDataForUID(firebaseUID)
+           UsersManager.observeUserDataForUID(firebaseUID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -71,7 +109,7 @@ class MessageViewModel : ViewModel(), Observer {
                 .observeOn(Schedulers.io())
                 .subscribe{
                     if(it.status)
-                      mConnectionStatusLiveData.postValue("online")
+                       mConnectionStatusLiveData.postValue("online")
                     else{
                        val time = TimeUtils.convertTimeToString(it.timestamp.toString())
                        mConnectionStatusLiveData.postValue(time)
@@ -112,6 +150,6 @@ class MessageViewModel : ViewModel(), Observer {
         mSubscriptions.clear()
         ConnectionStatusManager.detachObserveConnectionStatusForUIDListener(mUID!!)
         MessageManager.detachMessagesForUIDListener(mUID!!)
-
+        //UsersManager.detachUserDataListener(mUID!!)
     }
 }

@@ -1,16 +1,14 @@
 package com.slyworks.medix.ui.activities.loginActivity
 
-import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +20,8 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import com.slyworks.constants.*
 import com.slyworks.medix.*
 import com.slyworks.medix.managers.VibrationManager
+import com.slyworks.medix.navigation.Navigator
+import com.slyworks.medix.navigation.Navigator.Companion.getExtra
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.mainActivity.MainActivity
 import com.slyworks.medix.ui.activities.registrationActivity.EXTRA_IS_ACTIVITY_RECREATED
@@ -58,7 +58,7 @@ class LoginActivity : BaseActivity() {
 
     private val mSubscriptions:CompositeDisposable = CompositeDisposable()
 
-    private var mDestination:Class<*> = MainActivity::class.java
+    private var mDestination:Class<out AppCompatActivity> = MainActivity::class.java
 
     private var mMediaPlayer: MediaPlayer? = null
 
@@ -98,11 +98,11 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun initData(){
-        if(intent.getBundleExtra(EXTRA_ACTIVITY) != null)
-            mDestination = ActivityUtils.from(intent.getStringExtra(EXTRA_LOGIN_DESTINATION)!!)
-
         this.onBackPressedDispatcher
             .addCallback(this, MOnBackPressedCallback(this))
+
+        if(intent.getExtra<String>(EXTRA_LOGIN_DESTINATION) != null)
+            mDestination = ActivityUtils.from(intent.getStringExtra(EXTRA_LOGIN_DESTINATION)!!)
 
         mViewModel.passwordResetLiveData.observe(this){
             if(it)
@@ -117,10 +117,10 @@ class LoginActivity : BaseActivity() {
                 it.isSuccess ->{
                     setMediaPlayerStatus()
 
-                    val intent = Intent(this@LoginActivity, mDestination)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                    finish()
+                    Navigator.intentFor(this, mDestination)
+                        .newAndClearTask()
+                        .finishCaller()
+                        .navigate()
                 }
                 it.isFailure ||
                 it.isError -> displayMessage(it.getValue() as String)
@@ -300,7 +300,7 @@ class LoginActivity : BaseActivity() {
         }
 
         toggleLoadingStatus(true)
-        
+
         mViewModel.login(email,password)
     }
 

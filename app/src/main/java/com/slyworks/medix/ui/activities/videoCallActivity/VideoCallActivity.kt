@@ -22,8 +22,11 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.slyworks.constants.*
 import com.slyworks.medix.managers.CallManager
 import com.slyworks.medix.R
+import com.slyworks.medix.managers.CallHistoryManager
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.VibrationManager
+import com.slyworks.medix.navigation.Navigator.Companion.getExtra
+import com.slyworks.medix.navigation.Navigator.Companion.getParcelable
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.utils.*
 import com.slyworks.medix.utils.ViewUtils.displayImage
@@ -137,15 +140,15 @@ class VideoCallActivity : BaseActivity() {
      //if join call,show callers picture and name
      //else show person you are calling picture
       //1-calling
-       val extras:Bundle = intent.getBundleExtra(EXTRA_ACTIVITY)!!
-       val type:String = extras.getString(EXTRA_VIDEO_CALL_TYPE)!!
-       mUserDetails = intent.getParcelableExtra<FBUserDetails>(EXTRA_VIDEO_CALL_USER_DETAILS)!!
+        val callType:String = intent.getExtra<String>(EXTRA_VIDEO_CALL_TYPE)!!
+        mUserDetails = intent.getParcelable(EXTRA_VIDEO_CALL_USER_DETAILS)!!
+
         mCallHistory = CallHistory(type = VIDEO_CALL,
             callerUID = mUserDetails.firebaseUID,
             senderImageUri =  mUserDetails.imageUri,
             callerName = mUserDetails.fullName,
             timeStamp = System.currentTimeMillis().toString())
-       if(type == VIDEO_CALL_OUTGOING){
+       if(callType == VIDEO_CALL_OUTGOING){
            mCallHistory.status = OUTGOING_CALL
 
            val request: VideoCallRequest =
@@ -313,11 +316,11 @@ class VideoCallActivity : BaseActivity() {
 
         setupLocalVideoFeed()
 
-        CallManager.onVideoCallStarted(mCallHistory)
+        CallHistoryManager.onVideoCallStarted(mCallHistory)
     }
 
     private fun leaveChannel(){
-        CallManager.onVideoCallStopped()
+        CallHistoryManager.onVideoCallStopped()
 
         mRtcEngine.leaveChannel()
         removeVideo(flSmallVideoContainer)

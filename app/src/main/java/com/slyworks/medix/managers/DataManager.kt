@@ -1,6 +1,5 @@
 package com.slyworks.medix.managers
 
-import android.util.Log
 import androidx.collection.SimpleArrayMap
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database

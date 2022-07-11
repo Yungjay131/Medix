@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,16 +16,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
-import com.slyworks.constants.CAMERA_FILE_REQUEST_CODE
-import com.slyworks.constants.EVENT_SELECT_PROFILE_IMAGE
-import com.slyworks.constants.IMAGE_FILE_REQUEST_CODE
-import com.slyworks.medix.AppController
 import com.slyworks.medix.BuildConfig
 import com.slyworks.medix.R
 import com.slyworks.medix.utils.*
-import com.slyworks.models.models.Outcome
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -131,7 +126,7 @@ class ChangePhotoDialog(): BaseDialogFragment() {
     private fun takePhoto():Unit{
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if(intent.resolveActivity(requireActivity().packageManager) == null){
-            Log.e(TAG, "snapPhoto: no app to handle camera request" )
+            Timber.e("snapPhoto: no app installed able to handle camera request" )
             showToast("no camera app installed, please install one and try again")
             return
         }
@@ -140,13 +135,13 @@ class ChangePhotoDialog(): BaseDialogFragment() {
         try {
             photoFile = createImageFile()
         }catch (ioe:IOException){
-            Log.e(TAG, "takePhoto: ${ioe.message}" )
+            Timber.e("takePhoto: ${ioe.message}" )
             dismiss()
         }
 
         //continue only if file was successfully created
         if(photoFile == null){
-            Log.e(TAG, "takePhoto: photoFile wasn't created" )
+            Timber.e("takePhoto: photoFile wasn't created" )
             showToast("photoFile wasn't created")
             return
         }

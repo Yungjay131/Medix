@@ -5,11 +5,10 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import com.slyworks.medix.App
 import java.io.ByteArrayOutputStream
 import com.slyworks.models.models.Result
-
+import timber.log.Timber
 
 
 /**
@@ -28,22 +27,22 @@ object Compressor {
         private var mBytes: ByteArray? = null
     //endregion
 
-        fun compressImage(uri: Uri): com.slyworks.models.models.Result<ByteArray> {
-            var status = com.slyworks.models.models.Result.failure<ByteArray>()
+        fun compressImage(uri: Uri): Result<ByteArray> {
+            var status = Result.failure<ByteArray>()
 
             val bitmap = getBitmap(uri) ?: return status
 
             var bytes:ByteArray?
                 for(i in 1..10){
                     if(i == 10){
-                        status = com.slyworks.models.models.Result.failure<ByteArray>()
+                        status = Result.failure<ByteArray>()
                         break
                     }
 
                     bytes = getBytesFromBitmap(bitmap, 100/i)
 
                     if(bytes.size / MB < MAX_PICTURE_SIZE){
-                        status = com.slyworks.models.models.Result.success(bytes)
+                        status = Result.success(bytes)
                         break
                     }
                 }
@@ -60,7 +59,7 @@ object Compressor {
                     bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(App.getContentResolver(), uri))
 
             } catch (e: Exception) {
-                Log.e(TAG, "getBitmap: ${e.message}" )
+                Timber.e("getBitmap: ${e.message}" )
             }
 
             return bitmap
@@ -72,7 +71,5 @@ object Compressor {
             return stream.toByteArray()
         }
 
-        fun compressVideo(uri:Uri){
-
-        }
+        fun compressVideo(uri:Uri){}
 }

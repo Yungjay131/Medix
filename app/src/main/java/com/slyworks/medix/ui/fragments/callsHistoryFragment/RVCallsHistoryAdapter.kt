@@ -21,7 +21,7 @@ class RVCallsHistoryAdapter(diffUtil: DiffUtil.ItemCallback<CallHistory> = Calls
 ): ListAdapter<CallHistory, RVCallsHistoryAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.li_ca   ll_history, parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.li_call_history, parent,false)
         return ViewHolder(view)
     }
 

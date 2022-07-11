@@ -1,6 +1,5 @@
 package com.slyworks.medix.managers
 
-import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -16,6 +15,7 @@ import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.models.room_models.FBUserDetails
 import io.reactivex.rxjava3.core.Observable
+import timber.log.Timber
 
 
 /**
@@ -97,13 +97,13 @@ class  RegistrationManager {
                     if (it.isSuccessful) {
                         mCurrentFirebaseUserResult = it.result!!
                         mUser.firebaseUID = it.result!!.user!!.uid
-                        Log.e(TAG, "_createFirebaseUser: createUserWithEmailAndPassword() successful")
+                        Timber.e("_createFirebaseUser: createUserWithEmailAndPassword() successful")
 
                         val r = Outcome.SUCCESS(value = "firebase user created successfully")
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
-                        Log.e(TAG, "_createFirebaseUser: createUserWithEmailAndPassword() completed but was not successful")
+                        Timber.e("_createFirebaseUser: createUserWithEmailAndPassword() completed but was not successful")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                         val r = Outcome.FAILURE(value = "firebase user was not created", reason = it.exception?.message)
@@ -136,7 +136,7 @@ class  RegistrationManager {
                                         emitter.onNext(r)
                                         emitter.onComplete()
                                     } else {
-                                        Log.e(TAG, "_uploadUserProfileImage: query retrieving downloadUrl for image completed but wasn't successful")
+                                        Timber.e("_uploadUserProfileImage: query retrieving downloadUrl for image completed but wasn't successful")
                                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                                         val r = Outcome.FAILURE(value = "user profile image url was not downloaded", reason = it.exception?.message)
@@ -145,7 +145,7 @@ class  RegistrationManager {
                                     }
                                 }
                         } else {
-                            Log.e(TAG, "_uploadUserProfileImage: query uploading user image completed but wasn't successful")
+                            Timber.e("_uploadUserProfileImage: query uploading user image completed but wasn't successful")
                             //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                             val r = Outcome.FAILURE(value = "user profile image was not uploaded", reason = it.exception?.message)
@@ -154,7 +154,7 @@ class  RegistrationManager {
                         }
                     }
             } catch (e: Exception) {
-                Log.e(TAG, "_uploadUserProfileImage: _uploadUserProfileImage().catch(): error occurred", e)
+                Timber.e("_uploadUserProfileImage: _uploadUserProfileImage().catch(): error occurred", e)
                 //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                 val r = Outcome.ERROR(value = "an error occurred uploading user profile image"
@@ -184,7 +184,7 @@ class  RegistrationManager {
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
-                        Log.e(TAG, "getFCMRegistrationToken: getting user FCM Registration token completed but failed")
+                        Timber.e("getFCMRegistrationToken: getting user FCM Registration token completed but failed")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                         val r = Outcome.FAILURE(value = "getting user FCM registration token failed", reason = it.exception?.message)
@@ -208,7 +208,7 @@ class  RegistrationManager {
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
-                        Log.e(TAG, "uploadUserDetailsToFirebaseDB2: uploading user details to multiple locations in the DB, completed but failed")
+                        Timber.e("uploadUserDetailsToFirebaseDB2: uploading user details to multiple locations in the DB, completed but failed")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
                         val r = Outcome.FAILURE(value = "uploading user details to Firebase failed", reason = it.exception?.message)
                         emitter.onNext(r)
@@ -255,7 +255,7 @@ class  RegistrationManager {
                         emitter.onNext(r)
                         emitter.onComplete()
                     } else {
-                        Log.e(TAG, "_sendVerificationEmail: sending email verification completed but failed")
+                        Timber.e("_sendVerificationEmail: sending email verification completed but failed")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
                         val r = Outcome.FAILURE(value = "user verification email was not sent", reason = it.exception?.message)
                         emitter.onNext(r)
@@ -275,13 +275,13 @@ class  RegistrationManager {
                 .delete()
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        Log.e(TAG, "deleteUser: delete successful")
+                        Timber.e("deleteUser: delete successful")
 
                         val r = Outcome.SUCCESS(value = true)
                         emitter.onNext(r)
                         emitter.onComplete()
                     }else{
-                        Log.e(TAG, "deleteUser: delete unsuccessful", it.exception)
+                        Timber.e("deleteUser: delete unsuccessful", it.exception)
 
                         val r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                         emitter.onNext(r)
@@ -302,13 +302,13 @@ class  RegistrationManager {
                 .delete()
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        Log.e(TAG, "deleteUserProfileImage: delete successful")
+                        Timber.e("deleteUserProfileImage: delete successful")
 
                         val r = Outcome.SUCCESS(value = true)
                         emitter.onNext(r)
                         emitter.onComplete()
                     }else{
-                        Log.e(TAG, "deleteUserProfileImage: delete unsuccessful", it.exception )
+                        Timber.e("deleteUserProfileImage: delete unsuccessful", it.exception )
 
                         val r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                         emitter.onNext(r)
@@ -330,13 +330,13 @@ class  RegistrationManager {
                 .setValue(null)
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        Log.e(TAG, "deleteUserDetailsFromDB: delete successful" )
+                        Timber.e("deleteUserDetailsFromDB: delete successful" )
 
                         val r = Outcome.SUCCESS(value = true)
                         emitter.onNext(r)
                         emitter.onComplete()
                     }else{
-                        Log.e(TAG, "deleteUserDetailsFromDB: delete unsuccessful")
+                        Timber.e("deleteUserDetailsFromDB: delete unsuccessful")
 
                         val r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                         emitter.onNext(r)
@@ -352,11 +352,11 @@ class  RegistrationManager {
             mFirebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Log.e(TAG, "handleForgotPassword: password reset email successfully sent")
+                        Timber.e("handleForgotPassword: password reset email successfully sent")
                         emitter.onNext(true)
                         emitter.onComplete()
                     } else {
-                        Log.e(TAG, "handleForgotPassword: password reset email was not successfully sent", it.exception)
+                        Timber.e("handleForgotPassword: password reset email was not successfully sent", it.exception)
                         emitter.onNext(false)
                         emitter.onComplete()
                     }

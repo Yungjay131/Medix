@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -45,6 +45,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    api "com.jakewharton.timber:timber:5.0.1"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

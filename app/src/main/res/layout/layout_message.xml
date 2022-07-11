@@ -14,7 +14,7 @@
         android:layout_height="1dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -28,7 +28,7 @@
         <ImageView
             android:id="@+id/ivEmoji"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="32dp"
             app:layout_constraintStart_toEndOf="@id/__guide_vertical_1"
             app:layout_constraintEnd_toStartOf="@id/__guide_vertical_3"
             app:layout_constraintBottom_toTopOf="@id/__view_horizontal_1"
@@ -50,7 +50,7 @@
         <ImageView
             android:id="@+id/ivAttachment"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="32dp"
             app:layout_constraintStart_toEndOf="@id/__guide_vertical_6"
             app:layout_constraintEnd_toStartOf="@id/__guide_vertical_2"
             app:layout_constraintBottom_toTopOf="@id/__view_horizontal_1"
@@ -136,12 +136,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/_guide_vertical_3"
         app:layout_constraintEnd_toStartOf="@id/_guide_vertical_4"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/appGreen"
         android:src="@drawable/ic_send"
-        android:tint="@color/white"
         app:fabSize="normal"
+        android:tint="@color/white"
         app:rippleColor="#388E3C"
         app:elevation="4dp"
         android:visibility="gone"/>
@@ -150,16 +153,19 @@
         android:id="@+id/fab_record_layout_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/_guide_vertical_3"
-        app:layout_constraintEnd_toStartOf="@id/_guide_vertical_4"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/_guide_vertical_4"
+        app:layout_constraintStart_toEndOf="@id/_guide_vertical_3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/appGreen"
         android:src="@drawable/ic_mic"
-        app:fabSize="normal"
-        app:rippleColor="#388E3C"
+        android:tint="@color/white"
         app:elevation="4dp"
-        android:tint="@color/white"/>
+        app:fabSize="normal"
+        app:rippleColor="#388E3C" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/_guide_vertical_1"
@@ -210,5 +216,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".98"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

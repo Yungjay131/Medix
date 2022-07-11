@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
-import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.AppController
 import com.slyworks.medix.R
 import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage
@@ -56,7 +56,7 @@ class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = PersonDiffUtilCal
         //endregion
 
         fun bind(entity: Person){
-            ivProfile.displayImage(entity.senderImageUri)
+            ivProfile.displayImage(entity.imageUri)
 
             var name:String = entity.fullName
             if(entity.userAccountType == "DOCTOR")

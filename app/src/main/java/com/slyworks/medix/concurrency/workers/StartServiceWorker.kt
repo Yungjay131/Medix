@@ -1,4 +1,4 @@
-package com.slyworks.medix.concurrency
+package com.slyworks.medix.concurrency.workers
 
 import android.content.Context
 import android.content.Intent

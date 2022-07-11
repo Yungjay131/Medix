@@ -4,17 +4,14 @@ import com.google.firebase.database.*
 import com.slyworks.constants.*
 import com.slyworks.data.AppDatabase
 import com.slyworks.data.daos.MessageDao
-import com.slyworks.data.daos.MessagePersonDao
 import com.slyworks.data.daos.PersonDao
 import com.slyworks.medix.App
-import com.slyworks.medix.utils.MChildEventListener
 import com.slyworks.medix.utils.MValueEventListener
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.room_models.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -39,7 +36,7 @@ object MessageManager {
     private var observeNewMessagePersonsJob:Job? = null
 
     private lateinit var mUIDValueEventListener: ValueEventListener
-    private lateinit var mUIDChildEventListener:ChildEventListener
+    private lateinit var mUIDChildEventListener:ValueEventListener
    //endregion
 
     fun detachMessagesForUIDListener(firebaseUID: String){
@@ -61,7 +58,7 @@ object MessageManager {
           FirebaseDatabase.getInstance()
               .reference
               .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
-              .orderByChild("from_uid")
+              .orderByChild("fromUID")
               .equalTo(firebaseUID)
               .addValueEventListener(mUIDValueEventListener)
 
@@ -84,6 +81,9 @@ object MessageManager {
       }
 
     private fun handleChangedMessages(snapshot: DataSnapshot){
+        if(!snapshot.exists())
+            return
+
         val l: MutableList<Message> = mutableListOf()
         snapshot.children.forEach {
             val m: Message = it.getValue(Message::class.java)!!
@@ -112,12 +112,12 @@ object MessageManager {
 
     fun observeMessagePersons():Observable<Outcome> =
         Observable.create { emitter ->
-             mUIDChildEventListener = MChildEventListener(onChildAddedFunc = ::handleNewMessages)
+             mUIDChildEventListener = MValueEventListener(onDataChangeFunc = ::handleNewMessages)
 
              FirebaseDatabase.getInstance()
                  .reference
                  .child("messages/${UserDetailsUtils.user!!.firebaseUID}")
-                 .addChildEventListener(mUIDChildEventListener)
+                 .addValueEventListener(mUIDChildEventListener)
 
              observeNewMessagePersonsJob =
                  CoroutineScope(Dispatchers.IO).launch {
@@ -137,18 +137,15 @@ object MessageManager {
         }
 
     private fun handleNewMessages(snapshot: DataSnapshot){
-        val d = getPersonSetObservable()
-            .flatMap {
-                getMessageListObservable(snapshot)
-                    .map(::mapUIDToMessageList)
-                    .map(::mapUIDMapToPersonList)
-            }
-            .flatMap {
-                getPersonsObservable(it)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe { _ -> }
+        /*snapshot should be a list of all the user's messages from the different senders*/
+        val d =
+            getMessageListObservable(snapshot)
+                  .map(::mapUIDToMessageList)
+                  .map(::mapUIDMapToPersonList)
+                  .flatMap(::getPersonsObservable)
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(Schedulers.io())
+                  .subscribe()
 
         mHandleNewMessagesDisposable.add(d)
     }
@@ -224,9 +221,9 @@ object MessageManager {
 
             lastMessage = mList.last()
             if(lastMessage.type == OUTGOING_MESSAGE)
-                name = lastMessage.receiverFullName
-            else
                 name = lastMessage.senderFullName
+            else
+                name = lastMessage.receiverFullName
 
 
             mList.forEach { m:Message ->
@@ -251,99 +248,40 @@ object MessageManager {
         lastMessageContent = m.content,
         lastMessageStatus = m.status,
         lastMessageTimeStamp = m.timeStamp,
-        senderImageUri = m.senderImageUri,
+        imageUri = m.receiverImageUri,
         fullName = name,
         unreadMessageCount = unreadMessageCount,
         FCMRegistrationToken = m.FCMRegistrationToken )
 
 
 
-    fun sendMessage(message:Message): Observable<Boolean> {
+    fun sendMessage(message:Message): Observable<Message> {
         /* creating 2 copies of the messages to keep sender and receiver version different */
-        //TODO: perform tests to know if this 'doubling' is necessary
         message.status = DELIVERED
         val message2: Message = Message.cloneFrom(message)
 
         /* if the sender's DB message node has other messages, just add a new empty node */
-        val senderMessageNodeKey:String? = FirebaseDatabase.getInstance()
+        val senderMessageNodeKey: String? = FirebaseDatabase.getInstance()
             .reference.child("messages/${message.fromUID}")
             .push().key
 
         /* if the receiver's DB message node has other messages, just add a new empty node*/
-        val receiverMessageNodeKey:String? = FirebaseDatabase.getInstance()
+        val receiverMessageNodeKey: String? = FirebaseDatabase.getInstance()
             .reference.child("messages/${message.toUID}")
             .push().key
 
-        getChildNodesObservable(
-            message,
-            message2,
-            senderMessageNodeKey,
-            receiverMessageNodeKey)
+        return getChildNodesObservable( message,
+                                        message2,
+                                        senderMessageNodeKey,
+                                        receiverMessageNodeKey)
             .flatMap {
-                addMessagesToDB(
-                    if (it.isSuccess)
-                        message
-                    else
-                        message.apply { status = NOT_SENT }
-                )
-            }
-
-        /* complex RX chain that starts with checking if the sender's message node is empty
-        * if it is, start by sending the message to the sender's node
-        * then if the receiver's message node is empty,
-        * send the message to the message node
-        * if the receiver's message node is NOT empty
-        * send the message to an empty created node
-        * and save the sent message, if there was an error, set the Message#status to NOT_SENT
-        * and add to DB, if it failed it is re-queued for later
-        *
-        * if both receiver and sender message nodes are NOT empty, then just perform a
-        * simultaneous child node update */
-        //TODO && FIXME: use Completable#andThen here
-        return Observable.just(senderMessageNodeKey == null)
-            .flatMap {
-                if(it)
-                    getSenderObservable(message)
-                        .flatMap { it2 ->
-                            if(it2.isSuccess)
-                                Observable.just(receiverMessageNodeKey == null)
-                                    .flatMap { it3 ->
-                                        if(it3)
-                                            getReceiverObservable(message2)
-                                                .flatMap { it4 ->
-                                                    addMessagesToDB(
-                                                        if (it4.isSuccess)
-                                                            message
-                                                        else
-                                                            message.apply { status = NOT_SENT }
-                                                    )
-                                                }
-                                        else
-                                            getReceiverNodeObservable(message2,receiverMessageNodeKey)
-                                                .flatMap { it5 ->
-                                                    addMessagesToDB(
-                                                        if (it5.isSuccess)
-                                                            message
-                                                        else
-                                                            message.apply { status = NOT_SENT }
-                                                    )
-                                                }
-                                    }
-
-                            else
-                                Observable.just(it2)
-                        }
-                else
-                    getChildNodesObservable(message,
-                                            message2,
-                                            senderMessageNodeKey,
-                                            receiverMessageNodeKey)
-            }
-            .flatMap {
-                if(it.isSuccess)
-                    Observable.just(true)
-                else
-                    Observable.just(false)
+                if (it.isSuccess) {
+                    addMessagesToDB(message)
+                    Observable.just(message)
+                } else {
+                    addMessagesToDB(message.apply { status = NOT_SENT })
+                    Observable.just(message.apply { status = NOT_SENT })
+                }
             }
     }
 

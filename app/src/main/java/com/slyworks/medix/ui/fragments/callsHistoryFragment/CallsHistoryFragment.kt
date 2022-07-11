@@ -67,7 +67,6 @@ class CallsHistoryFragment : Fragment() {
 
     private fun initData(){
         mViewModel = ViewModelProvider(this).get(CallsHistoryViewModel::class.java)
-
         mViewModel.progressState
             .observe(viewLifecycleOwner){
             progress.isVisible = it

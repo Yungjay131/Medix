@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.medix.utils
 
 import com.slyworks.models.models.NotifyMethod
 import com.slyworks.models.models.Observer
@@ -65,7 +65,7 @@ object AppController {
     }
 
     fun <T>notifyObservers(event:String, data:T){
-        //Log.e("AppController", "notifyObservers: ${Thread.currentThread().name}" )
+        //Timber.e("notifyObservers: ${Thread.currentThread().name}" )
 
         val observers:MutableSet<Subscription>? = mObservers[event]
         if(observers.isNullOrEmpty()) return

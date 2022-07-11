@@ -5,8 +5,8 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import com.slyworks.medix.App
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.Callable
 
@@ -28,7 +28,7 @@ class CompressImageCallable(val uri: Uri) : Callable<ByteArray> {
               val imageQuality:Int = 100/index
               val bytes:ByteArray = _getBytesFromBitmap(bitmap,imageQuality)
 
-                Log.e(TAG, "CompressImageCallable.call(): megabytes: (" + (11 - index) + "0%) " + bytes.size / MB + " MB")
+                Timber.e("CompressImageCallable.call(): megabytes: (" + (11 - index) + "0%) " + bytes.size / MB + " MB")
 
                 val condition = (bytes.size / MB) < MB_THRESHHOLD
                 if(condition){
@@ -54,7 +54,7 @@ class CompressImageCallable(val uri: Uri) : Callable<ByteArray> {
                 else
                     bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(App.getContentResolver(), uri))
             }catch (e:Exception){
-                Log.e(TAG, "call: CompressImageCallable.call() failed", e )
+                Timber.e("call: CompressImageCallable.call() failed", e )
             }
 
             return bitmap!!

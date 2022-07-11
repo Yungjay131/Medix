@@ -27,7 +27,8 @@ data class Message(
     @ColumnInfo(name = "status") var status:Double = NOT_SENT,
     @ColumnInfo(name = "sender_image_uri") var senderImageUri:String = "",
     @ColumnInfo(name = "account_type") var accountType:String = "",
-    @ColumnInfo(name = "sender_fcm_registration_token")var FCMRegistrationToken:String = "")
+    @ColumnInfo(name = "sender_fcm_registration_token") var FCMRegistrationToken:String = "",
+    @ColumnInfo(name = "receiver_image_uri") var receiverImageUri:String = "")
     : Parcelable, Comparable<Message> {
 
     constructor():this(
@@ -42,7 +43,8 @@ data class Message(
         status = NOT_SENT,
         senderImageUri = "",
         accountType = "",
-        FCMRegistrationToken = "")
+        FCMRegistrationToken = "",
+        receiverImageUri = "")
 
     companion object{
         fun cloneFrom(message:Message):Message{
@@ -58,8 +60,8 @@ data class Message(
                 status = message.status,
                 senderImageUri = message.senderImageUri,
                 accountType = message.accountType,
-                FCMRegistrationToken = message.FCMRegistrationToken
-            )
+                FCMRegistrationToken = message.FCMRegistrationToken,
+                receiverImageUri = message.receiverImageUri )
         }
     }
     override fun compareTo(other: Message): Int {

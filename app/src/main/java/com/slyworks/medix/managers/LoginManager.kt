@@ -1,6 +1,5 @@
 package com.slyworks.medix.managers
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.slyworks.constants.KEY_FCM_REGISTRATION
 import com.slyworks.constants.KEY_FCM_UPLOAD_TOKEN
@@ -16,6 +15,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 /**
@@ -133,7 +133,7 @@ private constructor() {
                        val r:Outcome = Outcome.SUCCESS(value = "login successful")
                        emitter.onNext(r)
                    }else{
-                       Log.e(TAG, "signInUser: user login failed",it.exception )
+                       Timber.e("signInUser: user login failed",it.exception )
                        val r:Outcome = Outcome.FAILURE(value = "oops something went wrong on our end, please try again")
                        emitter.onNext(r)
                        emitter.onComplete()

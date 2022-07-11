@@ -14,7 +14,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_GET_DISPLAY_VIEW
 import com.slyworks.medix.App
-import com.slyworks.medix.AppController
 import com.slyworks.medix.R
 import com.slyworks.models.models.Observer
 

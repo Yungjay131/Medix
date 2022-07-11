@@ -47,11 +47,9 @@ class ChatFragmentViewModel : ViewModel(){
     //endregion
 
     fun getChats(){
-       val d = Observable.merge(
-           Observable.just(mNetworkRegister!!.getNetworkStatus()),
-           mNetworkRegister!!.subscribeToNetworkUpdates()
-       )
-           .flatMap {
+       val d =
+         mNetworkRegister!!.subscribeToNetworkUpdates()
+             .flatMap {
                if(!it)
                    Observable.just(Outcome.ERROR<Nothing>(additionalInfo = "no network connection"))
                else {

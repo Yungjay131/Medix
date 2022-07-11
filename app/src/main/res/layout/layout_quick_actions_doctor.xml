@@ -9,9 +9,12 @@
     <androidx.constraintlayout.helper.widget.Flow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:flow_firstVerticalStyle="spread"
+        app:flow_verticalStyle="spread"
+        app:flow_horizontalStyle="spread_inside"
         app:flow_maxElementsWrap="3"
         app:flow_wrapMode="aligned"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:constraint_referenced_ids="quick_action_message,quick_action_consultations,quick_action_healthcare_centers,quick_action_reminder,quick_action_voicecalls,quick_action_videocalls"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout

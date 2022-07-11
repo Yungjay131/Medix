@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.slyworks.constants.*
 import com.slyworks.medix.App
+import com.slyworks.medix.managers.LoginManager
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.UsersManager
 import com.slyworks.medix.managers.NotificationHelper
@@ -33,7 +34,11 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
             /*TODO:save offline to DB, maybe use WorkManager*/
             if(NetworkRegister(App.getContext()).getNetworkStatus()) {
                 PreferenceManager.set(KEY_FCM_REGISTRATION, token)
-                UsersManager.sendFCMTokenToServer(token)
+
+                if(LoginManager.getInstance().getLoginStatus())
+                   UsersManager.sendFCMTokenToServer(token)
+                else
+                    App.initFCMTokenUploadWork(token)
             }else{
                 /*enqueue task for upload since there is no network connection*/
                 PreferenceManager.set(KEY_FCM_REGISTRATION, token)
@@ -51,6 +56,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
              val message:String = remoteMessage.data["message"]!!
              NotificationHelper.createConsultationRequestNotification( fromUID, fullName, message, toFCMRegistrationToken)
            }
+
            FCM_RESPONSE_ACCEPTED, FCM_RESPONSE_DECLINED ->{
                val fromUID:String = remoteMessage.data["fromUID"]!!
                val toUID:String = UserDetailsUtils.user!!.firebaseUID
@@ -59,6 +65,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                val fullName:String = remoteMessage.data["fullName"]!!
                NotificationHelper.createConsultationResponseNotification( fromUID,toUID, message, status, fullName)
            }
+
            FCM_VOICE_CALL_REQUEST ->{
               val details: FBUserDetails = FBUserDetails(
                   accountType = remoteMessage.data["accountType"]!!,
@@ -73,8 +80,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                   FCMRegistrationToken = remoteMessage.data["fcmRegistrationToken"]!!,
                   imageUri = remoteMessage.data["imageUri"]!!,
                   history = null,
-                  specialization = null
-              )
+                  specialization = null )
 
                CoroutineScope(Dispatchers.IO).launch {
                  val bitmap: Bitmap = Glide.with(App.getContext())
@@ -87,7 +93,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                }
            }
            FCM_NEW_UPDATE_MESSAGE ->{
-               /*TODO:retrieve new Url to download new app from*/
+               /*TODO:retrieve new Url to download new version of app from*/
            }
        }
     }

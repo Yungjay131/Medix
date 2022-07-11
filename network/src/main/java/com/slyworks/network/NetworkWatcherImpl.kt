@@ -47,7 +47,7 @@ class NetworkWatcherImpl(private var context:Context?) : NetworkWatcher {
         mCm.registerNetworkCallback(mNetworkRequest!!, mConnectivityCallback!!)
 
         /*calling it first time*/
-        return mO!!.hide()
+        return mO!!.startWithItem(getNetworkStatus()).hide()
 
     }
 

@@ -27,7 +27,7 @@ object TaskManager {
         return e
     }
 
-    fun destroyExecutor(executorID: Long){
+    fun shutdownExecutor(executorID: Long){
        mExecutorsMap?.get(executorID)?.shutdownNow()
     }
 
@@ -37,12 +37,13 @@ object TaskManager {
         e.shutdown()
     }
 
-    fun <T, R, S>runOnSingleThread(p1:R?, p2:S?, task:(r:R?, s:S?)->T):T{
+    fun <T, R, S> runOnSingleThread(
+        param1: R?,
+        param2: S?,
+        task: (p1: R?, p2: S?) -> T
+    ): T {
         val e = Executors.newSingleThreadExecutor()
-        val data = e.submit(
-            Callable<T>{
-                task(p1, p2)
-            }).get()
+        val data = e.submit(Callable<T>{ task(param1, param2) }).get()
         e.shutdownNow()
         return data
     }
@@ -62,7 +63,7 @@ object TaskManager {
         return Executors.newFixedThreadPool(NUMBER_OF_CORES).submit(task).get()
     }
 
-    //fixme:not sure creating THREADS 2x the NUM_OF_CORES is a good idea.find a better way
+    //fixme:not sure creating THREADS 2x the NUM_OF_CORES is a good idea. find a better way
     fun <T>runOnComputationThreadPool(task:Callable<T>):T{
         val e = Executors.newFixedThreadPool(NUMBER_OF_CORES * 2)
         return execute<T>(e,task)
@@ -75,7 +76,7 @@ object TaskManager {
     }
 
     fun handleUncompletedTasks(){
-        /*TODO:first check if there are uncomplete tasks like DeferredMessages, FCMRegistrationTokens not sent from server
+        /*TODO:first check if there are uncompleted tasks like DeferredMessages, FCMRegistrationTokens not sent from server
         * profile update, not yet implemented etc*/
 
 

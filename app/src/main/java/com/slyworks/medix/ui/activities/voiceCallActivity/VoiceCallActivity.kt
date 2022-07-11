@@ -3,8 +3,8 @@ package com.slyworks.medix.ui.activities.voiceCallActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.text.TextUtils
-import android.util.Log
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.slyworks.constants.*
@@ -14,6 +14,8 @@ import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.managers.VibrationManager
 import com.slyworks.medix.navigation.*
 import com.slyworks.medix.ui.activities.BaseActivity
+import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
+import com.slyworks.medix.ui.dialogs.SwitchToVideoCallDialog
 import com.slyworks.medix.utils.*
 import com.slyworks.models.models.VoiceCallRequest
 import com.slyworks.models.room_models.FBUserDetails
@@ -25,6 +27,7 @@ import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import timber.log.Timber
 import kotlin.math.abs
 
 class VoiceCallActivity : BaseActivity() {
@@ -217,7 +220,7 @@ class VoiceCallActivity : BaseActivity() {
                 firebaseUID = mUserDetails.firebaseUID,
                 status = REQUEST_DECLINED)
 
-            NavigationManager.onBackPressed(this, true, ActivityWrapper.MAIN)
+            this.onBackPressedDispatcher.onBackPressed()
         }
 
         fabEndCall.setOnClickListener {
@@ -227,7 +230,8 @@ class VoiceCallActivity : BaseActivity() {
                 type = TYPE_RESPONSE,
                 firebaseUID = mUserDetails.firebaseUID,
                 status = REQUEST_DECLINED)
-            NavigationManager.onBackPressed(this, true, ActivityWrapper.MAIN)
+
+            this.onBackPressedDispatcher.onBackPressed()
         }
 
         fabLoudSpeaker.setOnClickListener {
@@ -242,21 +246,19 @@ class VoiceCallActivity : BaseActivity() {
 
         fabSwitchToVideoCall.setOnClickListener {
             val o:PublishSubject<Boolean> = PublishSubject.create()
-            NavigationManager.inflateDialog(ActivityWrapper.VOICE_CALL,
-                                           DialogWrapper.SWITCH_TO_VIDEO_CALL,
-                                           args = o)
+
+            SwitchToVideoCallDialog(o).show(supportFragmentManager, "")
+
             o.subscribe {
                 if (it) {
                     leaveChannel()
-                    NavigationManager.inflateActivity(
-                        this,
-                        ActivityWrapper.VIDEO_CALL,
-                        removeCurrentFromBackStack = false,
-                        isToBeFinished = true,
-                        Bundle().apply {
-                            putString(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-                            putParcelable(EXTRA_VIDEO_CALL_USER_DETAILS, mUserDetails)
-                        })
+
+                    Navigator.intentFor<VideoCallActivity>(this)
+                        .addExtra<String>(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+                        .addExtra<Parcelable>(EXTRA_VIDEO_CALL_USER_DETAILS, mUserDetails)
+                        .previousIsTop()
+                        .finishCaller()
+                        .navigate()
                 }
             }
 
@@ -350,7 +352,7 @@ class VoiceCallActivity : BaseActivity() {
             // Error code description can be found at:
             // en: https://docs.agora.io/en/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
             // cn: https://docs.agora.io/cn/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
-            Log.e(TAG, RtcEngine.getErrorDescription(abs(res)))
+            Timber.e(RtcEngine.getErrorDescription(abs(res)))
             return
         }
 
@@ -365,9 +367,5 @@ class VoiceCallActivity : BaseActivity() {
     private fun toggleSpeakerHeadphoneStatus(status: Boolean) {
         /*TODO:set appropriate button state and toggle icon*/
         mRtcEngine!!.setEnableSpeakerphone(status)
-    }
-
-    override fun onBackPressed() {
-        NavigationManager.onBackPressed(this, true)
     }
 }

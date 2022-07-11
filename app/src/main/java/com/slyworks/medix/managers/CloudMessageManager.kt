@@ -1,9 +1,8 @@
 package com.slyworks.medix.managers
 
-import android.util.Log
 import com.google.firebase.database.*
 import com.slyworks.constants.*
-import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.AppController
 import com.slyworks.medix.utils.UserDetailsUtils
 import com.slyworks.medix.getUserReceivedConsultationRequestsRef
 import com.slyworks.medix.getUserSentConsultationRequestsRef
@@ -18,6 +17,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 
 /**
@@ -88,9 +88,18 @@ object CloudMessageManager {
             .removeEventListener(mConsultationRequestsValueEventListener)
     }
 
-    fun sendConsultationRequestResponse(response: ConsultationResponse,
-                                        mode: MessageMode = MessageMode.CLOUD_MESSAGE):Observable<Outcome>
+    fun sendConsultationRequestResponse(response:ConsultationResponse):Observable<Outcome> =
+        Observable.combineLatest(
+            sendConsultationRequestResponseViaFCM(response),
+            sendConsultationRequestResponseToDB(response),
+            { o1:Outcome, o2:Outcome ->
+                if (o1.isSuccess && o2.isSuccess)
+                    Outcome.SUCCESS<Nothing>(additionalInfo = "response delivered")
+                else
+                    Outcome.FAILURE<Nothing>(reason = "response was not successfully delivered")
+            })
 
+    private fun sendConsultationRequestResponseViaFCM(response: ConsultationResponse):Observable<Outcome>
        =  Observable.create<Outcome> { emitter ->
            val fcMessage:FirebaseCloudMessage = mapConsultationResponseToFCMessage(response)
 
@@ -99,11 +108,11 @@ object CloudMessageManager {
                 .enqueue(object : Callback<ResponseBody>{
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         if (response.isSuccessful) {
-                            Log.e(TAG, "onResponse: cloud message consultation request sent successfully")
+                            Timber.e( "onResponse: cloud message consultation request sent successfully")
                             emitter.onNext(Outcome.SUCCESS(null))
                             emitter.onComplete()
                         } else {
-                            Log.e(TAG, "onResponse: cloud message consultation request did not send successfully")
+                            Timber.e( "onResponse: cloud message consultation request did not send successfully")
                             emitter.onNext(Outcome.FAILURE(null))
                             emitter.onComplete()
 
@@ -111,14 +120,14 @@ object CloudMessageManager {
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        Log.e(TAG, "onFailure: sending cloud message response failed", t)
+                        Timber.e("onFailure: sending cloud message response failed", t)
                         emitter.onNext(Outcome.ERROR(null, additionalInfo = t.message))
                         emitter.onComplete()
                     }
                 })
         }
 
-    fun sendConsultationRequestResponseToDB(response: ConsultationResponse):Observable<Outcome> =
+    private fun sendConsultationRequestResponseToDB(response: ConsultationResponse):Observable<Outcome> =
         Observable.create<Outcome> { emitter ->
             val childNodeUpdate:HashMap<String, Any> = hashMapOf(
                 "/requests/${UserDetailsUtils.user!!.firebaseUID}/from/${response.toUID}/status" to response.status,
@@ -128,11 +137,11 @@ object CloudMessageManager {
                 .updateChildren(childNodeUpdate)
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        Log.e(TAG, "sendConsultationRequestResponse: success")
+                        Timber.e("sendConsultationRequestResponse: success")
                         emitter.onNext(Outcome.SUCCESS(null))
                         emitter.onComplete()
                     }else{
-                        Log.e(TAG, "sendConsultationRequestResponse", it.exception)
+                        Timber.e("sendConsultationRequestResponse", it.exception)
                         emitter.onNext(Outcome.FAILURE(null))
                         emitter.onComplete()
                     }
@@ -158,7 +167,7 @@ object CloudMessageManager {
                 if(it.isSuccessful){
                     AppController.notifyObservers(EVENT_SEND_REQUEST, true)
                 }else{
-                    Log.e(TAG, "sendRequest: sending request failed", it.exception)
+                    Timber.e("sendRequest: sending request failed", it.exception)
                     AppController.notifyObservers(EVENT_SEND_REQUEST, false)
                 }
             }
@@ -186,7 +195,7 @@ object CloudMessageManager {
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        Log.e(TAG, "onFailure: sending Cloud message request failed",t)
+                        Timber.e("onFailure: sending Cloud message request failed",t)
 
                         //AppController.notifyObservers(EVENT_SEND_REQUEST, false)
                         AppController.pushToTopic(EVENT_SEND_REQUEST, true)
@@ -228,9 +237,9 @@ object CloudMessageManager {
             .updateChildren(childNodes)
             .addOnCompleteListener {
                 if(it.isSuccessful)
-                    Log.e(TAG, "updateRequest_sender: updates REQUEST status in DB successful" )
+                    Timber.e("updateRequest_sender: updates REQUEST status in DB successful" )
                 else
-                    Log.e(TAG, "updateRequest_sender: update REQUEST status in DB failed", it.exception )
+                    Timber.e("updateRequest_sender: update REQUEST status in DB failed", it.exception )
             }
 
     }

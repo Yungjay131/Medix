@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
 import com.slyworks.medix.App
-import com.slyworks.medix.AppController
+import com.slyworks.medix.utils.AppController
 import com.slyworks.medix.R
 import com.slyworks.medix.managers.TimeUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage

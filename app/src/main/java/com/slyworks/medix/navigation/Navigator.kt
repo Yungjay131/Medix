@@ -170,13 +170,17 @@ private constructor() {
             return ActivityContinuationImpl(Intent(from, T::class.java), from as AppCompatActivity)
         }
 
-        inline fun <reified T> Intent.getExtra(key:String):T{
+        fun intentFor(from:Context, clazz: Class<out AppCompatActivity>):ActivityContinuation{
+            return ActivityContinuationImpl(Intent(from, clazz), from as AppCompatActivity)
+        }
+
+        inline fun <reified T> Intent.getExtra(key:String):T?{
             return when(T::class){
-                String::class -> this.getStringExtra(key) as T
-                Int::class -> this.getIntExtra(key, -1) as T
-                Double::class-> this.getDoubleExtra(key, -1.0) as T
-                Bundle::class-> this.getBundleExtra(key) as T
-                ByteArray::class -> this.getByteExtra(key, Byte.MIN_VALUE) as T
+                String::class -> this.getStringExtra(key) as? T
+                Int::class -> this.getIntExtra(key, -1) as? T
+                Double::class-> this.getDoubleExtra(key, -1.0) as? T
+                Bundle::class-> this.getBundleExtra(key) as? T
+                ByteArray::class -> this.getByteExtra(key, Byte.MIN_VALUE) as? T
                 else -> throw IllegalArgumentException("type of T is not supported")
             }
         }
