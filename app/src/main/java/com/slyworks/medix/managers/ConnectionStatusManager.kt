@@ -61,8 +61,7 @@ object ConnectionStatusManager {
                 .updateChildren(
                     mapOf(
                         "/status" to false,
-                        "/timestamp" to ServerValue.TIMESTAMP
-                    )
+                        "/timestamp" to ServerValue.TIMESTAMP )
                 )
 
             /*change my current connection status to connected*/
