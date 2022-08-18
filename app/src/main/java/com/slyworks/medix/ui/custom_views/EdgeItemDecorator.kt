@@ -3,12 +3,11 @@ package com.slyworks.medix.ui.custom_views
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Rect
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.medix.R
-import com.slyworks.medix.ui.activities.messageActivity.RVMessageAdapter
+import com.slyworks.medix.ui.activities.message_activity.RVMessageAdapter
 import com.slyworks.medix.utils.px
 
 

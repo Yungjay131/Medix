@@ -6,20 +6,20 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Build
 import io.reactivex.rxjava3.core.Observable
+import javax.inject.Inject
+import javax.inject.Named
 
 
 /**
  *Created by Joshua Sylvanus, 11:27 AM, 29/05/2022.
  */
 @SuppressLint("NewApi")
-class NetworkRegister(private var context: Context?) {
+class NetworkRegister(private val context: Context ) {
     //region Vars
     private var mImpl: NetworkWatcher? = null
     //endregion
 
-   init{
-       init2()
-   }
+   init{ init2() }
 
     private fun init1(context: Context){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){

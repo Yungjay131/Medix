@@ -9,23 +9,12 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 /**
  *Created by Joshua Sylvanus, 4:19 PM, 29/05/2022.
  */
-class ConnectivityCallback(private var o: PublishSubject<Boolean>?)
+internal class ConnectivityCallback(private var o: PublishSubject<Boolean>?)
     : ConnectivityManager.NetworkCallback(){
+
     override fun onLost(network: Network) {
         super.onLost(network)
-
-    }
-
-    override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-        super.onLinkPropertiesChanged(network, linkProperties)
-    }
-
-    override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
-        super.onBlockedStatusChanged(network, blocked)
-    }
-
-    override fun onLosing(network: Network, maxMsToLive: Int) {
-        super.onLosing(network, maxMsToLive)
+        o!!.onNext(false)
     }
 
     override fun onAvailable(network: Network) {
@@ -34,14 +23,6 @@ class ConnectivityCallback(private var o: PublishSubject<Boolean>?)
 
     override fun onUnavailable() {
        o!!.onNext(false)
-    }
-
-    override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-        super.onCapabilitiesChanged(network, networkCapabilities)
-        /*val isConnected:Boolean = networkCapabilities
-            .hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-
-        o!!.onNext(isConnected)*/
     }
 
 }

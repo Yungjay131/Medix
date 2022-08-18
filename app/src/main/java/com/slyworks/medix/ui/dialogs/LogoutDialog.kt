@@ -1,5 +1,6 @@
 package com.slyworks.medix.ui.dialogs
 
+import android.app.Application
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.slyworks.auth.LoginManager
+import com.slyworks.medix.App
 import com.slyworks.medix.R
-import com.slyworks.medix.managers.LoginManager
-import com.slyworks.medix.navigation.Navigator
-import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
+import com.slyworks.medix.appComponent
+import com.slyworks.navigation.Navigator
+import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
+import javax.inject.Inject
 
 
 /**
@@ -20,8 +24,10 @@ class LogoutDialog: BaseDialogFragment() {
     //region Vars
     private lateinit var tvCancel: TextView
     private lateinit var tvLogout: TextView
-    //endregion
 
+    @Inject
+    lateinit var loginManager:LoginManager
+    //endregion
 
     companion object{
         @JvmStatic
@@ -29,6 +35,11 @@ class LogoutDialog: BaseDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        requireContext().appComponent
+            .dialogFragmentComponentBuilder()
+            .build()
+            .inject(this)
+
         return MaterialAlertDialogBuilder(requireContext(), theme).apply {
             val dialogView = onCreateView(LayoutInflater.from(requireContext()),null, savedInstanceState)
             dialogView?.let {
@@ -50,8 +61,7 @@ class LogoutDialog: BaseDialogFragment() {
 
         tvCancel.setOnClickListener { dismiss() }
         tvLogout.setOnClickListener {
-            LoginManager.getInstance()
-                .logoutUser()
+            loginManager.logoutUser()
 
             Navigator.intentFor<OnBoardingActivity>(requireActivity())
                 .newAndClearTask()

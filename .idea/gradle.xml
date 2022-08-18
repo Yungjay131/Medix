@@ -13,10 +13,19 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/auth" />
+            <option value="$PROJECT_DIR$/communication" />
             <option value="$PROJECT_DIR$/constants" />
-            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/controller" />
+            <option value="$PROJECT_DIR$/di" />
+            <option value="$PROJECT_DIR$/fcm_api" />
+            <option value="$PROJECT_DIR$/firebase_commons" />
             <option value="$PROJECT_DIR$/models" />
+            <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/network" />
+            <option value="$PROJECT_DIR$/room" />
+            <option value="$PROJECT_DIR$/userdetails" />
+            <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

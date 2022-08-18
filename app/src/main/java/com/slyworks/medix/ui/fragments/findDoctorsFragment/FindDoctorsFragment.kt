@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,15 +18,16 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_GET_DOCTOR_USERS
 import com.slyworks.constants.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
-import com.slyworks.medix.utils.AppController
-import com.slyworks.medix.utils.AppController.clearAndRemove
+import com.slyworks.controller.AppController
+import com.slyworks.controller.AppController.Companion.clearAndRemove
+import com.slyworks.controller.Subscription
 import com.slyworks.medix.R
-import com.slyworks.medix.utils.Subscription
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
-import com.slyworks.medix.ui.fragments.ViewProfileFragment
+import com.slyworks.medix.ui.fragments.viewProfileFragment.ViewProfileFragment
 import com.slyworks.models.room_models.FBUserDetails
+import javax.inject.Inject
 
-class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
+class FindDoctorsFragment : Fragment(), com.slyworks.controller.Observer {
    //region Vars
     private lateinit var rvDoctors:RecyclerView
     private lateinit var progress:ProgressBar
@@ -39,13 +39,13 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
 
     private val mSubscriptionsList:MutableList<Subscription> = mutableListOf()
 
-    private lateinit var mViewModel:FindDoctorsViewModel
+    @Inject
+    lateinit var mViewModel:FindDoctorsFragmentViewModel
     private lateinit var mAdapter:RVFindDoctorsAdapter
     //endregion
    companion object {
        @JvmStatic
        fun getInstance(): FindDoctorsFragment  = FindDoctorsFragment()
-
    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,13 +67,11 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
         mSubscriptionsList.add(subscription_1)
         mSubscriptionsList.add(subscription_2)
 
-        mViewModel = ViewModelProvider(this).get(FindDoctorsViewModel::class.java)
-        mViewModel.mDoctorsListLiveData!!.observe(viewLifecycleOwner, Observer {
+        mViewModel.mDoctorsListLiveData.observe(viewLifecycleOwner, Observer {
             mAdapter.addDoctors(it)
         })
-
-
     }
+
     private fun initViews1(view:View){
         rootView = view.findViewById(R.id.rootView)
         rvDoctors = view.findViewById(R.id.rvFindDoctors_find_doctors)
@@ -83,9 +81,6 @@ class FindDoctorsFragment : Fragment(), com.slyworks.models.models.Observer {
         ivLayout_intro = view.findViewById(R.id.ivFindDoctors_layout_intro)
         lavLayout_intro = view.findViewById(R.id.lavFindDoctors_layout_intro)
         btnFindDoctors = view.findViewById(R.id.btnFindDoctors_frag_find_doctors)
-
-        /*using lottie now*/
-        //ivLayout_intro.displayGif(R.drawable.find_doctors)
 
         btnFindDoctors.setOnClickListener {
             if(!mViewModel.getNetworkStatus()) {

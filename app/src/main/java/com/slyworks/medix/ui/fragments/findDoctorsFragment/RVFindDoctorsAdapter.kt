@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.constants.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
+import com.slyworks.controller.AppController
 import com.slyworks.medix.App
-import com.slyworks.medix.utils.AppController
 import com.slyworks.medix.R
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.FBUserDetails
@@ -43,7 +43,7 @@ class RVFindDoctorsAdapter : RecyclerView.Adapter<RVFindDoctorsAdapter.ViewHolde
         notifyItemRangeInserted(startIndex, list.size)
     }
 
-    fun addDoctor(doctor:FBUserDetails){
+    fun addDoctor(doctor: FBUserDetails){
         val index = mList.size - 1
         mList.add(doctor)
 

@@ -4,22 +4,26 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.slyworks.constants.*
-import com.slyworks.medix.managers.CloudMessageManager
-import com.slyworks.medix.managers.NotificationHelper
-import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.helpers.NotificationHelper
+import com.slyworks.communication.CloudMessageManager
 import com.slyworks.models.models.ConsultationResponse
-import com.slyworks.models.models.Outcome
+import com.slyworks.userdetails.UserDetailsUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
 
 /**
  *Created by Joshua Sylvanus, 11:30 PM, 1/13/2022.
  */
-class CloudMessageBroadcastReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        /*TODO:cancel notification*/
+class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
 
+    @Inject
+    lateinit var userDetailsUtils: UserDetailsUtils
+    @Inject
+    lateinit var cloudMessageManager: CloudMessageManager
+
+    override fun onReceive(context: Context?, intent: Intent?) {
         val fromUID:String = intent!!.getStringExtra(EXTRA_CLOUD_MESSAGE_FROM_UID)!!
         val toFCMRegistrationToken:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN)!!
         val fullName:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_FULLNAME)!!
@@ -37,17 +41,17 @@ class CloudMessageBroadcastReceiver : BroadcastReceiver() {
         val pendingResult: PendingResult = goAsync()
         Observable.just(
             ConsultationResponse(
-                fromUID = UserDetailsUtils.user!!.firebaseUID,
+                fromUID = userDetailsUtils.user!!.firebaseUID,
                 toUID = fromUID,
                 toFCMRegistrationToken = toFCMRegistrationToken,
                 status = responseType,
                 fullName = fullName)
            )
+            .observeOn(Schedulers.io())
             .flatMap {
-                CloudMessageManager.sendConsultationRequestResponse(it)
+                cloudMessageManager.sendConsultationRequestResponse(it)
             }
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
             .subscribe{
                 NotificationHelper.cancelNotification(notificationID)
                 pendingResult.finish()

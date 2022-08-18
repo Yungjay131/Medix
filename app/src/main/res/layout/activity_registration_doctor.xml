@@ -5,8 +5,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.activities.registrationActivity.RegistrationDoctorActivity"
-    android:id="@+id/rootView">
+    tools:context=".ui.activities.registration_activity.RegistrationDoctorActivity"
+    android:id="@+id/rootView"
+    android:animateLayoutChanges="true">
 
     <ScrollView
         android:layout_width="match_parent"

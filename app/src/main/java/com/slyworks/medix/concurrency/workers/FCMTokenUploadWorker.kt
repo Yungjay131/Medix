@@ -4,31 +4,67 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.slyworks.constants.KEY_FCM_UPLOAD_TOKEN
-import com.slyworks.medix.getUserDataRef
+import com.slyworks.auth.UsersManager
+import com.slyworks.firebase_commons.FirebaseUtils
+import com.slyworks.medix.App
+import com.slyworks.medix.appComponent
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 
 /**
  *Created by Joshua Sylvanus, 10:47 AM, 16/05/2022.
  */
-class FCMTokenUploadWorker(private var context: Context,
+class FCMTokenUploadWorker(private val context: Context,
                            params:WorkerParameters) : CoroutineWorker(context, params) {
+    //region Vars
+    @Inject
+    lateinit var firebaseUtils: FirebaseUtils
+    @Inject
+    lateinit var usersManager: UsersManager
+    //endregion
+
+    init{
+        (applicationContext as App).appComponent
+            .workerComponentBuilder()
+            .build()
+            .inject(this)
+    }
+
 
     override suspend fun doWork(): Result {
-        //val token:String = PreferenceManager.get<String>(KEY_FCM_REGISTRATION, null) ?: return Result.failure()
+        /*ensure there is a signed in use first*/
+        val _job:Deferred<String?> =
+            CoroutineScope(Dispatchers.Default).async {
+                var result:String? = null
+
+                val innerJob:Deferred<Unit> = async {
+                    usersManager.getUserFromDataStore()
+                        .collectLatest {
+                            result = it.firebaseUID
+                            this.coroutineContext.cancel()
+                        }
+                }
+
+                innerJob.await()
+                return@async result
+            }
 
         val token:String = inputData.getString(KEY_FCM_UPLOAD_TOKEN) ?: return Result.failure()
+        val UID:String = _job.await() ?: return Result.failure()
 
         val job:Deferred<Result> = CoroutineScope(Dispatchers.IO).async {
             var r: Result = Result.retry()
             val childJob: Deferred<Unit> = async async@{
-                getUserDataRef()
+              firebaseUtils.getUserDataRefForWorkManager(UID)
                     .setValue(token)
                     .addOnCompleteListener {
+                        r =
                         if (it.isSuccessful) {
-                            r = Result.success()
+                            Result.success()
                         } else {
-                            r = Result.retry()
+                            Result.retry()
                         }
 
                         this.coroutineContext.cancel()

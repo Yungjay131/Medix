@@ -5,4 +5,4 @@ data class ConsultationRequestData(
     var fromUID:String,
     var fullName:String,
     var toFCMRegistrationToken:String,
-    override var type:String):Data
+    override var type:String): Data

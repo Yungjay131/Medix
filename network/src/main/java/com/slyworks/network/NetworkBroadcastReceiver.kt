@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /*1 instance per application execution*/
-class NetworkBroadcastReceiver : BroadcastReceiver(), com.slyworks.network.NetworkWatcher {
+internal class NetworkBroadcastReceiver : BroadcastReceiver(), NetworkWatcher {
     //region Vars
     private var o:PublishSubject<Boolean>? = PublishSubject.create()
     private var networkStatus:Boolean = false
@@ -22,9 +22,6 @@ class NetworkBroadcastReceiver : BroadcastReceiver(), com.slyworks.network.Netwo
             ConnectivityManager.CONNECTIVITY_ACTION -> {
                networkStatus = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)
                 o!!.onNext(networkStatus)
-
-                /*AppController.notifyObservers(EVENT_GET_NETWORK_UPDATES, !noConnectivityAvailable)
-                NetworkManager.setNetworkStatus(!noConnectivityAvailable)*/
             }
         }
     }

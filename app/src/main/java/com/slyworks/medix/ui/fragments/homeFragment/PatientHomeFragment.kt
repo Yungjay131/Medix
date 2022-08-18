@@ -10,17 +10,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.medix.R
-import com.slyworks.medix.utils.UserDetailsUtils
-import com.slyworks.medix.ui.activities.mainActivity.MainActivity
+import com.slyworks.medix.ui.activities.main_activity.MainActivity
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
 import com.slyworks.medix.ui.custom_views.HorizontalSpacingItemDecorator
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.models.AccountType
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
+import javax.inject.Inject
 
 class PatientHomeFragment : Fragment() {
     //region Vars
@@ -55,7 +55,9 @@ class PatientHomeFragment : Fragment() {
     private lateinit var mAdapterHealthAreas:RvHealthAreasAdapter
     
     private lateinit var mParentActivity:MainActivity
-    private lateinit var mViewModel: HomeFragmentViewModel
+
+    @Inject
+    lateinit var mViewModel: HomeFragmentViewModel
     //endregion
     companion object {
         @JvmStatic
@@ -65,6 +67,12 @@ class PatientHomeFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mParentActivity = context as MainActivity
+
+       context.activityComponent
+           .fragmentComponentBuilder()
+           .setFragment(this)
+           .build()
+           .inject(this)
     }
 
     override fun onCreateView(
@@ -82,7 +90,6 @@ class PatientHomeFragment : Fragment() {
     }
 
     private fun initData(){
-        mViewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
         mViewModel.observeUserProfilePic().observe(viewLifecycleOwner){
             ivProfile.displayImage(it)
         }
@@ -116,17 +123,17 @@ class PatientHomeFragment : Fragment() {
 
         tvNotificationCount.setText(1.toString())
 
-        ivProfile.displayImage(UserDetailsUtils.user!!.imageUri)
-        ivProfile_cardSchedule.displayImage(UserDetailsUtils.user!!.imageUri)
+        ivProfile.displayImage(mViewModel.getUser().imageUri)
+        ivProfile_cardSchedule.displayImage(mViewModel.getUser().imageUri)
 
         ivToggle.setOnClickListener{ mParentActivity.toggleDrawerState() }
 
-        val name: String = UserDetailsUtils.user!!.firstName
+        val name: String = mViewModel.getUser().firstName
             .substring(0, 1)
             .uppercase(Locale.getDefault())
             .plus(
-                UserDetailsUtils.user!!.firstName
-                    .substring(1, UserDetailsUtils.user!!.firstName.length))
+                mViewModel.getUser().firstName
+                    .substring(1, mViewModel.getUser().firstName.length))
         tvUserName.text = name
 
         mAdapterHealthAreas = RvHealthAreasAdapter()

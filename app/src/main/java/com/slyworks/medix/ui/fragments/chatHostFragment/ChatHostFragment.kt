@@ -1,5 +1,6 @@
 package com.slyworks.medix.ui.fragments.chatHostFragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.slyworks.constants.KEY_UNREAD_MESSAGE_COUNT
-import com.slyworks.medix.ui.activities.mainActivity.MainActivity
+import com.slyworks.medix.ui.activities.main_activity.MainActivity
 import com.slyworks.medix.R
-import com.slyworks.medix.utils.UserDetailsUtils
-import com.slyworks.medix.managers.PreferenceManager
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class ChatHostFragment : Fragment() {
@@ -33,26 +30,27 @@ class ChatHostFragment : Fragment() {
     private lateinit var containerSecondary:FragmentContainerView
 
     private lateinit var vpAdapter: VPAdapter
+
+    @Inject
+    lateinit var mViewModel:ChatHostFragmentViewModel
     //endregion
+
     companion object {
         //region Vars
         val mTabTitles:MutableList<String> = mutableListOf("Chats", "Call History")
         @JvmStatic
-        fun getInstance(): ChatHostFragment {
-            return ChatHostFragment()
-        }
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        fun getInstance(): ChatHostFragment = ChatHostFragment()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(Dispatchers.IO).launch {
-            PreferenceManager.set(KEY_UNREAD_MESSAGE_COUNT, 0)
-        }
-    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
 
+        context.activityComponent
+            .fragmentComponentBuilder()
+            .setFragment(this)
+            .build()
+            .inject(this)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view:View = inflater.inflate(R.layout.fragment_chat_host, container, false)
         initViews_1(view)
@@ -69,11 +67,9 @@ class ChatHostFragment : Fragment() {
 
         containerSecondary = view.findViewById(R.id.fragment_container_chat_host)
 
-        ivToggle.setOnClickListener {
-            (requireActivity() as MainActivity).toggleDrawerState()
-        }
+        ivToggle.setOnClickListener { (requireActivity() as MainActivity).toggleDrawerState() }
 
-        ivProfile.displayImage(UserDetailsUtils.user!!.imageUri)
+        ivProfile.displayImage(mViewModel.getUserDetailsUser().imageUri)
     }
     private fun initViews_2(view:View){
         val lifecycle:Lifecycle = this.lifecycle

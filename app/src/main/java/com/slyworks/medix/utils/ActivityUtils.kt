@@ -1,8 +1,7 @@
 package com.slyworks.medix.utils
 
 import androidx.appcompat.app.AppCompatActivity
-import com.slyworks.medix.navigation.ActivityWrapper
-import com.slyworks.medix.ui.activities.mainActivity.MainActivity
+import com.slyworks.medix.ui.activities.main_activity.MainActivity
 
 
 /**

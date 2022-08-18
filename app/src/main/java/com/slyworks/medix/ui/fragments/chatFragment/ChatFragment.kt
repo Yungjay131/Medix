@@ -1,7 +1,8 @@
 package com.slyworks.medix.ui.fragments.chatFragment
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,19 +23,21 @@ import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY_2
 import com.slyworks.constants.EXTRA_USER_PROFILE_FBU
 import com.slyworks.constants.PATIENT
-import com.slyworks.medix.utils.AppController
-import com.slyworks.medix.utils.AppController.clearAndRemove
+import com.slyworks.controller.AppController
+import com.slyworks.controller.AppController.Companion.clearAndRemove
+import com.slyworks.controller.Observer
+import com.slyworks.controller.Subscription
 import com.slyworks.medix.R
-import com.slyworks.medix.utils.Subscription
-import com.slyworks.medix.utils.UserDetailsUtils
-import com.slyworks.medix.ui.activities.mainActivity.MainActivity
-import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
+import com.slyworks.medix.ui.activities.main_activity.MainActivity
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
+import com.slyworks.medix.ui.activities.message_activity.MessageActivity
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
-import com.slyworks.models.models.Observer
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
-
+import com.slyworks.navigation.Navigator
+import com.slyworks.navigation.addExtra
+import javax.inject.Inject
 
 class ChatFragment : Fragment(), Observer {
     //region Vars
@@ -50,9 +53,10 @@ class ChatFragment : Fragment(), Observer {
     private lateinit var btnRetry:Button
     private lateinit var progress_retry:ProgressBar
 
-    private lateinit var mAdapter:RVChatAdapter
     private lateinit var mAdapter2:RVChatAdapter2
-    private lateinit var mViewModel:ChatFragmentViewModel
+
+    @Inject
+    lateinit var mViewModel:ChatFragmentViewModel
 
     private var mSubscriptionsList:MutableList<Subscription> = mutableListOf()
 
@@ -64,6 +68,15 @@ class ChatFragment : Fragment(), Observer {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        context.activityComponent
+            .fragmentComponentBuilder()
+            .setFragment(this)
+            .build()
+            .inject(this)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
         initViews1(view)
@@ -88,7 +101,7 @@ class ChatFragment : Fragment(), Observer {
 
         fabStartChat.setOnClickListener {
             val f:Fragment
-            if(UserDetailsUtils.user!!.accountType == PATIENT)
+            if(mViewModel.getUserDetailsUtils().accountType == PATIENT)
                     f = ProfileHostFragment.getInstance()
             else
                     f = DoctorHomeFragment.getInstance()
@@ -170,15 +183,11 @@ class ChatFragment : Fragment(), Observer {
                     accountType = result.userAccountType,
                     firebaseUID = result.firebaseUID,
                     fullName = result.fullName,
-                    imageUri = result.imageUri
-                )
+                    imageUri = result.imageUri)
 
-                startActivity(
-                    Intent(requireActivity(),MessageActivity::class.java)
-                        .apply {
-                            putExtra(EXTRA_USER_PROFILE_FBU, entity)
-                        }
-                )
+                Navigator.intentFor<MessageActivity>(requireActivity())
+                    .addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, entity)
+                    .navigate()
             }
         }
     }

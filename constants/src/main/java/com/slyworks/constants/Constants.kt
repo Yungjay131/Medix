@@ -146,3 +146,6 @@ const val INCOMING_CALL_NOTIFICATION = 2
 const val GENERAL= 0
 const val COORDINATOR = 1
 const val MAIN = 2
+
+const val DI_ACTIVITY_VIEWMODEL_KEY = "com.slyworks.medix.DI_ACTIVITY_VIEWMODEL_KEY"
+const val DI_FRAGMENT_VIEWMODEL_KEY = "com.slyworks.medix.DI_FRAGMENT_VIEWMODEL_KEY"

@@ -3,6 +3,7 @@ package com.slyworks.models.room_models
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.slyworks.constants.INCOMING_MESSAGE
 import com.slyworks.constants.NOT_SENT
@@ -13,7 +14,7 @@ import kotlinx.parcelize.Parcelize
  *Created by Joshua Sylvanus, 6:16 PM, 1/9/2022.
  */
 @Parcelize
-@Entity
+@Entity(indices = [Index(value = ["from_uid","to_uid"])] )
 data class Message(
     @ColumnInfo(name = "type") var type:String = "",
     @ColumnInfo(name = "from_uid") var fromUID:String = "",
@@ -47,7 +48,7 @@ data class Message(
         receiverImageUri = "")
 
     companion object{
-        fun cloneFrom(message:Message):Message{
+        fun cloneFrom(message: Message): Message {
             return Message(
                 type = INCOMING_MESSAGE,
                 fromUID = message.fromUID,

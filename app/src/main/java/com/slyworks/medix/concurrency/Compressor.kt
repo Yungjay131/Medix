@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import com.slyworks.medix.App
 import java.io.ByteArrayOutputStream
 import com.slyworks.models.models.Result
+import com.slyworks.utils.ContentResolverStore
 import timber.log.Timber
 
 
@@ -54,9 +55,9 @@ object Compressor {
             var bitmap:Bitmap? = null
             try {
                 if (Build.VERSION.SDK_INT < 28)
-                    bitmap = MediaStore.Images.Media.getBitmap(App.getContentResolver(), uri)
+                    bitmap = MediaStore.Images.Media.getBitmap(ContentResolverStore.getContentResolver(), uri)
                 else
-                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(App.getContentResolver(), uri))
+                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(ContentResolverStore.getContentResolver(), uri))
 
             } catch (e: Exception) {
                 Timber.e("getBitmap: ${e.message}" )

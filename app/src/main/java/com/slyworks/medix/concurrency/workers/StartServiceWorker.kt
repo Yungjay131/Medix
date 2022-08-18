@@ -14,10 +14,11 @@ import com.slyworks.medix.utils.showToast
  *Created by Joshua Sylvanus, 12:13 PM, 1/21/2022.
  */
 /*the task would be re queued in ListenerService*/
-class StartServiceWorker(var appContext: Context, workerParams:WorkerParameters) : Worker(appContext,workerParams){
+class StartServiceWorker(private val appContext: Context,
+                         workerParams:WorkerParameters) : Worker(appContext,workerParams){
     override fun doWork(): Result {
         val intent: Intent = Intent(appContext, ListenerService::class.java)
-        ContextCompat.startForegroundService(App.getContext(), intent)
+        ContextCompat.startForegroundService(appContext, intent)
 
         showToast("StartServiceWorker#doWork executed")
 

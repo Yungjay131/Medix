@@ -18,14 +18,8 @@ class ForgotPasswordBSDialog(private var initFunction:((view:View?)->Unit)? = nu
     : BaseBottomSheetDialogFragment() {
 
     companion object {
-        //region Vars
-        private var INSTANCE: ForgotPasswordBSDialog? = null
-
-        //endregion
         @JvmStatic
-        fun getInstance(
-            initFunction: ((view: View?) -> Unit)? = null
-        ): ForgotPasswordBSDialog {
+        fun getInstance(initFunction: ((view: View?) -> Unit)? = null): ForgotPasswordBSDialog {
             return ForgotPasswordBSDialog(initFunction)
         }
     }

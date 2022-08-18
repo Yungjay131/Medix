@@ -2,18 +2,18 @@ package com.slyworks.medix.navigation
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.SimpleArrayMap
-import com.slyworks.medix.ui.activities.*
-import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
-import com.slyworks.medix.ui.activities.mainActivity.MainActivity
-import com.slyworks.medix.ui.activities.messageActivity.MessageActivity
-import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationDoctorActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationPatientActivity
-import com.slyworks.medix.ui.activities.videoCallActivity.VideoCallActivity
-import com.slyworks.medix.ui.activities.requestsActivity.ViewRequest
-import com.slyworks.medix.ui.activities.settingsActivity.SettingsActivity
-import com.slyworks.medix.ui.activities.voiceCallActivity.VoiceCallActivity
+import com.slyworks.medix.ui.activities.login_activity.LoginActivity
+import com.slyworks.medix.ui.activities.main_activity.MainActivity
+import com.slyworks.medix.ui.activities.message_activity.MessageActivity
+import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationPatientActivity
+import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
+import com.slyworks.medix.ui.activities.view_requests_activity.ViewRequestActivity
+import com.slyworks.medix.ui.activities.settings_activity.SettingsActivity
+import com.slyworks.medix.ui.activities.splash_activity.SplashActivity
+import com.slyworks.medix.ui.activities.voice_call_activity.VoiceCallActivity
 
 
 /**
@@ -23,18 +23,18 @@ import com.slyworks.medix.ui.activities.voiceCallActivity.VoiceCallActivity
 sealed class ActivityWrapper{
     companion object {
         private var mMap: SimpleArrayMap<String, ActivityWrapper> = SimpleArrayMap<String, ActivityWrapper>().apply {
-            put(SplashActivity::class.simpleName, ActivityWrapper.SPLASH)
-            put(OnBoardingActivity::class.simpleName, ActivityWrapper.ONBOARDING)
-            put(LoginActivity::class.simpleName, ActivityWrapper.LOGIN)
-            put(RegistrationActivity::class.simpleName, ActivityWrapper.REG)
-            put(RegistrationPatientActivity::class.simpleName, ActivityWrapper.REG_PATIENT)
-            put(RegistrationDoctorActivity::class.simpleName, ActivityWrapper.REG_DOCTOR)
-            put(MainActivity::class.simpleName, ActivityWrapper.MAIN)
-            put(MessageActivity::class.simpleName, ActivityWrapper.MESSAGE)
-            put(VideoCallActivity::class.simpleName, ActivityWrapper.VIDEO_CALL)
-            put(VoiceCallActivity::class.simpleName, ActivityWrapper.SPLASH)
-            put(ViewRequest::class.simpleName, ActivityWrapper.REQUESTS)
-            put(SettingsActivity::class.simpleName, ActivityWrapper.SETTINGS)
+            put(SplashActivity::class.simpleName, SPLASH)
+            put(OnBoardingActivity::class.simpleName, ONBOARDING)
+            put(LoginActivity::class.simpleName, LOGIN)
+            put(RegistrationActivity::class.simpleName, REG)
+            put(RegistrationPatientActivity::class.simpleName, REG_PATIENT)
+            put(RegistrationDoctorActivity::class.simpleName, REG_DOCTOR)
+            put(MainActivity::class.simpleName, MAIN)
+            put(MessageActivity::class.simpleName, MESSAGE)
+            put(VideoCallActivity::class.simpleName, VIDEO_CALL)
+            put(VoiceCallActivity::class.simpleName, SPLASH)
+            put(ViewRequestActivity::class.simpleName, REQUESTS)
+            put(SettingsActivity::class.simpleName, SETTINGS)
         }
 
         fun from(simpleName: String): ActivityWrapper {
@@ -86,7 +86,7 @@ sealed class ActivityWrapper{
     }
 
     object REQUESTS : ActivityWrapper(){
-        override fun getInstance(): Class<out AppCompatActivity> = ViewRequest::class.java
+        override fun getInstance(): Class<out AppCompatActivity> = ViewRequestActivity::class.java
     }
 
     object SETTINGS : ActivityWrapper(){

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.videoCallActivity.VideoCallActivity"
+    tools:context=".ui.activities.video_call_activity.VideoCallActivity"
     android:id="@+id/rootView">
 
     <!--TODO:put a black overlay over the preview view-->

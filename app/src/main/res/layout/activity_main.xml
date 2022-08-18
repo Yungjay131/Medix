@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
     android:id="@+id/drawer_main"
-    tools:context=".ui.activities.mainActivity.MainActivity">
+    tools:context=".ui.activities.main_activity.MainActivity">
 
 <include
  android:layout_height="match_parent"

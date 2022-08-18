@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.fragments.callsHistoryFragment.CallsHistoryFragment
 import com.slyworks.medix.ui.fragments.ProfileHostFragment
-import com.slyworks.medix.ui.fragments.ViewProfileFragment
+import com.slyworks.medix.ui.fragments.viewProfileFragment.ViewProfileFragment
 import com.slyworks.medix.ui.fragments.chatFragment.ChatFragment
 import com.slyworks.medix.ui.fragments.chatHostFragment.ChatHostFragment
 import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
@@ -97,6 +97,6 @@ enum class FragmentWrapper:Parcelable {
     open fun getFragmentContainerID(): Int = 0
     open fun addFragment(fragment: FragmentWrapper){}
     open fun isThereNextItem():Boolean = false
-    open fun getNextFragment():FragmentWrapper? = null
+    open fun getNextFragment(): FragmentWrapper? = null
 
 }

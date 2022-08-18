@@ -4,39 +4,39 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentResolver
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.work.*
-import com.google.firebase.database.FirebaseDatabase
+import com.facebook.stetho.Stetho
 import com.slyworks.constants.KEY_FCM_UPLOAD_TOKEN
 import com.slyworks.medix.concurrency.workers.FCMTokenUploadWorker
 import com.slyworks.medix.concurrency.workers.MessageWorker
 import com.slyworks.medix.concurrency.workers.ProfileUpdateWorker
 import com.slyworks.medix.concurrency.workers.StartServiceWorker
-import com.slyworks.data.AppDatabase
-import com.slyworks.medix.utils.UserDetailsUtils
+import com.slyworks.medix.di.components.ApplicationComponent
+import com.slyworks.medix.di.DaggerApplicationComponent
 import timber.log.Timber
 
 
 /**
  *Created by Joshua Sylvanus, 3:59 PM, 12/10/2021.
  */
+
+val Context.appComponent: ApplicationComponent
+get() = (applicationContext as App)._appComponent
+
+/*TODO:add dynamic feature module*/
 class App: Application() {
     //region Vars
+    lateinit var _appComponent: ApplicationComponent
     //endregion
 
     companion object{
         @SuppressLint("StaticFieldLeak")
         private var mContext: Context? = null
-        private var mContentResolver:ContentResolver? = null
 
         fun getContext(): Context { return mContext!! }
-
-        fun getContentResolver():ContentResolver{ return mContentResolver!! }
-        fun setContentResolver(cr: ContentResolver?){ this.mContentResolver = cr!! }
-        fun nullifyContentResolver(){ this.mContentResolver = null }
 
         fun initStartServiceWork(){
             val startServiceWorkRequest:OneTimeWorkRequest =
@@ -112,15 +112,29 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initDI()
         initTimber()
         initContext()
-        initRoom()
-        initUserDetailsUtils()
         initStartServiceWork()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             initNotificationChannels()
 
+    }
+
+    private fun initDI(){
+        /* inject UserDetailUtils, AppDatabase, context etc into dependency graph */
+        DaggerApplicationComponent
+            .builder()
+            .componentContext(this)
+            .build()
+    }
+
+    private fun initStetho(){
+        if(!BuildConfig.DEBUG)
+            return
+
+        Stetho.initializeWithDefaults(this)
     }
 
     private fun initTimber(){
@@ -140,11 +154,7 @@ class App: Application() {
         })
     }
 
-    private fun initContext(){
-        mContext = this;
-    }
-
-    private fun initUserDetailsUtils() = UserDetailsUtils
+    private fun initContext(){ mContext = this; }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initNotificationChannels(){
@@ -182,15 +192,4 @@ class App: Application() {
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
-
-    private fun initRoom(){
-        /*doing a first time initialization of Room so that subsequent calls would be
-         to get a database instance, (should help with performance???)*/
-        AppDatabase.getInstance(this)
-    }
-
-    private fun initFirebase(){
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-    }
-
 }

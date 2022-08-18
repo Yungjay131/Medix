@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
-import com.slyworks.medix.utils.AppController
+import com.slyworks.controller.AppController
 import com.slyworks.medix.R
-import com.slyworks.medix.managers.TimeUtils
+import com.slyworks.utils.TimeUtils
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.Person
 import de.hdodenhof.circleimageview.CircleImageView
@@ -21,8 +21,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = PersonDiffUtilCallback())
     : ListAdapter<Person, RVChatAdapter2.ViewHolder>(diffUtil) {
-    //region Vars
-    //endregion
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.li_chat, parent, false)

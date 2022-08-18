@@ -3,10 +3,19 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
       <module name="Medix.app" target="11" />
-      <module name="Medix.data" target="11" />
-      <module name="Medix.managers" target="11" />
+      <module name="Medix.auth" target="11" />
+      <module name="Medix.communication" target="11" />
+      <module name="Medix.controller" target="11" />
+      <module name="Medix.di" target="11" />
+      <module name="Medix.fcm_api" target="11" />
+      <module name="Medix.firebase_commons" target="11" />
       <module name="Medix.models" target="11" />
+      <module name="Medix.navigation" target="11" />
       <module name="Medix.network" target="11" />
+      <module name="Medix.room" target="11" />
+      <module name="Medix.room_models" target="11" />
+      <module name="Medix.userdetails" target="11" />
+      <module name="Medix.utils" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

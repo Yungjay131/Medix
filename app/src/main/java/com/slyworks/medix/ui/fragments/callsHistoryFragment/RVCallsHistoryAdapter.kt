@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.slyworks.constants.*
 import com.slyworks.medix.App
 import com.slyworks.medix.R
-import com.slyworks.medix.managers.TimeUtils
+import com.slyworks.utils.TimeUtils
 import com.slyworks.medix.ui.fragments.chatFragment.CallsHistoryDiffUtilCallback
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.CallHistory
@@ -37,7 +37,7 @@ class RVCallsHistoryAdapter(diffUtil: DiffUtil.ItemCallback<CallHistory> = Calls
         private val ivCallStatus:ImageView = itemView.findViewById(R.id.ivStatus_li_calls_history)
         private val tvDetails:TextView = itemView.findViewById(R.id.tvCallDetails_li_calls_history)
         //endregion
-        fun bind(entity:CallHistory){
+        fun bind(entity: CallHistory){
             ivProfile.displayImage(entity.senderImageUri)
             tvName.text = entity.callerName
 

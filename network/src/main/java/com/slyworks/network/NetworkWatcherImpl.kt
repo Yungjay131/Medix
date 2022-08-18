@@ -9,12 +9,14 @@ import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
+import javax.inject.Named
 
 
 /*TODO:use Dagger here to pass ApplicationContext*/
-class NetworkWatcherImpl(private var context:Context?) : NetworkWatcher {
+internal class NetworkWatcherImpl(
+    private val context:Context) : NetworkWatcher {
     //region Vars
     private var mCm:ConnectivityManager
     private var mConnectivityCallback: ConnectivityCallback? = null
@@ -30,8 +32,7 @@ class NetworkWatcherImpl(private var context:Context?) : NetworkWatcher {
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .build()
 
-        mCm = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        context = null
+        mCm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

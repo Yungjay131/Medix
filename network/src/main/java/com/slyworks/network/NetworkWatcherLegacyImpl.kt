@@ -7,12 +7,17 @@ import android.net.NetworkInfo
 import android.net.NetworkRequest
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
+import javax.inject.Named
 
-class NetworkWatcherLegacyImpl(private var context:Context?): NetworkWatcher {
+internal class NetworkWatcherLegacyImpl(
+    private var context:Context): NetworkWatcher {
+    //region Vars
     private var mCm: ConnectivityManager
     private var mConnectivityCallback: ConnectivityCallback? = null
     private var mNetworkRequest: NetworkRequest? = null
     private var mO: PublishSubject<Boolean>? = PublishSubject.create()
+    //endregion
 
     init {
      mNetworkRequest =
@@ -22,10 +27,9 @@ class NetworkWatcherLegacyImpl(private var context:Context?): NetworkWatcher {
              .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
              .build()
 
-        mCm =  context!!
+        mCm =  context
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        context = null
     }
 
     override fun getNetworkStatus(): Boolean {

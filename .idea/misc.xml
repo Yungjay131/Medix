@@ -92,7 +92,7 @@
     </option>
   </component>
   <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/data/src/main/java/com/slyworks/data/daos/ConsultationRequestDao.kt" />
+    <file url="file://$PROJECT_DIR$/room/src/main/java/com/slyworks/room/daos/ConsultationRequestDao.kt" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

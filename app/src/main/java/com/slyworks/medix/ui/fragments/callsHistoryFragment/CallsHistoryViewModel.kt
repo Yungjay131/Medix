@@ -3,17 +3,20 @@ package com.slyworks.medix.ui.fragments.callsHistoryFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.slyworks.medix.managers.CallHistoryManager
-import com.slyworks.medix.managers.CallManager
+import com.slyworks.communication.CallHistoryManager
+import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.room_models.CallHistory
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
 
 /**
  *Created by Joshua Sylvanus, 1:47 PM, 13/05/2022.
  */
-class CallsHistoryViewModel : ViewModel() {
+class CallsHistoryViewModel
+    @Inject
+    constructor(private val callHistoryManager: CallHistoryManager) : ViewModel() {
     //region Vars
     private val _errorState:MutableLiveData<Boolean> = MutableLiveData()
     val errorState:LiveData<Boolean>
@@ -24,14 +27,14 @@ class CallsHistoryViewModel : ViewModel() {
     get() = _errorData
 
     val progressState:MutableLiveData<Boolean> = MutableLiveData(true)
+     private val l:MutableLiveData<List<CallHistory>> = MutableLiveData()
 
-    private val mSubscriptions:CompositeDisposable = CompositeDisposable()
+    private val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
     fun observeCallsHistory():LiveData<List<CallHistory>>{
-        val l:MutableLiveData<List<CallHistory>> = MutableLiveData()
-        val d =
-            CallHistoryManager.observeCallsHistory()
+        disposables +=
+            callHistoryManager.observeCallsHistory()
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe {
@@ -46,18 +49,16 @@ class CallsHistoryViewModel : ViewModel() {
                     }
                 }
 
-        mSubscriptions.add(d)
-
         return l
     }
 
-    fun stop(){
-        CallHistoryManager.detachObserveCallsHistoryObserver()
-        mSubscriptions.clear()
+    fun unbind(){
+        callHistoryManager.detachObserveCallsHistoryObserver()
+        disposables.clear()
     }
 
     override fun onCleared() {
         super.onCleared()
-        stop()
+        unbind()
     }
 }

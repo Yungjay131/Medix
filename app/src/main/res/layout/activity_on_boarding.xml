@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity"
+    tools:context="com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity"
     android:id="@+id/rootView">
 
     <androidx.constraintlayout.widget.ConstraintLayout

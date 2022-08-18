@@ -15,60 +15,60 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medix">
         <activity
-            android:name=".ui.activities.settingsActivity.SettingsActivity"
+            android:name=".ui.activities.settings_activity.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.voiceCallActivity.VoiceCallActivity"
+            android:name=".ui.activities.voice_call_activity.VoiceCallActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.videoCallActivity.VideoCallActivity"
+            android:name=".ui.activities.video_call_activity.VideoCallActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.videoCall" />
         <activity
-            android:name=".ui.activities.messageActivity.MessageActivity"
+            android:name=".ui.activities.message_activity.MessageActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.message"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".ui.activities.requestsActivity.ViewRequest"
+            android:name=".ui.activities.view_requests_activity.ViewRequestActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.registrationActivity.RegistrationDoctorActivity"
+            android:name=".ui.activities.registration_activity.RegistrationDoctorActivity"
             android:exported="false"
             android:theme="@style/AppTheme.registration_doctor"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
 
         <activity
-            android:name=".ui.activities.registrationActivity.RegistrationPatientActivity"
+            android:name=".ui.activities.registration_activity.RegistrationPatientActivity"
             android:exported="false"
             android:theme="@style/AppTheme.registration_patient"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
 
         <activity
-            android:name=".ui.activities.loginActivity.LoginActivity"
+            android:name=".ui.activities.login_activity.LoginActivity"
             android:exported="false"
             android:theme="@style/AppTheme.login"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name=".ui.activities.registrationActivity.RegistrationActivity"
+            android:name=".ui.activities.registration_activity.RegistrationActivity"
             android:exported="false"
             android:theme="@style/AppTheme.registration" />
         <activity
-            android:name=".ui.activities.onBoardingActivity.OnBoardingActivity"
+            android:name=".ui.activities.onboarding_activity.OnBoardingActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ui.activities.mainActivity.MainActivity"
+            android:name=".ui.activities.main_activity.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.main"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity
-            android:name=".ui.activities.SplashActivity"
+            android:name=".ui.activities.splash_activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.splash2">

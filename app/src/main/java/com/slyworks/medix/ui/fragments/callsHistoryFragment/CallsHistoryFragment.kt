@@ -1,5 +1,6 @@
 package com.slyworks.medix.ui.fragments.callsHistoryFragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,13 +11,14 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.slyworks.medix.R
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
 import com.slyworks.medix.ui.custom_views.CustomDividerDecorator
+import javax.inject.Inject
 
 class CallsHistoryFragment : Fragment() {
     //region Vars
@@ -29,7 +31,8 @@ class CallsHistoryFragment : Fragment() {
 
     private lateinit var mAdapter: RVCallsHistoryAdapter
 
-    private lateinit var mViewModel:CallsHistoryViewModel
+    @Inject
+   lateinit var mViewModel:CallsHistoryViewModel
     //endregion
 
     companion object {
@@ -37,10 +40,15 @@ class CallsHistoryFragment : Fragment() {
         fun newInstance(): CallsHistoryFragment  = CallsHistoryFragment()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
 
+        context.activityComponent
+            .fragmentComponentBuilder()
+            .setFragment(this)
+            .build()
+            .inject(this)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calls_history, container, false)
         initViews1(view)
@@ -63,10 +71,7 @@ class CallsHistoryFragment : Fragment() {
         rvCallsHistory.adapter = mAdapter
     }
 
-    private fun initViews2(){}
-
     private fun initData(){
-        mViewModel = ViewModelProvider(this).get(CallsHistoryViewModel::class.java)
         mViewModel.progressState
             .observe(viewLifecycleOwner){
             progress.isVisible = it
@@ -82,6 +87,4 @@ class CallsHistoryFragment : Fragment() {
             mAdapter.submitList(it)
         }
     }
-
-
 }

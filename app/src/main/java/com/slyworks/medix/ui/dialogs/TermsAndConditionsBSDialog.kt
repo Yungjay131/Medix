@@ -13,8 +13,7 @@ import com.slyworks.medix.R
 /**
  *Created by Joshua Sylvanus, 11:13 PM, 1/4/2022.
  */
-class TermsAndConditionsBSDialog()
-    : BaseBottomSheetDialogFragment() {
+class TermsAndConditionsBSDialog() : BaseBottomSheetDialogFragment() {
 
     companion object{
         @JvmStatic

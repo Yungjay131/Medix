@@ -1,14 +1,16 @@
 package com.slyworks.medix.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
 import com.slyworks.medix.R
-import com.slyworks.medix.navigation.Navigator
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
+import com.slyworks.navigation.Navigator
 import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 
 class ProfileHostFragment : Fragment() {
@@ -19,6 +21,15 @@ class ProfileHostFragment : Fragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        context.activityComponent
+            .fragmentComponentBuilder()
+            .setFragment(this)
+            .build()
+            .inject(this)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_profile_host, container, false)
     }
@@ -31,16 +42,20 @@ class ProfileHostFragment : Fragment() {
 
     fun initData(){
         requireActivity().onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner){
-             if(childFragmentManager.backStackEntryCount > 1)
-                 childFragmentManager.popBackStack()
-             else {
-                 /*let the ParentActivity handle it*/
-                 isEnabled = false
-                 requireActivity().onBackPressed()
-             }
-        }
+            .addCallback(viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (childFragmentManager.backStackEntryCount > 1)
+                            childFragmentManager.popBackStack()
+                        else {
+                            /*let the ParentActivity handle it*/
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                        }
+                    }
+                })
     }
+
     fun inflateFragment2(f:Fragment){
         Navigator.transactionFrom(childFragmentManager)
             .into(R.id.fragment_container_profile_host)

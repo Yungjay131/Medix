@@ -16,7 +16,16 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Medix"
 include ':app'
-include ':data'
+include ':room'
 include ':constants'
 include ':network'
 include ':models'
+include ':communication'
+include ':di'
+include ':utils'
+include ':navigation'
+include ':auth'
+include ':fcm_api'
+include ':firebase_commons'
+include ':userdetails'
+include ':controller'

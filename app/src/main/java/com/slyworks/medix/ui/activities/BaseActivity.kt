@@ -8,16 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.slyworks.constants.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
-import com.slyworks.medix.managers.ListenerManager
-import com.slyworks.medix.ui.activities.loginActivity.LoginActivity
-import com.slyworks.medix.ui.activities.onBoardingActivity.OnBoardingActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationDoctorActivity
-import com.slyworks.medix.ui.activities.registrationActivity.RegistrationPatientActivity
+import com.slyworks.medix.helpers.ListenerManager
+import com.slyworks.medix.ui.activities.login_activity.LoginActivity
+import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivity
+import com.slyworks.medix.ui.activities.registration_activity.RegistrationPatientActivity
+import com.slyworks.medix.ui.activities.splash_activity.SplashActivity
 import com.slyworks.medix.utils.ActivityUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
@@ -70,7 +70,6 @@ open class BaseActivity : AppCompatActivity() {
         ActivityUtils.incrementActivityCount()
     }
 
-
     override fun onStart() {
         super.onStart()
 
@@ -94,7 +93,7 @@ open class BaseActivity : AppCompatActivity() {
 
     private fun initListenerManager(){
         if(mListenerManager == null)
-            mListenerManager = ListenerManager()
+            //mListenerManager = ListenerManager()
 
         mListenerManager!!.start()
     }
@@ -102,8 +101,7 @@ open class BaseActivity : AppCompatActivity() {
     private fun stopListenerManager() {
         mListenerManager!!.stop()
     }
-
-
+    
     override fun onResume() {
         super.onResume()
         /*to avoid doing too much work on the main thread*/

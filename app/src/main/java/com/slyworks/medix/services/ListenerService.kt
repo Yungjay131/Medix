@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.IBinder
 import com.slyworks.constants.APP_SERVICE_ID
 import com.slyworks.medix.App
-import com.slyworks.medix.managers.ListenerManager
-import com.slyworks.medix.managers.NotificationHelper
+import com.slyworks.medix.helpers.ListenerManager
+import com.slyworks.medix.helpers.NotificationHelper
 import com.slyworks.medix.utils.*
 
 
@@ -37,7 +37,7 @@ class ListenerService : Service() {
         }
 
         /*initializing class for listening to network events*/
-        mListenerManager = ListenerManager()
+        //mListenerManager = ListenerManager()
         mListenerManager!!.start()
 
         return START_NOT_STICKY

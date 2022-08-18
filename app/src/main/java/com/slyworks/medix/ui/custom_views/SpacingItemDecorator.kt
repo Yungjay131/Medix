@@ -3,7 +3,7 @@ package com.slyworks.medix.ui.custom_views
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.slyworks.medix.ui.activities.messageActivity.RVMessageAdapter
+import com.slyworks.medix.ui.activities.message_activity.RVMessageAdapter
 
 
 /**

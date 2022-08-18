@@ -13,9 +13,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_GET_DISPLAY_VIEW
+import com.slyworks.controller.AppController
+import com.slyworks.controller.Observer
 import com.slyworks.medix.App
 import com.slyworks.medix.R
-import com.slyworks.models.models.Observer
 
 
 /**
@@ -101,7 +102,7 @@ object ViewUtils {
         displaySnackBar((this as Observer), message);
     }
 
-    private fun displaySnackBar(observer:Observer, message: String) {
+    private fun displaySnackBar(observer: Observer, message: String) {
         Snackbar.make(
             AppController.pullData(EVENT_GET_DISPLAY_VIEW, observer),
             message,
