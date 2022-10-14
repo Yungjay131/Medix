@@ -5,10 +5,7 @@ import com.slyworks.di.ActivityScope
 import com.slyworks.di.ApplicationScope
 import com.slyworks.di.FragmentScope
 import com.slyworks.room.AppDatabase
-import com.slyworks.room.daos.CallHistoryDao
-import com.slyworks.room.daos.FCMTokenDao
-import com.slyworks.room.daos.MessageDao
-import com.slyworks.room.daos.PersonDao
+import com.slyworks.room.daos.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -29,23 +26,26 @@ object RoomModule {
 
     @Provides
     @ApplicationScope
-    fun providePersonDao(@Named("application_context")
-                         context:Context):PersonDao{
-        return AppDatabase.getInstance(context).getPersonDao();
+    fun providePersonDao(appDatabase: AppDatabase):PersonDao{
+        return appDatabase.getPersonDao();
     }
 
     @Provides
     @ApplicationScope
-    fun provideMessageDao(@Named("application_context")
-                          context:Context): MessageDao {
-        return AppDatabase.getInstance(context).getMessageDao();
+    fun provideMessageDao(appDatabase: AppDatabase): MessageDao {
+        return appDatabase.getMessageDao();
     }
 
     @Provides
     @ApplicationScope
-    fun provideCallHistoryDao(@Named("application_context")
-                              context:Context):CallHistoryDao{
-        return AppDatabase.getInstance(context).getCallHistoryDao();
+    fun provideCallHistoryDao(appDatabase: AppDatabase):CallHistoryDao{
+        return appDatabase.getCallHistoryDao();
+    }
+
+    @Provides
+    @ApplicationScope
+    fun provideConsultationRequestDao(appDatabase: AppDatabase):ConsultationRequestDao{
+        return appDatabase.getConsultationRequestDao()
     }
 
 }

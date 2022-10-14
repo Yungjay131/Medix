@@ -3,15 +3,16 @@ package com.slyworks.utils
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 /**
  *Created by Joshua Sylvanus, 11:25 AM, 1/13/2022.
  */
-object TimeUtils {
+class TimeUtils {
     //region Vars
-    private const val A_DAY = 10_000_000_000L
-    private const val MORE_THAN_YESTERDAY  = 20_000_000_000L
+    private val A_DAY = 10_000_000_000L
+    private val MORE_THAN_YESTERDAY  = 20_000_000_000L
     //endregion
 
     fun checkIfDateIsSameDay(t1:String, t2:String):Boolean{
@@ -110,6 +111,28 @@ object TimeUtils {
         val threeDays:Long = 3 * 24 * 60 * 60 * 1_000
         val currentTime = System.currentTimeMillis()
         return (currentTime - lastSignInTime) < threeDays
+    }
+
+    /** timePeriod should be the number of days */
+    fun isWithinTimePeriod(timeToBeChecked:Long, timePeriod:Long):Boolean{
+        val numOfDays:Long = timePeriod * 24 * 60 * 1_000
+        val currentTime = System.currentTimeMillis()
+        return (currentTime - timeToBeChecked) < numOfDays
+    }
+
+    fun isWithinTimePeriod(timeToBeChecked:Long, timePeriod:Long, timeUnit: TimeUnit):Boolean{
+        val currentTime:Long = System.currentTimeMillis()
+        val _timePeriod:Long =
+            when(timeUnit){
+               TimeUnit.DAYS -> timePeriod  * 24 * 60 * 60 * 1_000
+               TimeUnit.HOURS -> timePeriod * 60 * 60 * 1_000
+               TimeUnit.MINUTES -> timePeriod * 60 * 1_000
+               TimeUnit.SECONDS -> timePeriod * 1_000
+               TimeUnit.MILLISECONDS -> timePeriod
+               else -> throw IllegalArgumentException()
+            }
+
+        return (currentTime - timeToBeChecked) < _timePeriod
     }
 
 }

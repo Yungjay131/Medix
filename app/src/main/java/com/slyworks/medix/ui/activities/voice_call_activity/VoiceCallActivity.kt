@@ -161,14 +161,12 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        super.onStart(this)
 
         mIsInForeground = true
     }
 
     override fun onStop() {
         super.onStop()
-        super.onStop(this)
 
        mIsInForeground = false
     }
@@ -179,7 +177,6 @@ class VoiceCallActivity : BaseActivity() {
         mHandler!!.post(RtcEngine::destroy)
         mHandler = null
         mRtcEngine = null
-        super.onDestroy(this)
         super.onDestroy()
     }
 

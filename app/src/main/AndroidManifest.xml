@@ -15,6 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medix">
         <activity
+            android:name=".ui.activities.otp_activity.OTPActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.requests_activity.RequestsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.settings_activity.SettingsActivity"
             android:exported="false" />
         <activity
@@ -32,27 +38,24 @@
             android:theme="@style/AppTheme.message"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".ui.activities.view_requests_activity.ViewRequestActivity"
+            android:name=".ui.activities.view_request_activity.ViewRequestActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.registration_activity.RegistrationDoctorActivity"
             android:exported="false"
             android:theme="@style/AppTheme.registration_doctor"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
-
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".ui.activities.registration_activity.RegistrationPatientActivity"
             android:exported="false"
             android:theme="@style/AppTheme.registration_patient"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
-
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".ui.activities.login_activity.LoginActivity"
             android:exported="false"
             android:theme="@style/AppTheme.login"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
         <activity
             android:name=".ui.activities.registration_activity.RegistrationActivity"
             android:exported="false"
@@ -60,13 +63,12 @@
         <activity
             android:name=".ui.activities.onboarding_activity.OnBoardingActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.activities.main_activity.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.main"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".ui.activities.splash_activity.SplashActivity"
             android:exported="true"
@@ -119,17 +121,17 @@
         </receiver>
 
         <service
-            android:name="com.slyworks.medix.services.MFirebaseMessagingService"
+            android:name=".services.MFirebaseMessagingService"
             android:exported="false"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
-            android:name="NavigationService"
+            android:name=".NavigationService"
             android:foregroundServiceType="location">
+
             <!-- Any inner elements would go here. -->
         </service>
         <service
@@ -147,7 +149,6 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
@@ -157,10 +158,10 @@
     <uses-feature
         android:name="android.hardware.microphone"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />

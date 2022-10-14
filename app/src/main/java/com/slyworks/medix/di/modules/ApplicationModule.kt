@@ -30,14 +30,12 @@ import javax.inject.Named
 object ApplicationModule{
     @ApplicationScope
     @Provides
-    fun provideListenerManager(callManager: CallManager,
-                               cloudMessageManager: CloudMessageManager,
-                               notificationHelper: NotificationHelper):ListenerManager =
-        ListenerManager(callManager, cloudMessageManager, notificationHelper)
+    fun provideVibrationManager(context: Context):VibrationManager
+     = VibrationManager(context)
 
     @ApplicationScope
     @Provides
-    fun provideVibrationManager(@Named("application_context")
-                                context: Context):VibrationManager
-     = VibrationManager(context)
+    fun provideNotificationHelper():NotificationHelper
+       = NotificationHelper()
+
 }

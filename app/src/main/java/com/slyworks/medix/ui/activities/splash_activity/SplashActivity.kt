@@ -1,12 +1,14 @@
 package com.slyworks.medix.ui.activities.splash_activity
 
 import android.app.Activity
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
+import app.slyworks.navigator.Navigator
 import com.slyworks.auth.UsersManager
 import com.slyworks.constants.KEY_LAST_SIGN_IN_TIME
 import com.slyworks.medix.R
@@ -17,34 +19,30 @@ import com.slyworks.utils.PreferenceManager
 import com.slyworks.medix.ui.activities.main_activity.MainActivity
 import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
 import com.slyworks.medix.utils.*
-import com.slyworks.navigation.Navigator
 import com.slyworks.userdetails.UserDetailsUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
     //region Vars
-    @Inject
-    lateinit var usersManager:UsersManager;
-    @Inject
-    lateinit var userDetailsUtils:UserDetailsUtils;
-    @Inject
-    lateinit var preferenceManager:PreferenceManager
-
     private var mHandler:Handler? = Handler(Looper.myLooper()!!)
+
+    @Inject
+    lateinit var viewModel: SplashActivityViewModel
     //endregion
 
 
-    override fun onCreate(activity: Activity) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
-
-        super.onCreate(activity)
+        super.onCreate(savedInstanceState)
     }
 
     private fun initDI(){
         application.appComponent
             .activityComponentBuilder()
+            .setActivity(this)
             .build()
             .inject(this)
     }
@@ -75,27 +73,36 @@ class SplashActivity : BaseActivity() {
        _startActivity()
     }
 
-    private fun _startActivity() {
-        lifecycleScope.launch {
-            val navigator: Navigator.ActivityContinuation
-            val status = checkUserDetailsAvailability()
+    private fun _startActivity(){
+        viewModel.isSessionValid
+            .observe(this){
+            (if(it)
+                    Navigator.intentFor<MainActivity>(this@SplashActivity)
+                else
+                    Navigator.intentFor<OnBoardingActivity>(this@SplashActivity)
+            )
+                    .finishCaller()
+                    .navigate()
 
-            navigator =
-                     if(status && isLoginSessionValid())
-                         Navigator.intentFor<MainActivity>(this@SplashActivity)
-                     else
-                         Navigator.intentFor<OnBoardingActivity>(this@SplashActivity)
-
-
-            navigator.newAndClearTask()
-                .finishCaller()
-                .navigate()
         }
     }
 
-    private fun isLoginSessionValid():Boolean{
+   /* private fun _startActivity() {
+        lifecycleScope.launch {
+            val status = checkUserDetailsAvailability()
+
+            (if(status && isLoginSessionValid())
+                Navigator.intentFor<MainActivity>(this@SplashActivity)
+            else
+                Navigator.intentFor<OnBoardingActivity>(this@SplashActivity))
+                .finishCaller()
+                .navigate()
+        }
+    }*/
+
+   /* private fun isLoginSessionValid():Boolean{
         val lastSignInTime: Long = preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
-        return TimeUtils.isWithin3DayPeriod(lastSignInTime)
+        return timeUtils.isWithinTimePeriod(lastSignInTime, 3, TimeUnit.DAYS)
     }
 
     private suspend fun checkUserDetailsAvailability(): Boolean{
@@ -119,7 +126,7 @@ class SplashActivity : BaseActivity() {
                 childJob.join()
                 return@async result
             }.await()
-    }
+    }*/
 
     override fun onBackPressed() {}
 }

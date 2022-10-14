@@ -33,8 +33,7 @@ class UsersManager(
     private val personDao: PersonDao,
     private val messageDao:MessageDao,
     private val userDetailsUtils: UserDetailsUtils,
-    private val firebaseUtils: FirebaseUtils
-) {
+    private val firebaseUtils: FirebaseUtils) {
     //region Vars
     private val TAG: String? = UsersManager::class.simpleName
 

@@ -27,8 +27,8 @@ data class FBUserDetails(
     @ColumnInfo(name = "agora_uid") var agoraUID: String = "",
     @ColumnInfo(name = "fcm_registration_token") var FCMRegistrationToken:String = "",
     @ColumnInfo(name = "image_uri") var imageUri: String = "",
-    @Ignore var history: MutableList<String>? = mutableListOf(),
-    @Ignore var specialization: MutableList<String>? = mutableListOf() ): Parcelable {
+    @ColumnInfo(name = "history") var history: MutableList<String>? = mutableListOf(),
+    @ColumnInfo(name = "specialization") var specialization: MutableList<String>? = mutableListOf() ): Parcelable {
     constructor():
             this(accountType= "",
                 firstName = "",

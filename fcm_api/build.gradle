@@ -4,14 +4,16 @@ plugins {
     id 'kotlin-kapt'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 31
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 19
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        minSdk sdk_details.minSDK
+        targetSdk sdk_details.targetSDK
+        versionCode sdk_details.versionCode
+        versionName sdk_details.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -43,12 +45,11 @@ dependencies {
     implementation project(path: ':di')
     implementation project(path: ":models")
 
-    def retrofit = "2.9.0"
-    api "com.squareup.retrofit2:retrofit:$retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+    implementation depends.retrofit
+    implementation depends.retrofit_gson
+    implementation depends.stetho
+    implementation depends.stetho_okhttp
 
-    implementation 'com.facebook.stetho:stetho:1.5.1'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
-    def dagger_version = '2.42'
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation depends.dagger
+    kapt depends.dagger_kapt
 }

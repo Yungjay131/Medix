@@ -15,12 +15,12 @@ import com.slyworks.medix.concurrency.workers.MessageWorker
 import com.slyworks.medix.concurrency.workers.ProfileUpdateWorker
 import com.slyworks.medix.concurrency.workers.StartServiceWorker
 import com.slyworks.medix.di.components.ApplicationComponent
-import com.slyworks.medix.di.DaggerApplicationComponent
+import com.slyworks.medix.di.components.DaggerApplicationComponent
 import timber.log.Timber
 
 
 /**
- *Created by Joshua Sylvanus, 3:59 PM, 12/10/2021.
+ * Created by Joshua Sylvanus, 3:59 PM, 12/10/2021.
  */
 
 val Context.appComponent: ApplicationComponent
@@ -116,14 +116,15 @@ class App: Application() {
         initTimber()
         initContext()
         initStartServiceWork()
+        initStetho()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             initNotificationChannels()
-
     }
 
     private fun initDI(){
         /* inject UserDetailUtils, AppDatabase, context etc into dependency graph */
+        _appComponent =
         DaggerApplicationComponent
             .builder()
             .componentContext(this)
@@ -138,8 +139,8 @@ class App: Application() {
     }
 
     private fun initTimber(){
-        /*to ensure logging does not occur in RELEASE builds*
-          the actual dependency is in :models*/
+        /* to ensure logging does not occur in RELEASE builds*
+          the actual dependency is in :models */
         if(!BuildConfig.DEBUG)
             return
 
@@ -148,8 +149,7 @@ class App: Application() {
                 return String.format(
                     "%s:%s",
                     element.methodName,
-                    super.createStackElementTag(element)
-                )
+                    super.createStackElementTag(element))
             }
         })
     }

@@ -18,7 +18,7 @@ import com.slyworks.medix.App
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.main_activity.MainActivity
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
-import com.slyworks.medix.ui.activities.view_requests_activity.ViewRequestActivity
+import com.slyworks.medix.ui.activities.view_request_activity.ViewRequestActivity
 import com.slyworks.medix.broadcast_receivers.CloudMessageBroadcastReceiver
 import com.slyworks.medix.broadcast_receivers.VideoCallRequestBroadcastReceiver
 import com.slyworks.medix.broadcast_receivers.VoiceCallRequestBroadcastReceiver

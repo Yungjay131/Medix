@@ -18,8 +18,8 @@ import com.jakewharton.rxbinding4.InitialValueObservable
 import com.jakewharton.rxbinding4.widget.textChanges
 import com.slyworks.constants.*
 import com.slyworks.medix.*
-import com.slyworks.navigation.Navigator
-import com.slyworks.navigation.Navigator.Companion.getExtra
+
+.Companion.getExtra
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.main_activity.MainActivity
 import com.slyworks.medix.ui.activities.registration_activity.EXTRA_IS_ACTIVITY_RECREATED

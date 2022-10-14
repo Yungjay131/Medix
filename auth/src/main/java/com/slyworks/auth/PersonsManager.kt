@@ -14,20 +14,15 @@ import javax.inject.Named
 /**
  *Created by Joshua Sylvanus, 9:17 PM, 27/06/2022.
  */
-class PersonsManager(
-    private val personDao:PersonDao
-) {
-    //region Vars
-    //endregion
+class PersonsManager(private val personDao: PersonDao) {
 
     fun updateLastMessageInfo(firebaseUID:String){
         CoroutineScope(Dispatchers.IO).launch {
-            val person: Person? =
-               personDao
-                     .getPersonByID(firebaseUID) ?: return@launch
+            val person: Person =
+               personDao.getPersonByID(firebaseUID) ?: return@launch
 
                personDao
-                .updatePerson(person!!.apply {
+                .updatePerson(person.apply {
                     lastMessageStatus = READ
                     unreadMessageCount = 0
                 })
@@ -37,12 +32,11 @@ class PersonsManager(
 
     fun updateLastMessageTimeStamp(firebaseUID: String, timeStamp:String) {
         CoroutineScope(Dispatchers.IO).launch{
-           val person: Person? =
-             personDao
-                   .getPersonByID(firebaseUID) ?: return@launch
+           val person: Person =
+             personDao.getPersonByID(firebaseUID) ?: return@launch
 
              personDao
-                 .updatePerson(person!!.apply {
+                 .updatePerson(person.apply {
                      lastMessageTimeStamp = timeStamp
                  })
         }

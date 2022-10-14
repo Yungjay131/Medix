@@ -5,12 +5,14 @@ plugins {
     id 'kotlin-kapt'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 31
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
+        minSdk sdk_details.minSDK
+        targetSdk sdk_details.targetSDK
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -44,14 +46,14 @@ dependencies {
     implementation project(path: ':constants')
     implementation project(path: ':models')
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation depends.core_ktx
+    implementation depends.room
+    implementation depends.room_runtime
+    implementation depends.room_rxjava
+    kapt depends.room_kapt
 
-    def room_version = "2.4.0"
-    implementation "androidx.room:room-ktx:$room_version"
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-rxjava3:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation depends.gson
 
-    def dagger_version = '2.42'
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation depends.dagger
+    kapt depends.dagger_kapt
 }

@@ -20,7 +20,7 @@ interface MessageDao {
     @Delete
     suspend fun deleteMessage(vararg messages: Message):Int
 
-    @Query("SELECT * FROM Message")
+    @Query("SELECT * FROM Message ORDER BY time_stamp ASC")
     fun observeMessages(): Flow<MutableList<Message>>
 
     @Query("SELECT * FROM Message where from_uid == :firebaseUID  OR to_uid == :firebaseUID")

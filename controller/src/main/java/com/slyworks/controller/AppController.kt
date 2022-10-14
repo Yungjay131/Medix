@@ -10,6 +10,9 @@ class AppController {
         private var mEvents: MutableList<String> = mutableListOf();
         private var mObservers: MutableMap<String, MutableSet<Subscription>> = mutableMapOf()
         private var mEventMap: MutableMap<String, Pair<DataHolder, MutableSet<Subscription>>> = mutableMapOf();
+
+        private var mTopicList: MutableList<String> = mutableListOf()
+        private var mTopicObservers: MutableMap<String, PublishSubject<Any>> = mutableMapOf()
         //endregion
 
 
@@ -88,8 +91,6 @@ class AppController {
             return mEventMap[event]?.first?.data as T
         }
 
-        private var mTopicList: MutableList<String> = mutableListOf()
-        private var mTopicObservers: MutableMap<String, PublishSubject<Any>> = mutableMapOf()
         fun addTopic(topic: String) {
             if (mTopicList.contains(topic))
                 return
@@ -102,7 +103,7 @@ class AppController {
             mTopicObservers.get(topic)?.onNext(topic)
         }
 
-        fun <T> subscribeTo(topic: String): Observable<T> {
+        fun <T> subscribeTo(topic: String): Observable<out T> {
             if (!mTopicList.contains(topic))
                 addTopic(topic)
 

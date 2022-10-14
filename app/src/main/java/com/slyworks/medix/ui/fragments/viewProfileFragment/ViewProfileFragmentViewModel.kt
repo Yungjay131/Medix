@@ -25,7 +25,7 @@ class ViewProfileFragmentViewModel
     val consultationRequestStatusLiveData:LiveData<String>
     get() = _consultationRequestStatusLiveData
 
-    private val mSubscriptions = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     private lateinit var userUID:String
     //endregion
@@ -34,21 +34,20 @@ class ViewProfileFragmentViewModel
 
     fun observeConsultationRequestStatus(userUID:String){
         this.userUID = userUID
-        val d = cloudMessageManager.observeConsultationRequestStatus(userUID)
+        disposables +=
+        cloudMessageManager.observeConsultationRequestStatus(userUID)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .subscribe {
                _consultationRequestStatusLiveData.postValue(it)
             }
-
-        mSubscriptions.add(d)
     }
 
     fun sendConsultationRequest(request:ConsultationRequest, mode:MessageMode = MessageMode.DB_MESSAGE)
         = cloudMessageManager.sendConsultationRequest(request, mode)
 
     override fun onCleared() {
-        mSubscriptions.clear()
+        disposables.clear()
         cloudMessageManager.detachCheckRequestStatusListener(userUID)
         super.onCleared()
     }

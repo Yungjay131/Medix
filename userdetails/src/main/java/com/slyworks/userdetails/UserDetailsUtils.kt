@@ -19,9 +19,7 @@ import javax.inject.Named
 /**
  *Created by Joshua Sylvanus, 12:34 PM, 1/9/2022.
  */
-class UserDetailsUtils(
-    private val context:Context
-) {
+class UserDetailsUtils(private val context: Context) {
      //region Vars
       var user: FBUserDetails? = null
       var user2: FBUserDetails? = null
@@ -31,8 +29,7 @@ class UserDetailsUtils(
     private val Context.userDetailsProtoDataStore: DataStore<UserDetails> by
     dataStore(
         fileName = "user_details.pb",
-        serializer = UserDataSerializer
-    )
+        serializer = UserDataSerializer)
 
     //endregion
 
@@ -87,8 +84,7 @@ class UserDetailsUtils(
                     userDetails.fbRegistrationToken,
                     userDetails.imageUri,
                     history,
-                    specialization
-                )
+                    specialization)
 
             }
     }
@@ -97,8 +93,8 @@ class UserDetailsUtils(
         CoroutineScope(Dispatchers.IO).launch{
             context.userDetailsProtoDataStore.updateData {
                 it.toBuilder()
-                    .clear()
-                    .build()
+                  .clear()
+                  .build()
             }
         }
     }

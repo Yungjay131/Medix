@@ -15,8 +15,7 @@ import javax.inject.Named
 
 
 /*TODO:use Dagger here to pass ApplicationContext*/
-internal class NetworkWatcherImpl(
-    private val context:Context) : NetworkWatcher {
+internal class NetworkWatcherImpl(private val context: Context) : NetworkWatcher {
     //region Vars
     private var mCm:ConnectivityManager
     private var mConnectivityCallback: ConnectivityCallback? = null

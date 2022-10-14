@@ -1,17 +1,18 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 31
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        minSdk sdk_details.minSDK
+        targetSdk sdk_details.targetSDK
+        versionCode sdk_details.versionCode
+        versionName sdk_details.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,7 +34,5 @@ android {
 }
 
 dependencies {
-    def dagger_version = '2.42'
-    api "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation depends.dagger
 }

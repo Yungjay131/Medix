@@ -22,8 +22,9 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.slyworks.constants.*
 import com.slyworks.medix.R
 import com.slyworks.medix.appComponent
-import com.slyworks.navigation.Navigator.Companion.getExtra
-import com.slyworks.navigation.Navigator.Companion.getParcelable
+import com.slyworks.medix.appComponent
+.Companion.getExtra
+.Companion.getParcelable
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.models.VideoCallRequest

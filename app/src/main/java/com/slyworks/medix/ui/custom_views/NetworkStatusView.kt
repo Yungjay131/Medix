@@ -40,7 +40,8 @@ constructor(
     attrs: AttributeSet? = null,
     defStyleAttr:Int = 0): ConstraintLayout(context,attrs,defStyleAttr) {
 
-    private lateinit var view:View
+    //region Vars
+    private var view:View
     private var ivStatus:CircleImageView
     private var tvStatus: TextView
 
@@ -52,6 +53,7 @@ constructor(
     private val mColorOnline:Int = ContextCompat.getColor(context, R.color.appCardBlue)
 
     private var mHasBeenInitialized:Boolean = false
+    //endregion
 
     init{
         view = inflate(context, R.layout.network_notifier, this)

@@ -3,6 +3,8 @@ package com.slyworks.utils.di
 import android.content.Context
 import com.slyworks.di.ApplicationScope
 import com.slyworks.utils.PreferenceManager
+import com.slyworks.utils.TaskManager
+import com.slyworks.utils.TimeUtils
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -16,8 +18,7 @@ import javax.inject.Named
 class UtilsModule {
     @Provides
     @ApplicationScope
-    fun providePreferenceManager(@Named("application_context")
-                                 context: Context):PreferenceManager{
+    fun providePreferenceManager(context: Context):PreferenceManager{
         return PreferenceManager(context)
     }
 }

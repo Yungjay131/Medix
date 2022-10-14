@@ -10,7 +10,7 @@ import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivi
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivity
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationPatientActivity
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
-import com.slyworks.medix.ui.activities.view_requests_activity.ViewRequestActivity
+import com.slyworks.medix.ui.activities.view_request_activity.ViewRequestActivity
 import com.slyworks.medix.ui.activities.settings_activity.SettingsActivity
 import com.slyworks.medix.ui.activities.splash_activity.SplashActivity
 import com.slyworks.medix.ui.activities.voice_call_activity.VoiceCallActivity

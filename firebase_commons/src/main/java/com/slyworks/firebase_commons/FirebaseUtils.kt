@@ -12,9 +12,8 @@ import com.slyworks.constants.*
  *Created by Joshua Sylvanus, 2:06 PM, 03/06/2022.
  */
 
-class FirebaseUtils(
-    private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseStorage: FirebaseStorage) {
+class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
+                    private val firebaseStorage: FirebaseStorage) {
 
     fun getUserDataRefForWorkManager(params: String): DatabaseReference {
         return firebaseDatabase

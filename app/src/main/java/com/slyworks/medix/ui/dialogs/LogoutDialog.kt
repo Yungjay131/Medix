@@ -12,7 +12,7 @@ import com.slyworks.auth.LoginManager
 import com.slyworks.medix.App
 import com.slyworks.medix.R
 import com.slyworks.medix.appComponent
-import com.slyworks.navigation.Navigator
+
 import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
 import javax.inject.Inject
 

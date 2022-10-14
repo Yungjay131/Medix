@@ -12,7 +12,7 @@ import dagger.Subcomponent
 /**
  *Created by Joshua Sylvanus, 8:50 PM, 16/08/2022.
  */
-@ApplicationScope
+@WorkerScope
 @Subcomponent
 interface WorkerComponent {
     fun inject(worker:MessageWorker)

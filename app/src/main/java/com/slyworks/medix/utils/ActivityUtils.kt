@@ -25,8 +25,7 @@ object ActivityUtils {
         if(status){
             mCurrentActivityTag = tag
             mForegroundStatus = true
-        }else{
-         if(tag == mCurrentActivityTag)
+        }else if(!status && (tag == mCurrentActivityTag)){
             mForegroundStatus = status
         }
     }
@@ -34,8 +33,8 @@ object ActivityUtils {
     fun isThereActivityInForeground():Boolean =  mForegroundStatus
 
     fun isLastActivity():Boolean = mCount == 1
-    fun incrementActivityCount() = mCount++
-    fun decrementActivityCount() = mCount--
+    fun incrementActivityCount():Int = mCount++
+    fun decrementActivityCount():Int = mCount--
 
 }
 

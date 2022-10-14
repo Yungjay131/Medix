@@ -6,20 +6,21 @@ import com.slyworks.communication.CallManager
 import com.slyworks.communication.CloudMessageManager
 import com.slyworks.communication.ConnectionStatusManager
 import com.slyworks.medix.App
+import com.slyworks.medix.utils.plusAssign
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 
 
 /**
  *Created by Joshua Sylvanus, 7:30 PM, 20/05/2022.
  */
 class ListenerManager(
+    //region Vars
     private val callManager: CallManager,
     private val cloudMessageManager: CloudMessageManager,
     private val notificationHelper: NotificationHelper){
-    //region Vars
-    private var mSubscriptions:CompositeDisposable = CompositeDisposable()
+    private val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
     companion object{
@@ -27,13 +28,11 @@ class ListenerManager(
         * or from MainActivity (BaseActivity)*/
         var isInitialised:Boolean = false
 
-        lateinit var connectionStatusManager: ConnectionStatusManager
-
-        fun observeMyConnectionStatusChanges(){
+        fun observeMyConnectionStatusChanges(connectionStatusManager:ConnectionStatusManager){
             connectionStatusManager.setMyConnectionStatusHandler()
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .subscribe { _ -> }
+                .subscribe()
 
             isInitialised = true
         }
@@ -45,11 +44,12 @@ class ListenerManager(
         observeIncomingVoiceCalls()
     }
 
-    fun stop() = mSubscriptions.clear()
+    fun stop() = disposables.clear()
 
     private fun observeNewConsultationRequests(){
-        val d = cloudMessageManager.listenForConsultationRequests()
-            .observeOn(Schedulers.io())
+        disposables +=
+        cloudMessageManager.listenForConsultationRequests()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 notificationHelper.createConsultationRequestNotification(
@@ -58,24 +58,22 @@ class ListenerManager(
                     toFCMRegistrationToken = it.details.FCMRegistrationToken,
                     message = "${it.details.fullName} would like a consultation with you")
             }
-
-        mSubscriptions.add(d)
     }
 
     private fun observeIncomingVideoCalls(){
-        val d = callManager.listenForVideoCallRequests()
-            .observeOn(Schedulers.io())
+        disposables +=
+        callManager.listenForVideoCallRequests()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 notificationHelper.createIncomingVideoCallNotification(it)
             }
-
-        mSubscriptions.add(d)
     }
 
     private fun observeIncomingVoiceCalls(){
-        val d = callManager.listenForVoiceCallRequests()
-            .observeOn(Schedulers.io())
+        disposables +=
+        callManager.listenForVoiceCallRequests()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val b:Bitmap = Glide.with(App.getContext())
@@ -85,7 +83,5 @@ class ListenerManager(
                     .get()
                 notificationHelper.createIncomingVoiceCallNotification(b,it)
             }
-
-        mSubscriptions.add(d)
     }
 }

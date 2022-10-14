@@ -20,8 +20,8 @@ import com.slyworks.utils.IDUtils
 import com.slyworks.medix.R
 import com.slyworks.medix.appComponent
 import com.slyworks.medix.ui.activities.BaseActivity
-import com.slyworks.navigation.Navigator
-import com.slyworks.navigation.Navigator.Companion.getParcelable
+
+.Companion.getParcelable
 import com.slyworks.navigation.addExtra
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
 import com.slyworks.medix.ui.custom_views.SpacingItemDecorator

@@ -131,7 +131,7 @@ class MessageManager(
                                  val r: Outcome = Outcome.SUCCESS<MutableList<Person>>(it)
                                  emitter.onNext(r)
                              } else {
-                                 val r: Outcome = Outcome.FAILURE<Nothing>(reason = "you don't seem to have any messages at the moment")
+                                 val r: Outcome = Outcome.FAILURE<Unit>(reason = "you don't seem to have any messages at the moment")
                                  emitter.onNext(r)
                              }
                          }
@@ -140,16 +140,14 @@ class MessageManager(
 
     private fun handleNewMessages(snapshot: DataSnapshot){
         /*snapshot should be a list of all the user's messages from the different senders*/
-        val d =
-            getMessageListObservable(snapshot)
-                  .map(::mapUIDToMessageList)
-                  .map(::mapUIDMapToPersonList)
-                  .flatMap(::getPersonsObservable)
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(Schedulers.io())
-                  .subscribe()
-
-        mHandleNewMessagesDisposable.add(d)
+         mHandleNewMessagesDisposable +=
+         getMessageListObservable(snapshot)
+               .map(::mapUIDToMessageList)
+               .map(::mapUIDMapToPersonList)
+               .flatMap(::getPersonsObservable)
+               .subscribeOn(Schedulers.io())
+               .observeOn(Schedulers.io())
+               .subscribe()
     }
 
     private fun getMessageListObservable(snapshot: DataSnapshot):Observable<List<Message>> =
@@ -191,8 +189,7 @@ class MessageManager(
             }
         }
 
-    private fun mapUIDToMessageList(messageList:List<Message>)
-    :MutableMap<String, MutableList<Message>>{
+    private fun mapUIDToMessageList(messageList: List<Message>):MutableMap<String, MutableList<Message>>{
         val sm: MutableMap<String, MutableList<Message>> = mutableMapOf()
 
         messageList.forEach { m ->
@@ -243,7 +240,7 @@ class MessageManager(
                             UID:String,
                             name:String,
                             unreadMessageCount:Int):Person
-            =Person(
+       = Person(
         firebaseUID = UID,
         userAccountType = m.accountType,
         lastMessageType = m.type,
@@ -253,15 +250,12 @@ class MessageManager(
         imageUri = m.receiverImageUri,
         fullName = name,
         unreadMessageCount = unreadMessageCount,
-        FCMRegistrationToken = m.FCMRegistrationToken
-    )
-
-
+        FCMRegistrationToken = m.FCMRegistrationToken)
 
     fun sendMessage(message:Message): Observable<Message> {
         /* creating 2 copies of the messages to keep sender and receiver version different */
         message.status = DELIVERED
-        val message2:Message =Message.cloneFrom(message)
+        val message2:Message = Message.cloneFrom(message)
 
         /* if the sender's DB message node has other messages, just add a new empty node */
         val senderMessageNodeKey: String? = firebaseDatabase
@@ -288,98 +282,17 @@ class MessageManager(
             }
     }
 
-    private fun getSenderObservable(message:Message):Observable<Outcome> =
-        /* Observable for case when sender's message node is empty
-       i.e its the very first message for the user */
-        Observable.create<Outcome> { emitter ->
-            val key:String? = firebaseDatabase
-                .reference
-                .child("messages/${message.toUID}")
-                .push()
-                .key
-
-            if(key == null){
-                emitter.onNext(Outcome.FAILURE("created message node for sender is null"))
-                emitter.onComplete()
-                return@create
-            }
-
-            firebaseDatabase
-                .reference
-                .child("messages/${userDetailsUtils.user!!.firebaseUID}/$key")
-                .setValue(message)
-                .addOnCompleteListener {
-                    if(it.isSuccessful)
-                        emitter.onNext(Outcome.SUCCESS(null))
-                    else
-                        emitter.onNext(Outcome.FAILURE(null))
-
-                    emitter.onComplete()
-                }
-        }
-
-    private fun getReceiverObservable(message:Message):Observable<Outcome> =
-        /* Observable for case when receiver's message node is empty
-       * i.e its the very first message for the user*/
-        Observable.create<Outcome> { emitter ->
-            val key:String? = firebaseDatabase
-                .reference
-                .child("messages/${message.toUID}")
-                .push()
-                .key
-
-            if(key == null){
-                emitter.onNext(Outcome.FAILURE("created message node for receiver is null"))
-                emitter.onComplete()
-                return@create
-            }
-
-            firebaseDatabase
-                .reference
-                .child("messages/${message.toUID}/$key")
-                .setValue(message)
-                .addOnCompleteListener {
-                    if(it.isSuccessful)
-                        emitter.onNext(Outcome.SUCCESS(null))
-                    else
-                        emitter.onNext(Outcome.FAILURE(it.exception?.message))
-
-                    emitter.onComplete()
-                }
-        }
-
-    private fun getReceiverNodeObservable(message:Message,
-                                          receiverMessageNodeKey:String?):Observable<Outcome> =
-        /* Observable for case when the receiver's message node is *NOT*
-        * empty, hence just add an empty node and set its value to the Message being sent*/
-        Observable.create<Outcome> { emitter ->
-            firebaseDatabase
-                .reference
-                .child("messages/${message.toUID}/$receiverMessageNodeKey")
-                .setValue(message)
-                .addOnCompleteListener {
-                    if(it.isSuccessful)
-                        emitter.onNext(Outcome.SUCCESS(null))
-                    else
-                        emitter.onNext(Outcome.FAILURE(null))
-
-                    emitter.onComplete()
-                }
-        }
-
-
     private fun getChildNodesObservable(message:Message,
                                         message2:Message,
                                         senderMessageNodeKey:String?,
                                         receiverMessageNodeKey: String?):Observable<Outcome> =
         /*
        * Observable for case when both receiver and sender message nodes are NOT
-       * empty,hence perform a simultaneous child node update*/
+       * empty,hence perform a simultaneous child node update */
         Observable.create<Outcome>{ emitter ->
             val childNode: HashMap<String, Any> = hashMapOf(
                 "/messages/${message.fromUID}/$senderMessageNodeKey" to message,
-                "/messages/${message.toUID}/$receiverMessageNodeKey" to message2
-            )
+                "/messages/${message.toUID}/$receiverMessageNodeKey" to message2)
 
             firebaseDatabase
                 .reference
@@ -398,13 +311,12 @@ class MessageManager(
         Observable.create { emitter ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    messageDao
-                        .addMessage(*message)
+                    messageDao.addMessage(*message)
 
-                    emitter.onNext(Outcome.SUCCESS(null))
+                    emitter.onNext(Outcome.SUCCESS<Unit>(null))
                     emitter.onComplete()
                 }catch (e:Exception){
-                    emitter.onNext(Outcome.FAILURE(null, reason = e.message))
+                    emitter.onNext(Outcome.FAILURE<Unit>(null, reason = e.message))
                     emitter.onComplete()
                 }
             }

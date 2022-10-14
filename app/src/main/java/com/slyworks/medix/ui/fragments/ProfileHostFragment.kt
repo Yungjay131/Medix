@@ -10,7 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.main_activity.activityComponent
-import com.slyworks.navigation.Navigator
+
 import com.slyworks.medix.ui.fragments.findDoctorsFragment.FindDoctorsFragment
 
 class ProfileHostFragment : Fragment() {

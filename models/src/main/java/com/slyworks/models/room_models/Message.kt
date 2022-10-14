@@ -21,10 +21,10 @@ data class Message(
     @ColumnInfo(name = "to_uid") var toUID:String = "",
     @ColumnInfo(name = "sender_fullname") var senderFullName:String = "",
     @ColumnInfo(name = "receiver_fullname") var receiverFullName:String = "",
-    @ColumnInfo(name = "content") var content:String = "",
+    @ColumnInfo(name = "content") val content:String = "",
     @PrimaryKey
-    @ColumnInfo(name = "time_stamp") var timeStamp:String = "",
-    @ColumnInfo(name = "message_id") var messageID:String = "",
+    @ColumnInfo(name = "time_stamp") val timeStamp:String = "",
+    @ColumnInfo(name = "message_id") val messageID:String = "",
     @ColumnInfo(name = "status") var status:Double = NOT_SENT,
     @ColumnInfo(name = "sender_image_uri") var senderImageUri:String = "",
     @ColumnInfo(name = "account_type") var accountType:String = "",
@@ -48,6 +48,7 @@ data class Message(
         receiverImageUri = "")
 
     companion object{
+        /* fixme: replace with Data Class's copy() method eventually */
         fun cloneFrom(message: Message): Message {
             return Message(
                 type = INCOMING_MESSAGE,
@@ -66,14 +67,14 @@ data class Message(
         }
     }
     override fun compareTo(other: Message): Int {
+        val thisTimeStamp:Long = this.timeStamp.toLong()
         val otherTimeStamp:Long = other.timeStamp.toLong()
-        if(this.timeStamp.toLong() > otherTimeStamp)
-            return 1
-        else if(this.timeStamp.toLong() < otherTimeStamp)
-            return -1
-        else if(this.timeStamp.toLong() == otherTimeStamp)
-            return 0
-        else
-            throw UnsupportedOperationException("cannot sort unknown order of value")
+
+        return when{
+            thisTimeStamp > otherTimeStamp -> 1
+            thisTimeStamp < otherTimeStamp -> -1
+            thisTimeStamp == otherTimeStamp -> 0
+            else -> throw UnsupportedOperationException("cannot sort order of unknown value")
+        }
     }
 }

@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import app.slyworks.navigator.Navigator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
@@ -32,8 +33,9 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.AccountType
 import com.slyworks.models.models.Gender
+import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
-import com.slyworks.navigation.Navigator
+
 import com.slyworks.utils.ContentResolverStore
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -82,8 +84,6 @@ class RegistrationPatientActivity : BaseActivity() {
     private lateinit var mImageUri:Uri
     private var mHasImageBeenSelected = false
 
-    private var mPermissionManager: PermissionManager? = null
-
     @Inject
     lateinit var mViewModel: RegistrationPatientActivityViewModel
 
@@ -101,8 +101,6 @@ class RegistrationPatientActivity : BaseActivity() {
         ContentResolverStore.nullifyContentResolver()
 
         mSubscriptions.clear()
-
-        mPermissionManager = null
 
         etFirstName.removeTextChangedListener(etFirstNameWatcher)
         etFirstName.removeTextChangedListener(etLastNameWatcher)
@@ -209,7 +207,8 @@ class RegistrationPatientActivity : BaseActivity() {
 
     private fun initPermissions(){
         /*has to be done in onCreate()*/
-        mPermissionManager = PermissionManager.of(
+        mViewModel.permissionManager!!
+            .initialize(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA)
@@ -285,21 +284,25 @@ class RegistrationPatientActivity : BaseActivity() {
          }
 
         ivProfile.setOnClickListener {
-                val d: Disposable =
-                    mPermissionManager!!.requestPermissions()
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { b:Boolean ->
-                            if(b){
+            disposables +=
+                mViewModel.permissionManager!!
+                    .requestPermissions()
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { o: Outcome ->
+                        when{
+                            o.isSuccess -> {
                                 ChangePhotoDialog.getInstance().apply {
                                     mViewModel.handleProfileImageUri(this.getObservable())
                                 }
-                                .show(supportFragmentManager, "")
-                            }else{
-                                showMessage("Medix requires these permissions to work, please grant access to the requested permissions", rootView)
+                                    .show(supportFragmentManager, "")
+                            }
+                            o.isFailure -> {
+                                val l:List<String> = o.getTypedValue<List<String>>()
+                                showMessage("Medix requires these permissions to work well", rootView)
                             }
                         }
-            mSubscriptions.add(d)
+                    }
         }
 
         btnAddDisease.setOnClickListener{

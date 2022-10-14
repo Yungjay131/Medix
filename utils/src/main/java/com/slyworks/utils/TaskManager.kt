@@ -1,6 +1,10 @@
 package com.slyworks.utils
 
 import androidx.collection.SimpleArrayMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -12,8 +16,16 @@ import java.util.concurrent.Executors
 object TaskManager {
     //region Vars
     private val NUMBER_OF_CORES:Int = Runtime.getRuntime().availableProcessors()
-    private var mExecutorsMap:SimpleArrayMap<Long,ExecutorService>? = SimpleArrayMap()
+    private var mExecutorsMap:SimpleArrayMap<Long,ExecutorService> = SimpleArrayMap()
     //endregion
+
+   /* fun runOnLaunchCoroutine(func:() -> Unit):Unit{
+        CoroutineScope(Dispatchers.IO).launch(::func)
+    }
+
+    fun <T> runOnAsyncCoroutine(func:() -> T):T{
+        return CoroutineScope(Dispatchers.IO).async { }
+    }*/
 
     fun newSingleThreadExecutor(executorID:Long): ExecutorService {
         val e =  Executors.newSingleThreadExecutor()
@@ -41,7 +53,7 @@ object TaskManager {
         param1: R?,
         param2: S?,
         task: (p1: R?, p2: S?) -> T
-    ): T {
+    ) /*where S:Parcelable, R: Parcelable*/ : T {
         val e = Executors.newSingleThreadExecutor()
         val data = e.submit(Callable<T>{ task(param1, param2) }).get()
         e.shutdownNow()

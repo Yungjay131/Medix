@@ -21,9 +21,10 @@
             <option value="$PROJECT_DIR$/fcm_api" />
             <option value="$PROJECT_DIR$/firebase_commons" />
             <option value="$PROJECT_DIR$/models" />
-            <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/network" />
+            <option value="$PROJECT_DIR$/payment" />
             <option value="$PROJECT_DIR$/room" />
+            <option value="$PROJECT_DIR$/security" />
             <option value="$PROJECT_DIR$/userdetails" />
             <option value="$PROJECT_DIR$/utils" />
           </set>

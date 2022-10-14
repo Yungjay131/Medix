@@ -29,8 +29,8 @@ import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.*
 import com.slyworks.models.models.AccountType
-import com.slyworks.navigation.Navigator
-import com.slyworks.navigation.Navigator.Companion.getParcelable
+
+.Companion.getParcelable
 import javax.inject.Inject
 
 val Context.activityComponent: ActivityComponent

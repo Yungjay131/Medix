@@ -35,7 +35,7 @@ import com.slyworks.medix.ui.fragments.ProfileHostFragment
 import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
-import com.slyworks.navigation.Navigator
+
 import com.slyworks.navigation.addExtra
 import javax.inject.Inject
 

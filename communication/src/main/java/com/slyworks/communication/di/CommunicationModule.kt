@@ -9,6 +9,7 @@ import com.slyworks.fcm_api.di.FCM_APIModule
 import com.slyworks.firebase_commons.FirebaseUtils
 import com.slyworks.firebase_commons.di.FirebaseCommonsModule
 import com.slyworks.room.daos.CallHistoryDao
+import com.slyworks.room.daos.ConsultationRequestDao
 import com.slyworks.room.daos.MessageDao
 import com.slyworks.room.daos.PersonDao
 import com.slyworks.room.di.RoomModule
@@ -30,12 +31,10 @@ import dagger.Provides
 object CommunicationModule {
     @Provides
     @ApplicationScope
-    fun provideCallManager(
-        firebaseDatabase: FirebaseDatabase,
-        fcmClientApi: FCMClientApi,
-        userDetailsUtils: UserDetailsUtils,
-        firebaseUtils: FirebaseUtils
-    ): CallManager {
+    fun provideCallManager(firebaseDatabase: FirebaseDatabase,
+                           fcmClientApi: FCMClientApi,
+                           userDetailsUtils: UserDetailsUtils,
+                           firebaseUtils: FirebaseUtils): CallManager {
         return CallManager(
             firebaseDatabase,
             fcmClientApi,
@@ -45,18 +44,15 @@ object CommunicationModule {
 
     @Provides
     @ApplicationScope
-    fun provideMessageManager(
-        firebaseDatabase: FirebaseDatabase,
-        messageDao: MessageDao,
-        personDao: PersonDao,
-        userDetailsUtils: UserDetailsUtils
-    ): MessageManager {
+    fun provideMessageManager(firebaseDatabase: FirebaseDatabase,
+                              messageDao: MessageDao,
+                              personDao: PersonDao,
+                              userDetailsUtils: UserDetailsUtils): MessageManager {
         return MessageManager(
             firebaseDatabase,
             messageDao,
             personDao,
-            userDetailsUtils
-        )
+            userDetailsUtils)
     }
 
     @Provides
@@ -75,11 +71,13 @@ object CommunicationModule {
     fun provideCloudMessageManager(firebaseDatabase: FirebaseDatabase,
                                    fcmClientApi: FCMClientApi,
                                    userDetailsUtils: UserDetailsUtils,
-                                   firebaseUtils: FirebaseUtils): CloudMessageManager {
+                                   firebaseUtils: FirebaseUtils,
+                                   consultationRequestDao: ConsultationRequestDao): CloudMessageManager {
         return CloudMessageManager(firebaseDatabase,
             fcmClientApi,
             userDetailsUtils,
-            firebaseUtils)
+            firebaseUtils,
+            consultationRequestDao)
     }
 
     @Provides

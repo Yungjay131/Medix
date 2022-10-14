@@ -32,8 +32,8 @@ class RegistrationActivity : BaseActivity() {
     lateinit var mViewModel:RegistrationActivityViewModel
     //endregion
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         mViewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
@@ -43,8 +43,8 @@ class RegistrationActivity : BaseActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
 
         mViewModel.unsubscribeToNetwork()
     }

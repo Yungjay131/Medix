@@ -34,14 +34,12 @@ import kotlin.jvm.Throws
  */
 class ChangePhotoDialog(): BaseDialogFragment() {
     //region Vars
-    private val TAG: String? = ChangePhotoDialog::class.simpleName
-
     private lateinit var tvSelectFromGallery:MaterialTextView
     private lateinit var tvTakePhotoUsingCamera:MaterialTextView
 
     private lateinit var mCurrentPhotoPath: String
 
-    private var mO:PublishSubject<Uri?> = PublishSubject.create()
+    private var mO:PublishSubject<Uri> = PublishSubject.create()
 
     private val takePhotoResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -54,7 +52,7 @@ class ChangePhotoDialog(): BaseDialogFragment() {
                         //AppController.notifyObservers(EVENT_SELECT_PROFILE_IMAGE, selectedImageUri)
                     }
                     else -> {
-                        mO.onNext(null)
+                        //mO.onNext(null)
                         mO.onComplete()
 
                         //AppController.notifyObservers(EVENT_SELECT_PROFILE_IMAGE, null)
@@ -173,6 +171,6 @@ class ChangePhotoDialog(): BaseDialogFragment() {
         return image
     }
 
-    fun getObservable():Observable<Uri?> = mO.hide()
+    fun getObservable():Observable<Uri> = mO.hide()
 
 }

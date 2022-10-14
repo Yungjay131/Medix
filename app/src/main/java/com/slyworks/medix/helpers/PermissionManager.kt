@@ -13,6 +13,7 @@ import com.slyworks.medix.App
 import com.slyworks.medix.ui.dialogs.PermissionsRationaleDialog
 import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.models.Outcome
+import com.slyworks.utils.PreferenceManager
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -21,14 +22,13 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 /**
  *Created by Joshua Sylvanus, 2:48 PM, 12/16/2021.
  */
-class PermissionManager
-private constructor(private val activity: Activity,
-                    private val permissions:List<String>){
+class PermissionManager {
 
     //region Vars
-    private var mPermissionsLauncher:ActivityResultLauncher<String>
+    private var activity: Activity? = null
+    private lateinit var permissions:List<String>
+    private lateinit var mPermissionsLauncher:ActivityResultLauncher<String>
     private var mO:PublishSubject<Boolean> = PublishSubject.create()
-    private var mCount:Int = 0
     //endregion
 
     companion object{
@@ -50,23 +50,22 @@ private constructor(private val activity: Activity,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         )
 
-        fun of(activity: Activity, vararg permissions:String): PermissionManager {
+       /* fun of(activity: Activity, vararg permissions:String): PermissionManager {
             if(permissions.isEmpty())
                 throw IllegalArgumentException("vararg param for permissions is empty")
 
             return PermissionManager(activity, permissions.toList())
-        }
+        }*/
     }
 
-    init {
+    fun initialize(activity: Activity,
+                   vararg permissions:String){
+        this.activity = activity
+        this.permissions = permissions.toList()
+
         mPermissionsLauncher =
             (activity as AppCompatActivity).registerForActivityResult(
-                ActivityResultContracts.RequestPermission(),
-                object : ActivityResultCallback<Boolean> {
-                    override fun onActivityResult(result: Boolean?) {
-                            mO.onNext(result ?: false)
-                    }
-                })
+                ActivityResultContracts.RequestPermission()) { result -> mO.onNext(result ?: false) }
 
     }
 
@@ -78,74 +77,55 @@ private constructor(private val activity: Activity,
     = (ContextCompat.checkSelfPermission(App.getContext(), permission)
             == PackageManager.PERMISSION_DENIED)
 
-    private fun requestPermissions(p:String){
-            when{
-                isPermissionGranted(p) -> {
-                    if(mCount + 1 > permissions.size){
-                        mO.onComplete()
-                        return
-                    }
-
-                    requestPermissions(permissions[++mCount])
-                }
-                else ->{
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-                        if(activity.shouldShowRequestPermissionRationale(p)){
-                            PermissionsRationaleDialog(mPermissionsLauncher, p)
-                                .show((activity as AppCompatActivity).supportFragmentManager, "")
-                        }else{
-                            mPermissionsLauncher.launch(p)
-                        }
-                    }else{
-                        mPermissionsLauncher.launch(p)
-                    }
-                }
-            }
-    }
-
-    fun requestPermissions(): Observable<Boolean>{
+    fun requestPermissions(): Observable<Outcome>{
      val subscriptions:CompositeDisposable = CompositeDisposable()
 
      return Observable.fromIterable(permissions)
               .concatMap {
-                Observable.create<Boolean> { emitter ->
+                Observable.create<Outcome> { emitter ->
                     when{
                         isPermissionGranted(it) ->{
-                            emitter.onNext(true)
+                            emitter.onNext(Outcome.SUCCESS(true))
                             emitter.onComplete()
                         }
                         else ->{
                             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                                if (activity.shouldShowRequestPermissionRationale(it)) {
+                                if (activity!!.shouldShowRequestPermissionRationale(it)) {
                                     val dialog = PermissionsRationaleDialog(mPermissionsLauncher, it)
 
                                     subscriptions +=
                                         Observable.merge(
                                             /*in case the dialog is cancelled and mO didn't get a value to emit*/
                                             dialog.getObservable(),
-                                            mO
-                                        ).subscribe {
-                                            emitter.onNext(it)
+                                            mO)
+                                            .subscribe { it2:Boolean ->
+                                            val o = if(it2) Outcome.SUCCESS(it) else Outcome.FAILURE(false, it)
+                                            emitter.onNext(o)
                                             emitter.onComplete()
                                         }
 
                                     dialog.show((activity as AppCompatActivity).supportFragmentManager, "")
-                                }else if(isPermissionDenied(it)){
-                                    emitter.onNext(false)
-                                    emitter.onComplete()
-                                } else {
-                                    mPermissionsLauncher.launch(it)
-                                    subscriptions +=
-                                        mO.subscribe {
-                                            emitter.onNext(it)
-                                            emitter.onComplete()
-                                        }
+                                }else {
+                                    if(isPermissionDenied(it)){
+                                        /* means the permission was requested and denied */
+                                        emitter.onNext(Outcome.FAILURE(false, it))
+                                        emitter.onComplete()
+                                    }else{
+                                        mPermissionsLauncher.launch(it)
+                                        subscriptions +=
+                                            mO.subscribe { it3:Boolean ->
+                                                val o = if(it3) Outcome.SUCCESS(it3) else Outcome.FAILURE(false, it)
+                                                emitter.onNext(o)
+                                                emitter.onComplete()
+                                            }
+                                    }
                                 }
                             }else{
                                 mPermissionsLauncher.launch(it)
                                 subscriptions +=
-                                mO.subscribe {
-                                    emitter.onNext(it)
+                                mO.subscribe { it4:Boolean ->
+                                    val o = if(it4) Outcome.SUCCESS(it4) else Outcome.FAILURE(false, it)
+                                    emitter.onNext(o)
                                     emitter.onComplete()
                                 }
                             }
@@ -158,8 +138,20 @@ private constructor(private val activity: Activity,
             }
             .toList()
             .toObservable()
-            .map{
-               !it.contains(false)
+            .map {
+                val l:MutableList<Outcome> = mutableListOf()
+                it.forEach { it5:Outcome ->
+                    if(it5.isFailure)
+                      l.add(it5)
+                }
+
+                if(l.isNotEmpty())
+                    return@map Outcome.FAILURE(value = l)
+
+                return@map Outcome.SUCCESS(true)
+            }
+            .doOnDispose {
+                activity = null
             }
      }
 }

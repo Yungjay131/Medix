@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fa7ad9650f88bcc75ac719e995fff64c",
+    "identityHash": "1f79d6f7dded5cd7e46e58b286f174ce",
     "entities": [
       {
         "tableName": "MessagePerson",
@@ -256,12 +256,122 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "ConsultationRequest",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`to_uid` TEXT NOT NULL, `timestamp` TEXT NOT NULL, `status` TEXT NOT NULL, `account_type` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `fullname` TEXT NOT NULL, `email` TEXT NOT NULL, `sex` TEXT NOT NULL, `age` TEXT NOT NULL, `firebase_uid` TEXT NOT NULL, `agora_uid` TEXT NOT NULL, `fcm_registration_token` TEXT NOT NULL, `image_uri` TEXT NOT NULL, `history` TEXT, `specialization` TEXT, PRIMARY KEY(`to_uid`))",
+        "fields": [
+          {
+            "fieldPath": "toUID",
+            "columnName": "to_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeStamp",
+            "columnName": "timestamp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.accountType",
+            "columnName": "account_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.fullName",
+            "columnName": "fullname",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.sex",
+            "columnName": "sex",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.age",
+            "columnName": "age",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.firebaseUID",
+            "columnName": "firebase_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.agoraUID",
+            "columnName": "agora_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.FCMRegistrationToken",
+            "columnName": "fcm_registration_token",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.imageUri",
+            "columnName": "image_uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details.history",
+            "columnName": "history",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "details.specialization",
+            "columnName": "specialization",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "to_uid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa7ad9650f88bcc75ac719e995fff64c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1f79d6f7dded5cd7e46e58b286f174ce')"
     ]
   }
 }

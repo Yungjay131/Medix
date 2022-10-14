@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
+    <bytecodeTargetLevel target="1.8">
       <module name="Medix.app" target="11" />
       <module name="Medix.auth" target="11" />
       <module name="Medix.communication" target="11" />
@@ -12,8 +12,10 @@
       <module name="Medix.models" target="11" />
       <module name="Medix.navigation" target="11" />
       <module name="Medix.network" target="11" />
+      <module name="Medix.payment" target="11" />
       <module name="Medix.room" target="11" />
       <module name="Medix.room_models" target="11" />
+      <module name="Medix.security" target="11" />
       <module name="Medix.userdetails" target="11" />
       <module name="Medix.utils" target="11" />
     </bytecodeTargetLevel>

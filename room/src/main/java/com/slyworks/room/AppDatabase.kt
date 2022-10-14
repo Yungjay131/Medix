@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.slyworks.models.models.ConsultationRequest
 import com.slyworks.models.room_models.CallHistory
 import com.slyworks.models.room_models.Message
 import com.slyworks.models.room_models.MessagePerson
@@ -21,10 +23,11 @@ import com.slyworks.room.daos.*
        Person::class,
        Message::class,
        CallHistory::class,
-        //ConsultationRequest::class
+       ConsultationRequest::class
     ],
     version = 1,
     exportSchema = true )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
     companion object{
         //region Vars
@@ -64,5 +67,5 @@ abstract class AppDatabase : RoomDatabase(){
     abstract fun getMessagePersonDao(): MessagePersonDao
     abstract fun getPersonDao(): PersonDao
     abstract fun getCallHistoryDao(): CallHistoryDao
-   // abstract fun getConsultationRequestDao(): ConsultationRequestDao
+    abstract fun getConsultationRequestDao(): ConsultationRequestDao
 }

@@ -1,15 +1,17 @@
 package com.slyworks.medix.ui.activities
 
-import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.slyworks.communication.ConnectionStatusManager
 import com.slyworks.constants.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
+import com.slyworks.medix.appComponent
 import com.slyworks.medix.helpers.ListenerManager
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
+import com.slyworks.medix.ui.activities.main_activity.activityComponent
 import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivity
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivity
@@ -19,6 +21,7 @@ import com.slyworks.medix.utils.ActivityUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
 
@@ -28,34 +31,22 @@ import kotlin.system.exitProcess
 
 open class BaseActivity : AppCompatActivity() {
     //region Vars
-    private var mListenerManager: ListenerManager? = null
+    @Inject
+    @JvmField
+    var connectionStatusManager:ConnectionStatusManager? = null
+    @Inject
+    @JvmField
+    var listenerManager: ListenerManager? = null
     //endregion
-
-    protected open fun onCreate(activity: Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
-    }
-
-    protected open fun onDestroy(activity: Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
-    }
-
-    protected open fun onStop(activity: Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
-    }
-
-    protected open fun onStart(activity:Activity){
-        throw UnsupportedOperationException("please remove this method from your class")
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()
-        mListenerManager = null
+        listenerManager = null
         ActivityUtils.decrementActivityCount()
     }
 
     private fun isCurrentActivityValid():Boolean{
-        /*not for login,registration,onboarding and splash activity*/
+        /* not for login, registration, onboarding and splash activity */
         val condition1 = this::class.simpleName == SplashActivity::class.simpleName
         val condition2 = this::class.simpleName == OnBoardingActivity::class.simpleName
         val condition3 = this::class.simpleName == LoginActivity::class.simpleName
@@ -66,6 +57,12 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        application.appComponent
+            .activityComponentBuilder()
+            .setActivity(this)
+            .build()
+            .inject(this)
+
         super.onCreate(savedInstanceState)
         ActivityUtils.incrementActivityCount()
     }
@@ -75,11 +72,12 @@ open class BaseActivity : AppCompatActivity() {
 
         ActivityUtils.setForegroundStatus(true, this@BaseActivity::class.simpleName!!)
 
-        if(isCurrentActivityValid()) {
-            if(!ListenerManager.isInitialised)
-                ListenerManager.observeMyConnectionStatusChanges()
-            initListenerManager()
-        }
+        if(!isCurrentActivityValid())
+            return
+
+        if (!ListenerManager.isInitialised)
+            ListenerManager.observeMyConnectionStatusChanges(connectionStatusManager!!)
+        listenerManager!!.start()
     }
 
     override fun onStop() {
@@ -88,23 +86,12 @@ open class BaseActivity : AppCompatActivity() {
         ActivityUtils.setForegroundStatus(false, this@BaseActivity::class.simpleName!!)
 
         if(isCurrentActivityValid())
-            stopListenerManager()
+            listenerManager!!.stop()
     }
 
-    private fun initListenerManager(){
-        if(mListenerManager == null)
-            //mListenerManager = ListenerManager()
-
-        mListenerManager!!.start()
-    }
-
-    private fun stopListenerManager() {
-        mListenerManager!!.stop()
-    }
-    
     override fun onResume() {
         super.onResume()
-        /*to avoid doing too much work on the main thread*/
+        /*to avoid doing too much work on the main thread */
         CoroutineScope(Dispatchers.Main).launch {
           handleGooglePlayServicesAvailability()
         }

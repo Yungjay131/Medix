@@ -4,14 +4,16 @@ plugins {
     id 'kotlin-kapt'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 31
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 19
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        minSdk sdk_details.minSdk
+        targetSdk sdk_details.targetSDk
+        versionCode sdk_details.versionCode
+        versionName sdk_details.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -35,13 +37,15 @@ android {
 dependencies {
     implementation project(path: ":di")
     implementation project(path: ":constants")
-    api platform('com.google.firebase:firebase-bom:29.0.1')
-    api 'com.google.firebase:firebase-analytics-ktx'
-    api 'com.google.firebase:firebase-auth-ktx'
-    api 'com.google.firebase:firebase-database-ktx'
-    api 'com.google.firebase:firebase-storage-ktx'
-    api 'com.google.firebase:firebase-crashlytics-ktx'
-    api 'com.google.firebase:firebase-messaging-ktx'
-    def dagger_version = '2.42'
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+
+    api platform(depends.firebase_bom)
+    api depends.firebase_analytics
+    api depends.firebase_auth
+    api depends.firebase_database
+    api depends.firebase_storage
+    api depends.firebase_crashlytics
+    api depends.firebase_messaging
+
+    implementation depends.dagger
+    kapt depends.dagger_kapt
 }

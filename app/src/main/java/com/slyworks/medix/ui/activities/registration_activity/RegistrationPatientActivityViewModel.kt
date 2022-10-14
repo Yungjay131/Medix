@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slyworks.auth.RegistrationManager
 import com.slyworks.constants.PROFILE_PHOTO_URI
+import com.slyworks.medix.helpers.PermissionManager
+import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.network.NetworkRegister
@@ -23,7 +25,8 @@ class RegistrationPatientActivityViewModel
     @Inject
     constructor(private var networkRegister: NetworkRegister?,
                 private var registrationManager: RegistrationManager?,
-                private var preferenceManager: PreferenceManager?) : ViewModel(){
+                private var preferenceManager: PreferenceManager?,
+                var permissionManager: PermissionManager?) : ViewModel(){
     //region Vars
     var ivProfileUriVal: Uri? = null
     var etFirstNameVal:String = ""
@@ -71,14 +74,13 @@ class RegistrationPatientActivityViewModel
         mSubscriptions.add(d)
     }
 
-    fun handleProfileImageUri(o: Observable<Uri?>){
-        val d =
+    fun handleProfileImageUri(o: Observable<Uri>){
+        mSubscriptions +=
             o.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe {
-                    _profileImageUriLiveData.postValue(it)
+                    it?.let{ _profileImageUriLiveData.postValue(it) }
                 }
-        mSubscriptions.add(d)
     }
 
     fun getNetworkStatus():Boolean = networkRegister!!.getNetworkStatus()
@@ -108,6 +110,10 @@ class RegistrationPatientActivityViewModel
 
     override fun onCleared() {
         mSubscriptions.clear()
+        networkRegister = null
+        preferenceManager = null
+        registrationManager = null
+        permissionManager = null
 
         super.onCleared()
     }

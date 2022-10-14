@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.slyworks.medix.App
 import com.slyworks.auth.RegistrationManager
 import com.slyworks.constants.PROFILE_PHOTO_URI
+import com.slyworks.medix.helpers.PermissionManager
 import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.network.NetworkRegister
@@ -25,7 +26,8 @@ class RegistrationDoctorActivityViewModel
     @Inject
     constructor(private var networkRegister: NetworkRegister?,
                 private var registrationManager: RegistrationManager?,
-                private var preferenceManager: PreferenceManager?) : ViewModel(){
+                private var preferenceManager: PreferenceManager?,
+                var permissionManager: PermissionManager?) : ViewModel(){
     //region Vars
       var ivProfileUriVal:Uri? = null
       var etFirstNameVal:String = ""
@@ -51,6 +53,7 @@ class RegistrationDoctorActivityViewModel
 
     private var mSubscription2: Disposable = Disposable.empty()
     //endregion
+
 
     fun updateValue(id:Int, newText:String){
         specializationList.remove(id)

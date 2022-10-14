@@ -20,7 +20,6 @@ import javax.inject.Inject
 /**
  *Created by Joshua Sylvanus, 8:42 AM, 28/06/2022.
  */
-@SuppressLint("StaticFieldLeak")
 class ConnectionStatusManager(
     private val personDao: PersonDao,
     private val firebaseDatabase: FirebaseDatabase,
@@ -34,7 +33,7 @@ class ConnectionStatusManager(
     fun setMyConnectionStatusHandler():Observable<Unit>{
        return Observable.create<Unit> {_ ->
             mConnectionRefValueEventListener =
-                com.slyworks.firebase_commons.MValueEventListener(onDataChangeFunc = ::handleConnectionStatusChange)
+                MValueEventListener(onDataChangeFunc = ::handleConnectionStatusChange)
 
             firebaseDatabase
                 .reference
@@ -63,8 +62,7 @@ class ConnectionStatusManager(
                 .updateChildren(
                     mapOf(
                         "/status" to false,
-                        "/timestamp" to ServerValue.TIMESTAMP )
-                )
+                        "/timestamp" to ServerValue.TIMESTAMP ))
 
             /*change my current connection status to connected*/
             firebaseDatabase

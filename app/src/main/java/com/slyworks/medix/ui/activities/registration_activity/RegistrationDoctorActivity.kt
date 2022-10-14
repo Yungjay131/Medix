@@ -22,7 +22,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.COORDINATOR
 import com.slyworks.medix.*
-import com.slyworks.medix.helpers.PermissionManager
 import com.slyworks.medix.ui.dialogs.ChangePhotoDialog
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
@@ -33,12 +32,12 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.medix.utils.ViewUtils.setChildViewsStatus
 import com.slyworks.models.models.AccountType
 import com.slyworks.models.models.Gender
+import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.utils.ContentResolverStore
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -74,12 +73,10 @@ class RegistrationDoctorActivity : BaseActivity() {
 
     private var mIsThereCreatedLayout:Boolean = false
 
-    private var mSubscriptions:CompositeDisposable = CompositeDisposable()
+    private var disposables:CompositeDisposable = CompositeDisposable()
 
     private lateinit var mImageUri: Uri
     private var mHasImageBeenSelected = false
-
-    private var mPermissionManager: PermissionManager? = null
 
     @Inject
     lateinit var mViewModel:RegistrationDoctorActivityViewModel
@@ -101,9 +98,7 @@ class RegistrationDoctorActivity : BaseActivity() {
     override fun onDestroy() {
         ContentResolverStore.nullifyContentResolver()
 
-        mSubscriptions.clear()
-
-        mPermissionManager = null
+        disposables.clear()
 
         etFirstName.removeTextChangedListener(etFirstNameWatcher)
         etFirstName.removeTextChangedListener(etLastNameWatcher)
@@ -205,7 +200,8 @@ class RegistrationDoctorActivity : BaseActivity() {
 
     private fun initPermissions(){
         /*has to be done in onCreate()*/
-        mPermissionManager = PermissionManager.of(
+        mViewModel.permissionManager!!
+            .initialize(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA)
@@ -276,22 +272,26 @@ class RegistrationDoctorActivity : BaseActivity() {
         }
 
         ivProfile.setOnClickListener {
-            val d:Disposable =
-                mPermissionManager!!.requestPermissions()
+            disposables +=
+                mViewModel.permissionManager!!
+                    .requestPermissions()
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { b:Boolean ->
-                        if(b){
-                            ChangePhotoDialog.getInstance().apply {
-                                mViewModel.handleProfileImageUri(this.getObservable())
+                    .subscribe { o: Outcome ->
+                        when{
+                            o.isSuccess -> {
+                                ChangePhotoDialog.getInstance().apply {
+                                    mViewModel.handleProfileImageUri(this.getObservable())
+                                    }
+                                    .show(supportFragmentManager, "")
                             }
-                                .show(supportFragmentManager, "")
-                        }else{
-                            showMessage("error occurred requesting permissions", rootView)
+                            o.isFailure -> {
+                                val l:List<String> = o.getTypedValue<List<String>>()
+                                showMessage("Medix requires these permissions to work well", rootView)
+                            }
                         }
                     }
 
-            mSubscriptions.add(d)
         }
 
         btnAddSpecialization.setOnClickListener{

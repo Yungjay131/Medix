@@ -13,10 +13,8 @@ class RegistrationActivityViewModel
     constructor(private var networkRegister: NetworkRegister?) : ViewModel() {
     //region Vars
     private var mSubscription:Disposable = Disposable.empty()
-
     private val l: MutableLiveData<Boolean> = MutableLiveData()
     //endregion
-
 
     fun subscribeToNetwork(): LiveData<Boolean> {
         mSubscription = networkRegister!!
@@ -30,10 +28,14 @@ class RegistrationActivityViewModel
         return l
     }
 
-
     fun unsubscribeToNetwork(){
         networkRegister!!.unsubscribeToNetworkUpdates()
-        networkRegister = null
         mSubscription.dispose()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        networkRegister = null
     }
 }

@@ -1,6 +1,7 @@
 package com.slyworks.medix.di.components
 
 import com.slyworks.di.ApplicationScope
+import com.slyworks.di.ServiceScope
 import com.slyworks.medix.services.MFirebaseMessagingService
 import dagger.Subcomponent
 
@@ -8,7 +9,7 @@ import dagger.Subcomponent
 /**
  *Created by Joshua Sylvanus, 7:26 PM, 11/08/2022.
  */
-@ApplicationScope
+@ServiceScope
 @Subcomponent
 interface ServiceComponent {
    fun inject(service: MFirebaseMessagingService)

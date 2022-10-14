@@ -39,8 +39,7 @@ object FragmentViewModelModule{
                                      fragment: Fragment): HomeFragmentViewModel {
         return ViewModelProvider(
             fragment.viewModelStore,
-            viewModelFactory
-        )
+            viewModelFactory)
             .get(HomeFragmentViewModel::class.java)
     }
 

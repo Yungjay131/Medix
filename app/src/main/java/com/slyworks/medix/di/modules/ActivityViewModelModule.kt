@@ -3,6 +3,7 @@ package com.slyworks.medix.di.modules
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.slyworks.auth.UsersManager
 import com.slyworks.constants.DI_ACTIVITY_VIEWMODEL_KEY
 import com.slyworks.di.ActivityScope
 import com.slyworks.medix.MViewModelFactory
@@ -14,9 +15,13 @@ import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivityViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationPatientActivityViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivityViewModel
+import com.slyworks.medix.ui.activities.splash_activity.SplashActivityViewModel
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallViewModel
-import com.slyworks.medix.ui.activities.view_requests_activity.ViewRequestViewModel
+import com.slyworks.medix.ui.activities.view_request_activity.ViewRequestViewModel
 import com.slyworks.medix.ui.activities.voice_call_activity.VoiceCallViewModel
+import com.slyworks.userdetails.UserDetailsUtils
+import com.slyworks.utils.PreferenceManager
+import com.slyworks.utils.TimeUtils
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -32,6 +37,15 @@ object ActivityViewModelModule {
     fun provideViewModelFactory(map: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>):MViewModelFactory
        = MViewModelFactory(map)
 
+
+    @ActivityScope
+    @Provides
+    @IntoMap
+    @ViewModelKey(SplashActivityViewModel::class)
+    fun provideSplashActivityViewModel(viewModelFactory: MViewModelFactory,
+                                       activity: AppCompatActivity):SplashActivityViewModel
+    = ViewModelProvider(activity.viewModelStore,viewModelFactory)
+        .get(SplashActivityViewModel::class.java)
 
     @ActivityScope
     @Provides

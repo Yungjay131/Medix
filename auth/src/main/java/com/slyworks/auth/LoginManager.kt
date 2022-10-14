@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 
 /**
@@ -26,13 +25,10 @@ class LoginManager(
     private val firebaseAuth:FirebaseAuth,
     private val usersManager:UsersManager,
     private val userDetailsUtils: UserDetailsUtils,
-    private val firebaseUtils: FirebaseUtils
-) {
+    private val firebaseUtils: FirebaseUtils) {
     //region Vars
-    private val TAG: String? = LoginManager::class.simpleName
     private var mLoggedInStatus:Boolean = false
     private var mAuthStateListener:FirebaseAuth.AuthStateListener? = null
-
     //endregion
 
     init {
@@ -68,10 +64,10 @@ class LoginManager(
 
     private fun signInUser(email:String, password: String):Observable<Outcome> =
         Observable.create { emitter ->
-            firebaseAuth!!.signInWithEmailAndPassword(email, password)
+            firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        if (firebaseAuth!!.currentUser!!.isEmailVerified) {
+                        if (firebaseAuth.currentUser!!.isEmailVerified) {
                             preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
                             val r:Outcome = Outcome.SUCCESS(value = "sign in was successful")
                             emitter.onNext(r)
@@ -90,8 +86,8 @@ class LoginManager(
         }
 
     private fun uploadFCMRegistrationToken():Observable<Outcome> =
-        /*upload the FCMRegistration token specific to  this phone, since
-        * its not based on FirebaseUID, but on device*/
+        /* upload the FCMRegistration token specific to  this phone, since
+        * its not based on FirebaseUID, but on device */
         Observable.create { emitter ->
            val fcmToken:String = preferenceManager.get(KEY_FCM_REGISTRATION, "")
             if(fcmToken == ""){
@@ -115,7 +111,7 @@ class LoginManager(
 
     private fun retrieveUserDetails():Observable<Outcome> =
         Observable.create { emitter ->
-           firebaseUtils.getUserDataForUIDRef(firebaseAuth!!.currentUser!!.uid)
+           firebaseUtils.getUserDataForUIDRef(firebaseAuth.currentUser!!.uid)
                .get()
                .addOnCompleteListener {
                    if(it.isSuccessful){

@@ -9,8 +9,9 @@ import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivityViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationPatientActivityViewModel
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivityViewModel
+import com.slyworks.medix.ui.activities.splash_activity.SplashActivityViewModel
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallViewModel
-import com.slyworks.medix.ui.activities.view_requests_activity.ViewRequestViewModel
+import com.slyworks.medix.ui.activities.view_request_activity.ViewRequestViewModel
 import com.slyworks.medix.ui.activities.voice_call_activity.VoiceCallViewModel
 import com.slyworks.medix.ui.fragments.callsHistoryFragment.CallsHistoryViewModel
 import com.slyworks.medix.ui.fragments.chatFragment.ChatFragmentViewModel
@@ -31,6 +32,9 @@ class MViewModelFactory (
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
+            modelClass.isAssignableFrom(SplashActivityViewModel::class.java) ->
+                viewModels[SplashActivityViewModel::class.java] as T
+
             modelClass.isAssignableFrom(OnBoardingViewModel::class.java) ->
                 viewModels[OnBoardingViewModel::class.java] as T
 
