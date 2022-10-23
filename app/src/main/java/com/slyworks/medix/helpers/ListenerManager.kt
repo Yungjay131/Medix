@@ -16,35 +16,39 @@ import io.reactivex.rxjava3.schedulers.Schedulers
  *Created by Joshua Sylvanus, 7:30 PM, 20/05/2022.
  */
 class ListenerManager(
-    //region Vars
     private val callManager: CallManager,
     private val cloudMessageManager: CloudMessageManager,
-    private val notificationHelper: NotificationHelper){
+    private val notificationHelper: NotificationHelper,
+    private val connectionStatusManager: ConnectionStatusManager){
+
     private val disposables:CompositeDisposable = CompositeDisposable()
-    //endregion
+    private val disposables2:CompositeDisposable = CompositeDisposable()
 
     companion object{
-        /*should be set only once per app creation, preferably from the Application class
-        * or from MainActivity (BaseActivity)*/
         var isInitialised:Boolean = false
-
-        fun observeMyConnectionStatusChanges(connectionStatusManager:ConnectionStatusManager){
-            connectionStatusManager.setMyConnectionStatusHandler()
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe()
-
-            isInitialised = true
-        }
     }
 
     fun start(){
+        if(!isInitialised) {
+            observeMyConnectionStatusChanges()
+            isInitialised = true
+        }
         observeNewConsultationRequests()
         observeIncomingVideoCalls()
         observeIncomingVoiceCalls()
     }
 
     fun stop() = disposables.clear()
+
+    private fun observeMyConnectionStatusChanges(){
+        /* should be set only once per app creation, preferably from the Application class
+         * or from MainActivity (BaseActivity)*/
+        disposables2 +=
+        connectionStatusManager.setMyConnectionStatusHandler()
+            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+    }
 
     private fun observeNewConsultationRequests(){
         disposables +=

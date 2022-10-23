@@ -32,6 +32,8 @@ class RegistrationActivity : BaseActivity() {
     lateinit var mViewModel:RegistrationActivityViewModel
     //endregion
 
+    override fun isValid(): Boolean = false
+
     override fun onResume() {
         super.onResume()
 

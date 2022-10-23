@@ -8,7 +8,7 @@ import java.io.OutputStream
 
 
 /**
- *Created by Joshua Sylvanus, 12:47 PM, 1/8/2022.
+ * Created by Joshua Sylvanus, 12:47 PM, 8/1/2022.
  */
 internal object UserDataSerializer : Serializer<UserDetails> {
     //region Vars

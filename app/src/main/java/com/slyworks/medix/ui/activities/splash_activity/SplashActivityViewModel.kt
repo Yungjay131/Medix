@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.slyworks.auth.LoginManager
 import com.slyworks.auth.UsersManager
 import com.slyworks.constants.KEY_LAST_SIGN_IN_TIME
+import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.userdetails.UserDetailsUtils
 import com.slyworks.utils.PreferenceManager
 import com.slyworks.utils.TimeUtils
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -28,7 +31,7 @@ class SplashActivityViewModel
     constructor(private val usersManager:UsersManager,
                 private val userDetailsUtils: UserDetailsUtils,
                 private val preferenceManager: PreferenceManager,
-                private val firebaseAuth:FirebaseAuth): ViewModel() {
+                private val loginManager: LoginManager): ViewModel() {
 
         //region Vars
          private val _isSessionValid:MutableLiveData<Boolean> = MutableLiveData()
@@ -38,48 +41,54 @@ class SplashActivityViewModel
          private val disposables:CompositeDisposable = CompositeDisposable()
         //endregion
 
-        private fun checkUsersDetailsAvailability(): Single<Boolean>
-         = Single.create{ emitter ->
+        private fun checkUsersDetailsAvailability(): Observable<Boolean>
+         = Observable.create{ emitter ->
              viewModelScope.launch {
                  usersManager.getUserFromDataStore()
                      .collectLatest { it: FBUserDetails ->
                          if(it.firebaseUID.isEmpty()){
-                             emitter.onSuccess(false)
+                             emitter.onNext(false)
+                             emitter.onComplete()
 
                              this.coroutineContext.cancel()
                              return@collectLatest
                          }
 
                          userDetailsUtils.user = it
-                         emitter.onSuccess(false)
+
+                         emitter.onNext(true)
+                         emitter.onComplete()
+
                          this.coroutineContext.cancel()
                      }
                }
            }
 
+        /*
         private fun checkIfSessionIsExpired():Single<Boolean>
          = Single.fromCallable {
             val lastSignInTime: Long = preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
-            return@fromCallable TimeUtils.isWithinTimePeriod(lastSignInTime, 3, TimeUnit.DAYS)
+            return@fromCallable timeUtils.isWithinTimePeriod(lastSignInTime, 3, TimeUnit.DAYS)
          }
+         */
 
-
-         fun verify(){
-             firebaseAuth.addAuthStateListener {
-
-             }
-         }
          fun checkLoginSession(){
-             checkUsersDetailsAvailability()
-                 .observeOn(Schedulers.io())
-                 .flatMap {
-                     if(it)
-                         checkIfSessionIsExpired()
-                     else
-                         Single.just(false)
-                 }
+           disposables +=
+           Observable.combineLatest(Observable.just(loginManager.getLoginStatus()),
+                                    checkUsersDetailsAvailability(),{ isLoggedIn, isUserDetailsAvailable ->
+                   if(isLoggedIn && isUserDetailsAvailable)
+                         return@combineLatest true
+
+                   return@combineLatest false
+                 })
                  .subscribeOn(Schedulers.io())
                  .observeOn(Schedulers.io())
                  .subscribe(_isSessionValid::postValue)
          }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        disposables.clear()
+    }
 }

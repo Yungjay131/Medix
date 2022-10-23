@@ -38,6 +38,7 @@ dependencies {
 
     implementation depends.appcompat
     implementation depends.preference_ktx
+    implementation depends.security_crypto
     implementation depends.timber
 
     implementation depends.dagger

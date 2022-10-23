@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/di" />
             <option value="$PROJECT_DIR$/fcm_api" />
             <option value="$PROJECT_DIR$/firebase_commons" />
+            <option value="$PROJECT_DIR$/location" />
             <option value="$PROJECT_DIR$/models" />
             <option value="$PROJECT_DIR$/network" />
             <option value="$PROJECT_DIR$/payment" />

@@ -12,6 +12,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import app.slyworks.navigator.Navigator
+import app.slyworks.navigator.Navigator.Companion.getParcelable
+import app.slyworks.navigator.interfaces.FragmentContinuationStateful
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.slyworks.constants.*
@@ -30,7 +33,6 @@ import com.slyworks.medix.ui.fragments.homeFragment.PatientHomeFragment
 import com.slyworks.medix.utils.*
 import com.slyworks.models.models.AccountType
 
-.Companion.getParcelable
 import javax.inject.Inject
 
 val Context.activityComponent: ActivityComponent
@@ -59,7 +61,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
 
     //private var mCurrentFragmentTag:String? = null
     //private var mFragmentTagList:MutableList<String> = mutableListOf()
-    private lateinit var navigator: Navigator.FragmentContinuationStateful
+    private lateinit var navigator: FragmentContinuationStateful
     //endregion
 
     override fun onStart() {
@@ -220,7 +222,7 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     private fun initFragment(){
         var fragment:FragmentWrapper = FragmentWrapper.HOME
         if(intent.hasExtra(EXTRA_MAIN_FRAGMENT))
-            fragment = intent.getParcelable(EXTRA_MAIN_FRAGMENT)
+            fragment = intent.getParcelable(EXTRA_MAIN_FRAGMENT)!!
         updateActiveItem(fragment)
     }
 

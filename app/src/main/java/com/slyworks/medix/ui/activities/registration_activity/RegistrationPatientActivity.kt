@@ -22,7 +22,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.slyworks.constants.*
 import com.slyworks.medix.*
-import com.slyworks.medix.helpers.PermissionManager
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
 import com.slyworks.medix.ui.custom_views.NetworkStatusView
@@ -40,7 +39,6 @@ import com.slyworks.utils.ContentResolverStore
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -79,7 +77,7 @@ class RegistrationPatientActivity : BaseActivity() {
 
     private var mIsThereCreatedLayout:Boolean = false
 
-    private var mSubscriptions: CompositeDisposable = CompositeDisposable()
+    private var disposables: CompositeDisposable = CompositeDisposable()
 
     private lateinit var mImageUri:Uri
     private var mHasImageBeenSelected = false
@@ -96,11 +94,17 @@ class RegistrationPatientActivity : BaseActivity() {
     private lateinit var etConfirmPasswordWatcher : TextWatcher
     //endregion
 
+    override fun isValid(): Boolean = false
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)
+        super.onSaveInstanceState(outState)
+    }
 
     override fun onDestroy() {
         ContentResolverStore.nullifyContentResolver()
 
-        mSubscriptions.clear()
+        disposables.clear()
 
         etFirstName.removeTextChangedListener(etFirstNameWatcher)
         etFirstName.removeTextChangedListener(etLastNameWatcher)
@@ -118,12 +122,6 @@ class RegistrationPatientActivity : BaseActivity() {
         }
 
         super.onDestroy()
-    }
-
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)
-        super.onSaveInstanceState(outState)
     }
 
     override fun onStart() {

@@ -25,25 +25,28 @@ class LoginManager(
     private val firebaseAuth:FirebaseAuth,
     private val usersManager:UsersManager,
     private val userDetailsUtils: UserDetailsUtils,
-    private val firebaseUtils: FirebaseUtils) {
+    private val firebaseUtils: FirebaseUtils,
+    private val timeUtils: TimeUtils) {
+
     //region Vars
     private var mLoggedInStatus:Boolean = false
-    private var mAuthStateListener:FirebaseAuth.AuthStateListener? = null
+    private var mAuthStateListener:FirebaseAuth.AuthStateListener
     //endregion
 
     init {
-        mAuthStateListener =  object:FirebaseAuth.AuthStateListener{
+        mAuthStateListener = object:FirebaseAuth.AuthStateListener{
             override fun onAuthStateChanged(p0: FirebaseAuth) {
                 mLoggedInStatus = p0.currentUser == null
                 preferenceManager.set(KEY_LOGGED_IN_STATUS, mLoggedInStatus)
             }
         }
+        firebaseAuth.addAuthStateListener(mAuthStateListener)
     }
 
     fun getLoginStatus():Boolean {
         return preferenceManager.get(KEY_LOGGED_IN_STATUS, false)  &&
                 with(preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())){
-                    TimeUtils.isWithin3DayPeriod(this)
+                    timeUtils.isWithin3DayPeriod(this)
                 }
     }
 
@@ -124,6 +127,7 @@ class LoginManager(
 
                        val r:Outcome = Outcome.SUCCESS(value = "login successful")
                        emitter.onNext(r)
+                       emitter.onComplete()
                    }else{
                        Timber.e("signInUser: user login failed",it.exception )
                        val r:Outcome = Outcome.FAILURE(value = "oops something went wrong on our end, please try again")
@@ -143,6 +147,6 @@ class LoginManager(
     }
 
     fun onDestroy(){
-        mAuthStateListener = null
+        firebaseAuth.removeAuthStateListener(mAuthStateListener)
     }
 }

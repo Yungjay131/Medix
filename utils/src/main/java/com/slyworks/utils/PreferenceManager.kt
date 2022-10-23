@@ -16,9 +16,21 @@ import javax.inject.Named
  */
 class PreferenceManager(private val context: Context) {
     //region Vars
-     val mPrefs:SharedPreferences by lazy(LazyThreadSafetyMode.NONE) {
+    private val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+    private val mainKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+     val mPrefsSecure by lazy(LazyThreadSafetyMode.SYNCHRONIZED){
+         EncryptedSharedPreferences.create(
+             "",
+             mainKeyAlias,
+             context,
+             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
+     }
+
+     val mPrefs:SharedPreferences by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         PreferenceManager.getDefaultSharedPreferences(context)
-}
+     }
     //endregion
 
     private fun SharedPreferences.edit(op:(SharedPreferences.Editor) -> Unit){
@@ -27,9 +39,15 @@ class PreferenceManager(private val context: Context) {
         editor.apply()
     }
 
-    fun set(key:String, value:Any){
+    fun set(key:String, value:Any, encryptionMode:EncryptionMode = EncryptionMode.NONE){
         CoroutineScope(Dispatchers.IO).launch {
-            with(mPrefs){
+            val prefs =
+                when(encryptionMode){
+                    EncryptionMode.NONE -> mPrefs
+                    EncryptionMode.SECURE -> mPrefsSecure
+                }
+
+            with(prefs){
                 when(value){
                     is Editable -> {
                         if(value.toString().isNotEmpty())
@@ -64,4 +82,6 @@ class PreferenceManager(private val context: Context) {
 
         return t!!
     }
+
+    enum class EncryptionMode{ NONE, SECURE }
 }

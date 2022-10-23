@@ -90,6 +90,8 @@ class RegistrationDoctorActivity : BaseActivity() {
     private lateinit var etConfirmPasswordWatcher : TextWatcher
     //endregion
 
+    override fun isValid(): Boolean = false
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)
         super.onSaveInstanceState(outState)
@@ -200,7 +202,7 @@ class RegistrationDoctorActivity : BaseActivity() {
 
     private fun initPermissions(){
         /*has to be done in onCreate()*/
-        mViewModel.permissionManager!!
+        mViewModel.permissionManager
             .initialize(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -273,7 +275,7 @@ class RegistrationDoctorActivity : BaseActivity() {
 
         ivProfile.setOnClickListener {
             disposables +=
-                mViewModel.permissionManager!!
+                mViewModel.permissionManager
                     .requestPermissions()
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())

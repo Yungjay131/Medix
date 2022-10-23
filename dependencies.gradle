@@ -40,6 +40,7 @@
     depends.activity_ktx = "androidx.activity:activity-ktx:1.4.0"
 
     depends.preference_ktx =  "androidx.preference:preference-ktx:1.2.0"
+    depends.security_crypto = "androidx.security:security-crypto:1.0.0"
 
     def datastore = "1.0.0"
     depends.datastore = "androidx.datastore:datastore:$datastore"

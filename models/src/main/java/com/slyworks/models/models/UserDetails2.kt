@@ -4,7 +4,7 @@ import android.net.Uri
 
 
 /**
- *Created by Joshua Sylvanus, 6:42 AM, 1/4/2022.
+ *  Created by Joshua Sylvanus, 6:42 AM, 1/4/2022.
  */
 class UserDetails2 private constructor(){
     //region Vars

@@ -11,7 +11,8 @@ class OTPActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.
-        setContentView(R.layout.activity_otpactivity)
+        binding = ActivityOtpactivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
+
 }

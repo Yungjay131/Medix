@@ -24,8 +24,8 @@ class ConnectionStatusManager(
     private val personDao: PersonDao,
     private val firebaseDatabase: FirebaseDatabase,
     private val userDetailsUtils: UserDetailsUtils) {
-    //region Vars
 
+    //region Vars
     private lateinit var mConnectionRefValueEventListener: ValueEventListener
     private lateinit var mUIDConnectionRefValueEventListener: ValueEventListener
     //endregion
@@ -89,8 +89,8 @@ class ConnectionStatusManager(
                     val cs = it.getValue(ConnectionStatus::class.java)!!
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        val person: Person = personDao
-                            .getPersonByID(firebaseUID) ?: return@launch
+                        val person: Person =
+                            personDao.getPersonByID(firebaseUID) ?: return@launch
 
                         person.lastMessageTimeStamp = cs.timestamp.toString()
 

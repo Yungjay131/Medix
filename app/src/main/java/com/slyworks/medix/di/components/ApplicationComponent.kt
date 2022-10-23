@@ -6,6 +6,7 @@ import androidx.work.Worker
 import com.slyworks.di.ApplicationScope
 import com.slyworks.medix.App
 import com.slyworks.medix.di.modules.ApplicationModule
+import com.slyworks.medix.helpers.ListenerManager
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Named
@@ -16,13 +17,14 @@ import javax.inject.Named
  */
 @ApplicationScope
 @Component(modules = [ApplicationModule::class])
-interface ApplicationComponent {
-    fun inject(app: App)
+abstract class ApplicationComponent {
+    abstract fun inject(app: App)
 
-    fun activityComponentBuilder(): ActivityComponent.Builder
-    fun dialogFragmentComponentBuilder():DialogFragmentComponent.Builder
-    fun serviceComponentBuilder(): ServiceComponent.Builder
-    fun workerComponentBuilder():WorkerComponent.Builder
+    abstract fun baseActivityComponentBuilder():BaseActivityComponent.Builder
+    abstract fun activityComponentBuilder(): ActivityComponent.Builder
+    abstract fun dialogFragmentComponentBuilder():DialogFragmentComponent.Builder
+    abstract fun serviceComponentBuilder(): ServiceComponent.Builder
+    abstract fun workerComponentBuilder():WorkerComponent.Builder
 
     @Component.Builder
     interface Builder{

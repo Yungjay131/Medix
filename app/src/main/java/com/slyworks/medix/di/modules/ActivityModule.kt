@@ -15,11 +15,4 @@ object ActivityModule {
     @ActivityScope
     @Provides
     fun providePermissionManager():PermissionManager = PermissionManager()
-
-    @ActivityScope
-    @Provides
-    fun provideListenerManager(callManager: CallManager,
-                               cloudMessageManager: CloudMessageManager,
-                               notificationHelper: NotificationHelper): ListenerManager =
-        ListenerManager(callManager, cloudMessageManager, notificationHelper)
 }

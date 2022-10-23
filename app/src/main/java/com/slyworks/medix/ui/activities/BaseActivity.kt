@@ -9,6 +9,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.slyworks.communication.ConnectionStatusManager
 import com.slyworks.constants.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
 import com.slyworks.medix.appComponent
+import com.slyworks.medix.di.components.BaseActivityComponent
 import com.slyworks.medix.helpers.ListenerManager
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
 import com.slyworks.medix.ui.activities.main_activity.activityComponent
@@ -29,15 +30,20 @@ import kotlin.system.exitProcess
  *Created by Joshua Sylvanus, 6:26 PM, 1/13/2022.
  */
 
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : AppCompatActivity(), IValidForListening {
     //region Vars
-    @Inject
+    /*@Inject
     @JvmField
-    var connectionStatusManager:ConnectionStatusManager? = null
+    var connectionStatusManager:ConnectionStatusManager? = null*/
+
     @Inject
     @JvmField
     var listenerManager: ListenerManager? = null
     //endregion
+
+    companion object{
+      private var bac:BaseActivityComponent? = null
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -56,12 +62,11 @@ open class BaseActivity : AppCompatActivity() {
         return !(condition1 || condition2 || condition3 || condition4 || condition5 || condition6)
     }
 
+    override fun isValid(): Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
-            .build()
-            .inject(this)
+        if(isValid())
+            initDI()
 
         super.onCreate(savedInstanceState)
         ActivityUtils.incrementActivityCount()
@@ -72,12 +77,8 @@ open class BaseActivity : AppCompatActivity() {
 
         ActivityUtils.setForegroundStatus(true, this@BaseActivity::class.simpleName!!)
 
-        if(!isCurrentActivityValid())
-            return
-
-        if (!ListenerManager.isInitialised)
-            ListenerManager.observeMyConnectionStatusChanges(connectionStatusManager!!)
-        listenerManager!!.start()
+        if(isValid())
+          listenerManager!!.start()
     }
 
     override fun onStop() {
@@ -85,7 +86,7 @@ open class BaseActivity : AppCompatActivity() {
 
         ActivityUtils.setForegroundStatus(false, this@BaseActivity::class.simpleName!!)
 
-        if(isCurrentActivityValid())
+        if(isValid())
             listenerManager!!.stop()
     }
 
@@ -95,6 +96,15 @@ open class BaseActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
           handleGooglePlayServicesAvailability()
         }
+    }
+
+    private fun initDI(){
+        if(bac == null)
+            bac = application.appComponent
+                .baseActivityComponentBuilder()
+                .build()
+
+        bac!!.inject(this)
     }
 
     private fun handleGooglePlayServicesAvailability(){

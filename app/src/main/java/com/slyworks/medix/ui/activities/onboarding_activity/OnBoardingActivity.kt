@@ -38,6 +38,8 @@ class OnBoardingActivity : BaseActivity() {
     lateinit var mViewModel: OnBoardingViewModel
     //endregion
 
+    override fun isValid(): Boolean = false
+
     override fun onStart() {
         super.onStart()
 

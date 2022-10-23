@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import app.slyworks.navigator.Navigator
+import app.slyworks.navigator.Navigator.Companion.getExtra
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
@@ -19,7 +21,6 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import com.slyworks.constants.*
 import com.slyworks.medix.*
 
-.Companion.getExtra
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.main_activity.MainActivity
 import com.slyworks.medix.ui.activities.registration_activity.EXTRA_IS_ACTIVITY_RECREATED
@@ -66,6 +67,7 @@ class LoginActivity : BaseActivity() {
     lateinit var mViewModel: LoginActivityViewModel
     //endregion
 
+    override fun isValid(): Boolean = false
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)

@@ -32,8 +32,7 @@ import dagger.Subcomponent
     ActivityViewModelModule::class,
     AuthActivityScopedModule::class
 ])
-interface ActivityComponent {
-    fun inject(activity:BaseActivity)
+interface ActivityComponent{
     fun inject(activity: SplashActivity)
     fun inject(activity: OnBoardingActivity)
     fun inject(activity: LoginActivity)

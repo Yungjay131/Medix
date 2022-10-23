@@ -33,6 +33,7 @@ class SplashActivity : BaseActivity() {
     lateinit var viewModel: SplashActivityViewModel
     //endregion
 
+    override fun isValid(): Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
@@ -75,58 +76,17 @@ class SplashActivity : BaseActivity() {
 
     private fun _startActivity(){
         viewModel.isSessionValid
-            .observe(this){
-            (if(it)
-                    Navigator.intentFor<MainActivity>(this@SplashActivity)
-                else
-                    Navigator.intentFor<OnBoardingActivity>(this@SplashActivity)
-            )
-                    .finishCaller()
-                    .navigate()
+                 .observe(this){
+                    (if(it)
+                         Navigator.intentFor<MainActivity>(this@SplashActivity)
+                     else
+                         Navigator.intentFor<OnBoardingActivity>(this@SplashActivity))
+                         .finishCaller()
+                         .navigate()
+                }
 
-        }
+        viewModel.checkLoginSession()
     }
-
-   /* private fun _startActivity() {
-        lifecycleScope.launch {
-            val status = checkUserDetailsAvailability()
-
-            (if(status && isLoginSessionValid())
-                Navigator.intentFor<MainActivity>(this@SplashActivity)
-            else
-                Navigator.intentFor<OnBoardingActivity>(this@SplashActivity))
-                .finishCaller()
-                .navigate()
-        }
-    }*/
-
-   /* private fun isLoginSessionValid():Boolean{
-        val lastSignInTime: Long = preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
-        return timeUtils.isWithinTimePeriod(lastSignInTime, 3, TimeUnit.DAYS)
-    }
-
-    private suspend fun checkUserDetailsAvailability(): Boolean{
-        return lifecycleScope.async(Dispatchers.IO) {
-            var result: Boolean = false
-            val childJob = lifecycleScope.launch(Dispatchers.IO) {
-                usersManager.getUserFromDataStore()
-                    .collectLatest {
-                        if (it.firebaseUID.isEmpty()) {
-                            result = false
-                            this.coroutineContext.cancel()
-                            return@collectLatest
-                        }
-
-                        userDetailsUtils.user = it
-                        result = true
-                        this.coroutineContext.cancel()
-                    }
-            }
-
-                childJob.join()
-                return@async result
-            }.await()
-    }*/
 
     override fun onBackPressed() {}
 }

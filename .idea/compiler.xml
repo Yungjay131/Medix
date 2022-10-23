@@ -9,6 +9,7 @@
       <module name="Medix.di" target="11" />
       <module name="Medix.fcm_api" target="11" />
       <module name="Medix.firebase_commons" target="11" />
+      <module name="Medix.location" target="11" />
       <module name="Medix.models" target="11" />
       <module name="Medix.navigation" target="11" />
       <module name="Medix.network" target="11" />

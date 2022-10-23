@@ -6,6 +6,7 @@ import com.slyworks.communication.CallManager
 import com.slyworks.communication.CloudMessageManager
 import com.slyworks.communication.di.CommunicationModule
 import com.slyworks.controller.di.ControllerModule
+import com.slyworks.di.ActivityScope
 import com.slyworks.di.ApplicationScope
 import com.slyworks.firebase_commons.di.FirebaseCommonsModule
 import com.slyworks.medix.helpers.ListenerManager
@@ -37,5 +38,4 @@ object ApplicationModule{
     @Provides
     fun provideNotificationHelper():NotificationHelper
        = NotificationHelper()
-
 }

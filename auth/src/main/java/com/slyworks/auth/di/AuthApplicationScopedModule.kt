@@ -11,6 +11,7 @@ import com.slyworks.room.daos.MessageDao
 import com.slyworks.room.daos.PersonDao
 import com.slyworks.userdetails.UserDetailsUtils
 import com.slyworks.utils.PreferenceManager
+import com.slyworks.utils.TimeUtils
 import dagger.Module
 import dagger.Provides
 
@@ -18,17 +19,14 @@ import dagger.Provides
 /**
  *Created by Joshua Sylvanus, 9:48 PM, 11/08/2022.
  */
-@Module(includes = [
-
-])
+@Module(includes = [])
 class AuthApplicationScopedModule {
     @Provides
     @ApplicationScope
     fun provideUsersManager(personDao: PersonDao,
                             messageDao: MessageDao,
                             userDetailsUtils: UserDetailsUtils,
-                            firebaseUtils: FirebaseUtils
-    ): UsersManager {
+                            firebaseUtils: FirebaseUtils): UsersManager {
         return UsersManager(personDao,
             messageDao,
             userDetailsUtils,
@@ -37,9 +35,8 @@ class AuthApplicationScopedModule {
 
     @Provides
     @ApplicationScope
-    fun providePersonsManager(personDao: PersonDao): PersonsManager {
-        return PersonsManager(personDao)
-    }
+    fun providePersonsManager(personDao: PersonDao): PersonsManager =
+        PersonsManager(personDao)
 
     @Provides
     @ApplicationScope
@@ -47,11 +44,13 @@ class AuthApplicationScopedModule {
                             firebaseAuth: FirebaseAuth,
                             usersManager:UsersManager,
                             userDetailsUtils: UserDetailsUtils,
-                            firebaseUtils: FirebaseUtils): LoginManager {
+                            firebaseUtils: FirebaseUtils,
+                            timeUtils:TimeUtils): LoginManager {
         return LoginManager(preferenceManager,
             firebaseAuth,
             usersManager,
             userDetailsUtils,
-            firebaseUtils);
+            firebaseUtils,
+            timeUtils);
     }
 }
