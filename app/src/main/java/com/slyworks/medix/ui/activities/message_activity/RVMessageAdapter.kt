@@ -19,8 +19,9 @@ import com.slyworks.models.room_models.Message
  *Created by Joshua Sylvanus, 1:36 AM, 1/19/2022.
  */
 class RVMessageAdapter(var recyclerView:RecyclerView,
-                       diffUtil:DiffUtil.ItemCallback<Message> = MessageDiffUtilCallback()
-) : ListAdapter<Message, RVMessageAdapter.MViewHolder>(diffUtil) {
+                       var timeUtils: TimeUtils,
+                       diffUtil:DiffUtil.ItemCallback<Message> = MessageDiffUtilCallback())
+    : ListAdapter<Message, RVMessageAdapter.MViewHolder>(diffUtil) {
 
     //region Vars
     //endregion
@@ -174,7 +175,7 @@ class RVMessageAdapter(var recyclerView:RecyclerView,
         //endregion
 
         override fun bind(entity: Message) {
-            val date:String = TimeUtils.convertTimeToString(entity.timeStamp)
+            val date:String = timeUtils.convertTimeToString(entity.timeStamp)
             tvDate.setText(date)
         }
     }
@@ -188,7 +189,7 @@ class RVMessageAdapter(var recyclerView:RecyclerView,
 
         override fun bind(entity: Message) {
             tvContent.text = entity.content
-            tvTimeStamp.text = TimeUtils.convertTimeToString(entity.timeStamp)
+            tvTimeStamp.text = timeUtils.convertTimeToString(entity.timeStamp)
 
             val drawable:Int = getMessageStatusDrawable(entity.status)
             ivMessageStatus.displayImage(drawable)
@@ -203,7 +204,7 @@ class RVMessageAdapter(var recyclerView:RecyclerView,
 
         override fun bind(entity: Message){
             tvContent.text = entity.content
-            tvTimeStamp.text = TimeUtils.convertTimeToString(entity.timeStamp)
+            tvTimeStamp.text = timeUtils.convertTimeToString(entity.timeStamp)
         }
     }
 }

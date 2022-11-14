@@ -19,7 +19,7 @@ android {
         versionCode sdk_details.versionCode
         versionName sdk_details.versionName
 
-        testInstrumentationRunner defaultTestInstrumentationRunner
+        testInstrumentationRunner appTestRunners.default
 
         //for MeowBottomFragment
         vectorDrawables.useSupportLibrary = true
@@ -53,6 +53,23 @@ android {
         exclude 'assets/com.slyworks.medix.data.room.AppDatabase/1.json'
     }
 
+    sourceSets {
+        /* you might need to declare your test dependencies
+        * twice as both androidTestImplementation and testImplementation
+        * and you could either run from the command line
+        * >> ./gradle test (for both test and sharedTest)
+        * >> ./gradle connectedAndroidTest (for androidTest and sharedTest)
+        * second is to create a 'run config' for it */
+
+        String sharedTestDir = 'src/sharedTest/java'
+        test {
+            java.srcDir sharedTestDir
+        }
+        androidTest {
+            java.srcDir sharedTestDir
+        }
+    }
+
 }
 
 /*android.buildTypes.each{ type ->
@@ -68,63 +85,63 @@ dependencies {
     implementation project(path: ':controller')
     implementation project(path: ':utils')
     implementation project(path: ':communication')
+    implementation project(path: ':fcm_api')
+    implementation project(path: ':room')
     implementation project(path: ':models')
     implementation project(path: ':network')
 
-    implementation depends.core_ktx
-    implementation depends.appcompat
-    implementation depends.material
-    implementation depends.recyclerview
-    implementation depends.constraint_layout
-    implementation depends.legacy_support
-    implementation depends.cardview
-    implementation depends.drawerlayout
-    implementation depends.work_runtime
-    implementation depends.multidex
-    implementation depends.asynclayoutinflater
+    implementation impl_depends.core_ktx
+    implementation impl_depends.appcompat
+    implementation impl_depends.material
+    implementation impl_depends.recyclerview
+    implementation impl_depends.constraint_layout
+    implementation impl_depends.legacy_support
+    implementation impl_depends.cardview
+    implementation impl_depends.drawerlayout
+    implementation impl_depends.asynclayoutinflater
 
-    implementation depends.lifecycle_viewmodel
-    implementation depends.lifecycle_runtime
-    implementation depends.lifecycle_livedata
+    implementation impl_depends.camera
+    implementation impl_depends.camera_lifecycle
+    implementation impl_depends.camera_view
 
-    implementation depends.camera
-    implementation depends.camera_lifecycle
-    implementation depends.camera_view
+    implementation impl_depends.work_runtime
+    implementation impl_depends.multidex
 
-    implementation depends.coroutines_android
+    implementation impl_depends.lifecycle_viewmodel
+    implementation impl_depends.lifecycle_runtime
+    implementation impl_depends.lifecycle_livedata
 
-    implementation depends.glide
+    implementation impl_depends.coroutines_android
 
-    implementation depends.circle_imageview
+    implementation impl_depends.glide
 
-    implementation depends.rxbinding
+    implementation impl_depends.circle_imageview
 
-    implementation depends.agora_sdk
+    implementation impl_depends.rxbinding
 
-    implementation depends.easyadapter
+    implementation impl_depends.agora_sdk
 
-    implementation depends.lottie
+    implementation impl_depends.easyadapter
 
-    implementation depends.timber
+    implementation impl_depends.lottie
 
-    implementation depends.stetho
+    implementation impl_depends.timber
 
-    implementation depends.navigator
+    implementation impl_depends.stetho
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.navigator
 
-    implementation depends.arrow_core_optics
-    implementation depends.arrow_fx
-    kapt depends.arrow_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
 
-    testImplementation depends.junit
-    testImplementation depends.mockito_kotlin
+    testImplementation test_depends.core_testing
+    testImplementation test_depends.junit
+    testImplementation test_depends.mockito_kotlin
+    testImplementation test_depends.robolectric
+    testImplementation test_depends.android_junit
+    testImplementation test_depends.espresso
 
-    androidTestImplementation depends.android_junit
-    androidTestImplementation depends.espresso
-
-    debugImplementation depends.leakcanary
+    debugImplementation debug_impl_depends.leakcanary
 }
 
 

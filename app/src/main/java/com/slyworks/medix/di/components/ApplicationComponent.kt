@@ -20,7 +20,7 @@ import javax.inject.Named
 abstract class ApplicationComponent {
     abstract fun inject(app: App)
 
-    abstract fun baseActivityComponentBuilder():BaseActivityComponent.Builder
+    abstract fun baseActivityComponentBuilder(): BaseActivityComponent.Builder
     abstract fun activityComponentBuilder(): ActivityComponent.Builder
     abstract fun dialogFragmentComponentBuilder():DialogFragmentComponent.Builder
     abstract fun serviceComponentBuilder(): ServiceComponent.Builder

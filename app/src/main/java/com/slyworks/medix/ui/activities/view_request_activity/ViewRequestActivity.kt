@@ -3,11 +3,11 @@ package com.slyworks.medix.ui.activities.view_request_activity
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import app.slyworks.navigator.Navigator
+import app.slyworks.navigator.Navigator.Companion.getExtra
 import com.slyworks.constants.*
 import com.slyworks.medix.appComponent
 import com.slyworks.medix.databinding.ActivityViewRequestBinding
-.Companion.getExtra
-import com.slyworks.navigation.addExtra
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
 import com.slyworks.medix.utils.MOnBackPressedCallback
@@ -58,7 +58,7 @@ class ViewRequestActivity : BaseActivity() {
         /* checking if there is a signed in user */
         if(!mViewModel.getLoginStatus()){
            Navigator.intentFor<LoginActivity>(this)
-                .addExtra<String>(EXTRA_LOGIN_DESTINATION, this::class.simpleName!!)
+               // .addExtra<String>(EXTRA_LOGIN_DESTINATION, this::class.simpleName!!)
                 .newAndClearTask()
                 .finishCaller()
                 .navigate()

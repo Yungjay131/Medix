@@ -35,8 +35,6 @@ class UsersManager(
     private val userDetailsUtils: UserDetailsUtils,
     private val firebaseUtils: FirebaseUtils) {
     //region Vars
-    private val TAG: String? = UsersManager::class.simpleName
-
     private var mDoctorChildEventListener:ChildEventListener? = null
     private var mUserDataValueEventListener:ValueEventListener? = null
     //endregion

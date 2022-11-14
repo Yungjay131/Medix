@@ -93,6 +93,14 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
             .child("details")
     }
 
+    fun getUserVerificationStatusRef(UID:String):DatabaseReference =
+        firebaseDatabase
+            .reference
+            .child("users")
+            .child(UID)
+            .child("details")
+            .child("is_verified")
+
     fun getUserSentConsultationRequestsRef1(params: String): Query {
         return firebaseDatabase
             .reference

@@ -13,8 +13,8 @@ class RequestsActivity : BaseActivity() {
     //region Vars
     private lateinit var binding:ActivityRequestsBinding
 
-    @Inject
-    lateinit var viewModel:RequestsActivityViewModel
+    /*@Inject
+    lateinit var viewModel:RequestsActivityViewModel*/
     //endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,11 +30,11 @@ class RequestsActivity : BaseActivity() {
     }
 
     private fun initDI(){
-        application.appComponent
+       /* application.appComponent
             .activityComponentBuilder()
             .setActivity(this)
             .build()
-            .inject(this)
+            .inject(this)*/
     }
 
     private fun initData(){

@@ -6,13 +6,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.slyworks.communication.ConnectionStatusManager
 import com.slyworks.constants.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
+import com.slyworks.medix.App
 import com.slyworks.medix.appComponent
+import com.slyworks.medix.di.components.ApplicationComponent
 import com.slyworks.medix.di.components.BaseActivityComponent
 import com.slyworks.medix.helpers.ListenerManager
 import com.slyworks.medix.ui.activities.login_activity.LoginActivity
-import com.slyworks.medix.ui.activities.main_activity.activityComponent
 import com.slyworks.medix.ui.activities.onboarding_activity.OnBoardingActivity
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationActivity
 import com.slyworks.medix.ui.activities.registration_activity.RegistrationDoctorActivity
@@ -104,7 +104,10 @@ open class BaseActivity : AppCompatActivity(), IValidForListening {
                 .baseActivityComponentBuilder()
                 .build()
 
-        bac!!.inject(this)
+        App.getListenerManager()
+           .ifPresentOrElse({this.listenerManager = it}, { bac!!.inject(this)})
+
+        App.cacheListenerManager(this.listenerManager!!)
     }
 
     private fun handleGooglePlayServicesAvailability(){

@@ -23,10 +23,10 @@ import javax.inject.Inject
  */
 class RegistrationPatientActivityViewModel
     @Inject
-    constructor(private var networkRegister: NetworkRegister?,
-                private var registrationManager: RegistrationManager?,
-                private var preferenceManager: PreferenceManager?,
-                var permissionManager: PermissionManager?) : ViewModel(){
+    constructor(private var networkRegister: NetworkRegister,
+                private var registrationManager: RegistrationManager,
+                private var preferenceManager: PreferenceManager,
+                var permissionManager: PermissionManager) : ViewModel(){
     //region Vars
     var ivProfileUriVal: Uri? = null
     var etFirstNameVal:String = ""
@@ -87,7 +87,7 @@ class RegistrationPatientActivityViewModel
 
     fun subscribeToNetwork():LiveData<Boolean>{
         val l:MutableLiveData<Boolean> = MutableLiveData()
-        mSubscription2 = networkRegister!!
+        mSubscription2 = networkRegister
             .subscribeToNetworkUpdates()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
@@ -99,22 +99,18 @@ class RegistrationPatientActivityViewModel
     }
 
     fun unsubscribeToNetwork(){
-        networkRegister!!.unsubscribeToNetworkUpdates()
-        networkRegister = null
+        networkRegister.unsubscribeToNetworkUpdates()
         mSubscription2.dispose()
     }
 
     fun setProfileImageURI(uri: Uri) {
-        preferenceManager!!.set(PROFILE_PHOTO_URI, uri.toString())
+        preferenceManager.set(PROFILE_PHOTO_URI, uri.toString())
     }
 
     override fun onCleared() {
         mSubscriptions.clear()
-        networkRegister = null
-        preferenceManager = null
-        registrationManager = null
-        permissionManager = null
 
+        registrationManager.unbind()
         super.onCleared()
     }
 

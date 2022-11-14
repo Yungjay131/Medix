@@ -113,6 +113,7 @@ class RegistrationDoctorActivityViewModel
 
     override fun onCleared() {
         disposables.clear()
+        registrationManager.unbind()
         super.onCleared()
     }
 

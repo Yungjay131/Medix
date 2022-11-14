@@ -22,9 +22,10 @@ import io.reactivex.rxjava3.subjects.PublishSubject
  *Created by Joshua Sylvanus, 4:01 PM, 11/05/2022.
  */
 class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<String>?,
-                                 private val mPermission:String) : BaseDialogFragment(){
+                                 private val mPermission:String,
+                                 private val subject: PublishSubject<Boolean>) : BaseDialogFragment(){
     //region Vars
-    private var mO:PublishSubject<Boolean> = PublishSubject.create()
+    //private var mO:PublishSubject<Boolean> = PublishSubject.create()
 
     private lateinit var tvText:TextView
     private lateinit var tvAccept:TextView
@@ -77,18 +78,19 @@ class PermissionsRationaleDialog(private var launcher: ActivityResultLauncher<St
            launcher?.launch(mPermission)
            this.dismiss()
        }
+
        tvCancel.setOnClickListener {
-           mO.onNext(false)
-           mO.onComplete()
+           subject.onNext(false)
+           subject.onComplete()
            this.dismiss()
        }
     }
 
-    override fun onCancel(dialog: DialogInterface) {
+    /*override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         mO.onNext(false)
         mO.onComplete()
-    }
+    }*/
 
-    fun getObservable(): Observable<Boolean> = mO.hide()
+    //fun getObservable(): Observable<Boolean> = mO.hide()
 }

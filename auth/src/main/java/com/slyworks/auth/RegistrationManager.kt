@@ -1,7 +1,8 @@
 package com.slyworks.auth
 
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.slyworks.firebase_commons.FirebaseUtils
 import com.slyworks.models.models.AccountType
@@ -9,13 +10,18 @@ import com.slyworks.models.models.Outcome
 import com.slyworks.models.models.TempUserDetails
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.utils.CompressImageCallable
-import io.reactivex.rxjava3.core.Observable
+import com.slyworks.utils.IDUtils
+import com.slyworks.utils.TaskManager
+import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
-import javax.inject.Inject
+import java.util.concurrent.TimeUnit
 
 
 /**
- *Created by Joshua Sylvanus, 7:36 AM, 1/3/2022.
+ * Created by Joshua Sylvanus, 7:36 AM, 1/3/2022.
  */
 /*
 * "rules": {
@@ -32,39 +38,82 @@ import javax.inject.Inject
       }
     }
   }*/
+
+operator fun CompositeDisposable.plusAssign(d:Disposable):Unit{ this.add(d) }
+
+fun <T> ObservableEmitter<T>.onNextAndComplete(value:T):Unit{
+    onNext(value)
+    onComplete()
+}
+
+enum class OTPVerificationStage{
+    ENTER_OTP, PROCESSING, VERIFICATION_SUCCESS,VERIFICATION_FAILURE
+}
+
+enum class VerificationDetails{
+    OTP{
+        private lateinit var phoneNumber:String
+        override fun setDetails(details: String) { phoneNumber = details }
+        override fun getDetails(): String = phoneNumber
+    },
+    EMAIL{
+        private lateinit var email:String
+        override fun setDetails(details: String) { email = details }
+        override fun getDetails(): String = email
+    };
+    abstract fun getDetails():String
+    abstract fun setDetails(details:String)
+}
+
 class RegistrationManager(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseMessaging: FirebaseMessaging,
     private val firebaseUtils: FirebaseUtils,
-    private val taskManager:TaskManager) {
+    private val taskManager: TaskManager) {
+
     //region Vars
     private lateinit var mUser: TempUserDetails
+    private lateinit var verificationDetails: VerificationDetails
     private lateinit var mCurrentFirebaseUserResult: AuthResult
+
+    private val disposables:CompositeDisposable = CompositeDisposable()
+
+    private lateinit var verificationID:String
+    private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+
+     var isVerifyOTPInProgress:Boolean = false
+
+     private val internalSubject:PublishSubject<Outcome> = PublishSubject.create()
+     private val otpResultSubject:PublishSubject<Outcome> = PublishSubject.create()
+     val otpSubject:PublishSubject<String> = PublishSubject.create()
+     val resendSubject:PublishSubject<String> = PublishSubject.create()
     //endregion
+
+    fun unbind():Unit = disposables.clear()
 
     fun register(userDetails: TempUserDetails): Observable<Outcome> {
         mUser = userDetails
         return createFirebaseUser()
             .concatMap {
+                when{
+                    it.isSuccess -> return@concatMap signOutCreatedUser()
+                    else -> return@concatMap Observable.just(it)
+                }
+            }
+            .concatMap {
                 when {
                     it.isSuccess -> return@concatMap uploadUserProfileImage()
-                    else -> {
-                        return@concatMap deleteUser().concatMap { _ -> Observable.just(it) }
-                    }
+                    else -> return@concatMap deleteUser().concatMap { _ -> Observable.just(it) }
                 }
             }.concatMap {
                 when {
                     it.isSuccess -> return@concatMap downloadImageUrl()
-                    else -> {
-                        return@concatMap deleteUser().concatMap { _ -> Observable.just(it) }
-                    }
+                    else -> return@concatMap deleteUser().concatMap { _ -> Observable.just(it) }
                 }
             }.concatMap {
                 when {
                     it.isSuccess -> return@concatMap createAgoraUser()
-                    else ->{
-                        return@concatMap deleteUserProfileImage().concatMap { _ ->  Observable.just(it)}
-                    }
+                    else -> return@concatMap deleteUserProfileImage().concatMap { _ ->  Observable.just(it)}
                 }
             }.concatMap {
                 when {
@@ -75,19 +124,11 @@ class RegistrationManager(
             }.concatMap {
                 when {
                     it.isSuccess -> return@concatMap uploadUserDetailsToFirebaseDB()
-                    else -> return@concatMap Observable.just(it)
-                }
-            }.concatMap {
-                when {
-                    it.isSuccess -> return@concatMap sendVerificationEmail()
-                    else ->{
-                        return@concatMap deleteUserDetailsFromDB().concatMap { _ -> Observable.just(it) }
-                    }
+                    else -> return@concatMap deleteUserDetailsFromDB()
                 }
             }
 
     }
-
 
     private fun createFirebaseUser(): Observable<Outcome> {
         return Observable.create { emitter ->
@@ -107,12 +148,17 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = "firebase user was not created", reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
 
     }
+
+    private fun signOutCreatedUser():Observable<Outcome> =
+        Observable.fromCallable{
+            firebaseAuth.signOut()
+            Outcome.SUCCESS(value = "created user logged out successfully")
+        }
 
     private fun uploadUserProfileImage(): Observable<Outcome> {
         return Observable.create { emitter ->
@@ -133,15 +179,13 @@ class RegistrationManager(
                             r = Outcome.FAILURE(value = "user profile image was not uploaded", reason = it.exception?.message)
                         }
 
-                        emitter.onNext(r)
-                        emitter.onComplete()
+                        emitter.onNextAndComplete(r)
                     }
             } catch (e: Exception) {
                 Timber.e("_uploadUserProfileImage: _uploadUserProfileImage().catch(): error occurred", e)
 
                 val r = Outcome.ERROR(value = "an error occurred uploading user profile image")
-                emitter.onNext(r)
-                emitter.onComplete()
+                emitter.onNextAndComplete(r)
             }
         }
     }
@@ -162,17 +206,15 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = "user profile image url was not downloaded", reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
 
-    private fun createAgoraUser(): Observable<Outcome> {
-        return with(com.slyworks.utils.IDUtils.generateNewUserID()) {
+    private fun createAgoraUser(): Observable<Outcome> =
+        with(IDUtils.generateNewUserID()) {
             mUser.agoraUID = this
             Observable.just(Outcome.SUCCESS(value = "user agoraID generated successfully", additionalInfo = this))
         }
-    }
 
     private fun getFCMRegistrationToken(): Observable<Outcome> {
         return Observable.create { emitter ->
@@ -192,8 +234,7 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = "getting user FCM registration token failed", reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
     }
@@ -209,15 +250,14 @@ class RegistrationManager(
                     val r:Outcome
 
                     if (it.isSuccessful) {
-                        r = Outcome.SUCCESS(value = "uploading user details to Firebase was successful")
+                        r = Outcome.SUCCESS(value = "user details successfully uploaded")
                     } else {
                         Timber.e("uploadUserDetailsToFirebaseDB2: uploading user details to multiple locations in the DB, completed but failed")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
                         r = Outcome.FAILURE(value = "uploading user details to Firebase failed", reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
     }
@@ -236,8 +276,7 @@ class RegistrationManager(
             mUser.FBRegistrationToken!!,
             mUser.imageUri!!,
             null,
-            null
-        )
+            null)
 
         if (mUser.accountType == AccountType.PATIENT)
             user.history = mUser.history
@@ -245,30 +284,6 @@ class RegistrationManager(
             user.specialization = mUser.specialization
 
         return user
-    }
-
-    private fun sendVerificationEmail(): Observable<Outcome> {
-        return Observable.create { emitter ->
-            mCurrentFirebaseUserResult.user!!.sendEmailVerification()
-                .addOnCompleteListener {
-                    val r:Outcome
-
-                    if (it.isSuccessful) {
-                        firebaseAuth.signOut()
-                        //AppController.notifyObservers(EVENT_USER_REGISTRATION, true)
-
-                       r = Outcome.SUCCESS(value = "user verification email sent successfully")
-                    } else {
-                        Timber.e("_sendVerificationEmail: sending email verification completed but failed")
-                        //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
-                       r = Outcome.FAILURE(value = "user verification email was not sent", reason = it.exception?.message)
-                    }
-
-                    emitter.onNext(r)
-                    emitter.onComplete()
-                }
-        }
-
     }
 
     private fun deleteUser(user:TempUserDetails = mUser):Observable<Outcome>{
@@ -291,8 +306,7 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
 
@@ -320,16 +334,14 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
 
     }
 
-
     private fun deleteUserDetailsFromDB():Observable<Outcome>{
-        if(mCurrentFirebaseUserResult?.user?.uid == null)
+        if(mCurrentFirebaseUserResult.user?.uid == null)
             return Observable.just(Outcome.FAILURE(value = false, reason = "no user currently signed in"))
 
         return Observable.create { emitter ->
@@ -349,31 +361,126 @@ class RegistrationManager(
                         r = Outcome.FAILURE(value = false, reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
 
     }
 
-    fun handleForgotPassword(email: String): Observable<Boolean> {
-        return Observable.create<Boolean> { emitter ->
-            firebaseAuth.sendPasswordResetEmail(email)
+    fun verifyDetails(details: VerificationDetails):Observable<Outcome> {
+       verificationDetails = details
+
+        if (details == VerificationDetails.EMAIL)
+           return verifyBySendingEmail()
+        else if(details == VerificationDetails.OTP)
+           return verifyViaOTP()
+
+        throw UnsupportedOperationException()
+    }
+
+    private fun verifyBySendingEmail(): Observable<Outcome> =
+        Observable.create { emitter ->
+            mCurrentFirebaseUserResult.user!!.sendEmailVerification()
                 .addOnCompleteListener {
-                    val r:Boolean
+                    val r:Outcome
 
                     if (it.isSuccessful) {
-                        Timber.e("handleForgotPassword: password reset email successfully sent")
-                        r = true
+                        firebaseAuth.signOut()
+                        //AppController.notifyObservers(EVENT_USER_REGISTRATION, true)
+
+                        r = Outcome.SUCCESS(value = "user verification email sent successfully")
                     } else {
-                        Timber.e("handleForgotPassword: password reset email was not successfully sent", it.exception)
-                        r = false
+                        Timber.e("_sendVerificationEmail: sending email verification completed but failed")
+                        //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
+                        r = Outcome.FAILURE(value = "user verification email was not sent", reason = it.exception?.message)
                     }
 
-                    emitter.onNext(r)
-                    emitter.onComplete()
+                    emitter.onNextAndComplete(r)
                 }
         }
+
+    private fun verifyViaOTP():Observable<Outcome>{
+        disposables +=
+            internalSubject.subscribe {
+                when{
+                    it.isSuccess -> verifyOTPFinalStep(it.getTypedValue())
+                    it.isFailure -> otpResultSubject.onNext(it)
+                }
+            }
+
+        disposables +=
+            otpSubject.subscribe { smsCode:String ->
+                val credential = PhoneAuthProvider.getCredential(verificationID, smsCode)
+                verifyOTPFinalStep(credential)
+            }
+
+        disposables +=
+            resendSubject.subscribe{
+                PhoneAuthProvider.verifyPhoneNumber(buildPhoneAuthOptions(resendToken))
+            }
+
+        PhoneAuthProvider.verifyPhoneNumber(buildPhoneAuthOptions())
+        return otpResultSubject.hide()
     }
+
+    private val phoneAuthCallback:PhoneAuthProvider.OnVerificationStateChangedCallbacks =
+        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                internalSubject.onNext(Outcome.SUCCESS(value = p0))
+                otpResultSubject.onNext(Outcome.SUCCESS(value = OTPVerificationStage.PROCESSING))
+            }
+
+            override fun onVerificationFailed(p0: FirebaseException) {
+                var message = "something went wrong verifying OTP"
+                when (p0) {
+                    is FirebaseAuthInvalidCredentialsException ->
+                        message = "invalid OTP, please check and try again"
+                    is FirebaseTooManyRequestsException ->
+                        message = "something went wrong on our end. Please try again"
+                }
+                internalSubject.onNext(Outcome.FAILURE(value = OTPVerificationStage.VERIFICATION_FAILURE, message))
+            }
+
+            override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                verificationID = p0
+                resendToken = p1
+                otpResultSubject.onNext(Outcome.SUCCESS(value = OTPVerificationStage.ENTER_OTP))
+            }
+        }
+
+    private fun buildPhoneAuthOptions(resendToken:PhoneAuthProvider.ForceResendingToken? = null)
+            : PhoneAuthOptions =
+        PhoneAuthOptions.newBuilder(firebaseAuth)
+            .setPhoneNumber(verificationDetails.getDetails())
+            .setTimeout(60 * 1_000L, TimeUnit.MILLISECONDS)
+            .setCallbacks(phoneAuthCallback)
+            .apply {
+                resendToken?.let { setForceResendingToken(it) }
+            }
+            .build()
+
+    private fun verifyOTPFinalStep(credential: PhoneAuthCredential){
+        firebaseAuth.signInWithCredential(credential)
+            .continueWithTask {
+                if(it.isSuccessful)
+                    firebaseUtils.getUserVerificationStatusRef(mCurrentFirebaseUserResult.user!!.uid)
+                        .setValue(true)
+                else
+                    it
+            }
+            .continueWith {
+                val o:Outcome
+                if(it.isSuccessful) {
+                    firebaseAuth.signOut()
+                    o = Outcome.SUCCESS(value = OTPVerificationStage.VERIFICATION_SUCCESS)
+                }else
+                    o = Outcome.FAILURE(value = OTPVerificationStage.VERIFICATION_FAILURE, reason = it.exception?.message)
+
+                otpResultSubject.onNext(o)
+            }
+
+    }
+
+
 }
 

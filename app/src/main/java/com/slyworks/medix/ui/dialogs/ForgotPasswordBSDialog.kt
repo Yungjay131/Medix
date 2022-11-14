@@ -14,7 +14,7 @@ import com.slyworks.medix.R
  *Created by Joshua Sylvanus, 7:11 PM, 1/4/2022.
  */
 
-class ForgotPasswordBSDialog(private var initFunction:((view:View?)->Unit)? = null)
+class ForgotPasswordBSDialog(private val initFunction:((view:View?)->Unit)? = null)
     : BaseBottomSheetDialogFragment() {
 
     companion object {

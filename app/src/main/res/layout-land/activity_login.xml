@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.login_activity.LoginActivity"
+    tools:context=".ui.activities.com.slyworks.medix.ui.activities.login_activity.LoginActivity"
     android:id="@+id/rootView">
 
     <!--TODO:flatten this unnecessary nesting of layouts-->

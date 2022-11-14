@@ -44,10 +44,13 @@ dependencies {
     implementation project(path: ':models')
     implementation project(path: ':room')
 
-    implementation depends.coroutines_android
-    implementation depends.timber
-    implementation depends.rxjava
+    implementation impl_depends.coroutines_android
+    implementation impl_depends.timber
+    implementation impl_depends.rxjava
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
+
+    testImplementation test_depends.mockito_kotlin
+    testImplementation test_depends.junit
 }

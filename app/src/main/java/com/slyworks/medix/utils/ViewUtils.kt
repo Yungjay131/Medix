@@ -127,4 +127,7 @@ object ViewUtils {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(rootView.windowToken, 0)
     }
+
+    fun displayMessage(message:String, view:View):Unit =
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
 }

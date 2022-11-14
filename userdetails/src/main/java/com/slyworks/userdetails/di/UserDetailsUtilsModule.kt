@@ -16,8 +16,7 @@ import javax.inject.Named
 object UserDetailsUtilsModule {
     @Provides
     @ApplicationScope
-    fun provideUserDetailsUtils(@Named("application_context")
-                                context:Context):UserDetailsUtils{
+    fun provideUserDetailsUtils(context: Context):UserDetailsUtils{
         return UserDetailsUtils(context)
     }
 }

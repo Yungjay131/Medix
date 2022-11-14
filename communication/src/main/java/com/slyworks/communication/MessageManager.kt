@@ -1,6 +1,7 @@
 package com.slyworks.communication
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import com.google.firebase.database.*
 import com.slyworks.constants.*
 import com.slyworks.firebase_commons.MValueEventListener
@@ -15,6 +16,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.lang.reflect.Modifier.PRIVATE
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -29,8 +31,6 @@ class MessageManager(
     private val personDao: PersonDao,
     private val userDetailsUtils: UserDetailsUtils) {
     //region Vars
-    private val TAG: String? = MessageManager::class.simpleName
-
     private var mHandleChangedMessagesDisposable:CompositeDisposable = CompositeDisposable()
     private var mHandleNewMessagesDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -252,6 +252,7 @@ class MessageManager(
         unreadMessageCount = unreadMessageCount,
         FCMRegistrationToken = m.FCMRegistrationToken)
 
+
     fun sendMessage(message:Message): Observable<Message> {
         /* creating 2 copies of the messages to keep sender and receiver version different */
         message.status = DELIVERED
@@ -307,7 +308,8 @@ class MessageManager(
                 }
         }
 
-    private fun addMessagesToDB(vararg message:Message):Observable<Outcome> =
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal fun addMessagesToDB(vararg message:Message):Observable<Outcome> =
         Observable.create { emitter ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {

@@ -3,16 +3,20 @@ plugins {
     id 'kotlin-android'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 32
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 19
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        applicationId sdk_details.applicationID
+        minSdk sdk_details.minSDK
+        targetSdk sdk_details.targetSDK
+        versionCode sdk_details.versionCode
+        versionName sdk_details.versionName
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
+
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -32,11 +36,13 @@ android {
 }
 
 dependencies {
+    implementation impl_depends.core_ktx
+    implementation impl_depends.appcompat
+    implementation impl_depends.material
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.google.android.material:material:1.6.1'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation test_depends.junit
+    testImplementation test_depends.mockito_kotlin
+    testImplementation test_depends.robolectric
+    testImplementation test_depends.android_junit
+    testImplementation test_depends.espresso
 }

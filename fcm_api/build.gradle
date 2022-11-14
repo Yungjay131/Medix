@@ -45,11 +45,11 @@ dependencies {
     implementation project(path: ':di')
     implementation project(path: ":models")
 
-    implementation depends.retrofit
-    implementation depends.retrofit_gson
-    implementation depends.stetho
-    implementation depends.stetho_okhttp
+    implementation impl_depends.retrofit
+    implementation impl_depends.retrofit_gson
+    implementation impl_depends.stetho
+    implementation impl_depends.stetho_okhttp
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
 }

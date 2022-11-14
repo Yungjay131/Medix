@@ -44,4 +44,6 @@
     <string name="menu_main_action_calls_history">Calls History</string>
     <string name="menu_main_action_requests">Requests</string>
     <string name="li_calls_history">%1$s, %2$s</string>
+    <string name="reg_patient_intro">We aim to provide the best virtual medical consultation possible, providing us with information about your medical history would help in speeding up the consultation process. Your information is private and is only shared with doctors when you allow it.</string>
+    <string name="reg_header">Please check any of the boxes that apply to you, or add a different health condition by clicking the \"add\" button.</string>
 </resources>

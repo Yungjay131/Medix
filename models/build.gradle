@@ -13,9 +13,9 @@ android {
 
     defaultConfig {
         minSdk sdk_details.minSDK
-        targetSdk sdk_details.targetSDk
+        targetSdk sdk_details.targetSDK
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -38,16 +38,12 @@ android {
 dependencies {
     implementation project(path: ':constants')
 
-    implementation depends.room
-    implementation depends.room_runtime
-    implementation depends.room_rxjava
-    kapt depends.room_kapt
+    implementation impl_depends.room
+    implementation impl_depends.room_runtime
+    implementation impl_depends.room_rxjava
+    kapt kapt_depends.room_kapt
 
-    implementation depends.gson
+    implementation impl_depends.gson
 
-    implementation depends.timber
-
-    testImplementation depends.junit
-    androidTestImplementation depends.android_junit
-    androidTestImplementation depends.espresso
+    implementation impl_depends.timber
 }

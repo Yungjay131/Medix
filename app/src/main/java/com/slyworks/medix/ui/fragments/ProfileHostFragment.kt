@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
+import app.slyworks.navigator.Navigator
 import com.slyworks.medix.R
 import com.slyworks.medix.ui.activities.main_activity.activityComponent
 

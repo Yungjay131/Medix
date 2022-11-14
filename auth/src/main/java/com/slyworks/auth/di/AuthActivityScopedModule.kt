@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.slyworks.auth.RegistrationManager
 import com.slyworks.di.ActivityScope
 import com.slyworks.firebase_commons.FirebaseUtils
+import com.slyworks.utils.TaskManager
 import dagger.Module
 import dagger.Provides
 
@@ -21,10 +22,12 @@ class AuthActivityScopedModule {
     @ActivityScope
     fun provideRegistrationManager(firebaseAuth: FirebaseAuth,
                                    firebaseMessaging: FirebaseMessaging,
-                                   firebaseUtils: FirebaseUtils):RegistrationManager{
-        return RegistrationManager(firebaseAuth,
-                                   firebaseMessaging,
-                                   firebaseUtils)
-    }
+                                   firebaseUtils: FirebaseUtils,
+                                   taskManager: TaskManager):RegistrationManager =
+        RegistrationManager(firebaseAuth,
+                            firebaseMessaging,
+                            firebaseUtils,
+                            taskManager)
+
 
 }

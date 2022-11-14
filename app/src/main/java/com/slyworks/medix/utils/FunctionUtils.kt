@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.medix.App
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.Subject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,3 +38,8 @@ fun showMessage(message:String, view: View){
 }
 
 operator fun CompositeDisposable.plusAssign(d: Disposable){ add(d) }
+
+inline fun <T> Subject<T>.onNextAndComplete(value:T){
+    onNext(value)
+    onComplete()
+}

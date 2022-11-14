@@ -8,7 +8,7 @@
     android:padding="16dp">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/siv_cb"
+            android:id="@+id/siv_rb"
             android:layout_width="36dp"
             android:layout_height="36dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,7 @@
             android:id="@+id/siv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/siv_cb"
+            app:layout_constraintStart_toEndOf="@id/siv_rb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
             app:layout_constraintTop_toBottomOf="@id/siv_title"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="8dp"
-            android:gravity="center"
+            android:gravity="start"
             android:fontFamily="@font/chivo_regular"
             android:lineSpacingMultiplier="1.1"
             android:textSize="16sp"

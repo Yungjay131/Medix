@@ -10,7 +10,7 @@ android {
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk sdk_details.minSDk
+        minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK
         versionCode sdk_details.versionCode
         versionName sdk_details.versionName
@@ -32,6 +32,19 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    /* for Robolectric and Jupiter */
+    testOptions{
+      /*  execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        unitTests.all {
+            useJUnitPlatform()
+        }*/
+
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -45,10 +58,25 @@ dependencies {
      implementation project(path: ':room')
      implementation project(path: ':fcm_api')
 
-     implementation depends.coroutines_android
-     implementation depends.timber
-     implementation depends.rxjava
+     implementation impl_depends.coroutines_android
+     implementation impl_depends.retrofit
+     implementation impl_depends.timber
+     implementation impl_depends.rxjava
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
+
+    testImplementation impl_depends.room
+    testImplementation impl_depends.room_runtime
+    testImplementation impl_depends.rxandroid
+
+    testImplementation test_depends.junit
+    //testImplementation test_depends.jupiter
+    testImplementation test_depends.mockito_kotlin
+    testImplementation test_depends.core_testing
+    testImplementation test_depends.robolectric
+    testImplementation test_depends.coroutines_testing
+    testImplementation test_depends.mock_webserver
+    androidTestImplementation test_depends.dexmaker
+    androidTestImplementation test_depends.android_junit
 }

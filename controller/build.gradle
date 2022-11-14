@@ -15,7 +15,7 @@ android {
         versionCode sdk_details.versionCode
         versionName sdk_details.versionName
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -37,8 +37,11 @@ android {
 dependencies {
     implementation project(path: ":di")
 
-    implementation depends.rxjava
+    implementation impl_depends.rxjava
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
+
+    testImplementation test_depends.jupiter
+    testImplementation test_depends.mockito_kotlin
 }

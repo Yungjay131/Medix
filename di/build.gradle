@@ -34,5 +34,5 @@ android {
 }
 
 dependencies {
-    implementation depends.dagger
+    implementation impl_depends.dagger
 }

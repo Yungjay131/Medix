@@ -16,6 +16,8 @@ import com.slyworks.medix.concurrency.workers.ProfileUpdateWorker
 import com.slyworks.medix.concurrency.workers.StartServiceWorker
 import com.slyworks.medix.di.components.ApplicationComponent
 import com.slyworks.medix.di.components.DaggerApplicationComponent
+import com.slyworks.medix.helpers.ListenerManager
+import com.slyworks.utils.Maybe
 import timber.log.Timber
 
 
@@ -35,8 +37,16 @@ class App: Application() {
     companion object{
         @SuppressLint("StaticFieldLeak")
         private var mContext: Context? = null
+        private var listenerManager:ListenerManager? = null
 
         fun getContext(): Context { return mContext!! }
+
+        fun cacheListenerManager(lm:ListenerManager){
+            listenerManager ?: return
+            listenerManager = lm
+        }
+
+        fun getListenerManager():Maybe<ListenerManager> = Maybe.ofNullable(listenerManager)
 
         fun initStartServiceWork(){
             val startServiceWorkRequest:OneTimeWorkRequest =
@@ -108,12 +118,15 @@ class App: Application() {
                     ExistingWorkPolicy.REPLACE,
                     profileUpdateWorkRequest)
         }
+
+
     }
 
     override fun onCreate() {
         super.onCreate()
         initDI()
         initTimber()
+        //initExceptionHandler()
         initContext()
         initStartServiceWork()
         initStetho()
@@ -153,6 +166,9 @@ class App: Application() {
             }
         })
     }
+
+    private fun initExceptionHandler():Unit =
+        Thread.setDefaultUncaughtExceptionHandler(UniversalExceptionHandler(this))
 
     private fun initContext(){ mContext = this; }
 

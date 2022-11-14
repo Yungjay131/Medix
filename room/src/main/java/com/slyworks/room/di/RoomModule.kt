@@ -19,8 +19,7 @@ import javax.inject.Named
 object RoomModule {
     @Provides
     @ApplicationScope
-    fun provideAppDatabase(@Named("application_context")
-                           context:Context):AppDatabase{
+    fun provideAppDatabase(context: Context):AppDatabase{
         return AppDatabase.getInstance(context)
     }
 

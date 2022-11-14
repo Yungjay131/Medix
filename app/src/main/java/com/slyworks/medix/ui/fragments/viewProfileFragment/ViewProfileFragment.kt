@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import app.slyworks.navigator.Navigator
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -29,7 +30,6 @@ import com.slyworks.controller.Observer
 import com.slyworks.controller.Subscription
 import com.slyworks.medix.*
 import com.slyworks.medix.ui.activities.main_activity.activityComponent
-import com.slyworks.navigation.addExtra
 import com.slyworks.medix.ui.activities.message_activity.MessageActivity
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
 import com.slyworks.medix.utils.ViewUtils.displayImage
@@ -224,7 +224,7 @@ class ViewProfileFragment : Fragment(), Observer {
         }
 
         fabSendRequest.setOnClickListener {
-            val request2: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, mViewModel.getUserDetailsUser(), REQUEST_PENDING)
+            val request2: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, System.currentTimeMillis().toString(),  mViewModel.getUserDetailsUser(), REQUEST_PENDING)
            mViewModel.sendConsultationRequest(request2)
 
             Timber.e("initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
@@ -232,7 +232,7 @@ class ViewProfileFragment : Fragment(), Observer {
 
         fabSendRequest.setOnLongClickListener{
             val message:String = "Hi i'm ${mViewModel.getUserDetailsUser().fullName}. Please i would like a consultation with you"
-            val request: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID, mViewModel.getUserDetailsUser(), REQUEST_PENDING)
+            val request: ConsultationRequest = ConsultationRequest(mUserProfile!!.firebaseUID,  System.currentTimeMillis().toString(), mViewModel.getUserDetailsUser(), REQUEST_PENDING)
             mViewModel.sendConsultationRequest(request, mode = MessageMode.CLOUD_MESSAGE)
 
             Timber.e("initViews: FirebaseCloudMessage sent to ${mUserProfile!!.fullName}")
@@ -240,8 +240,8 @@ class ViewProfileFragment : Fragment(), Observer {
         }
 
         fabMessage.setOnClickListener {
-            com.slyworks.navigation.Navigator.intentFor<MessageActivity>(requireActivity())
-                .addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, mUserProfile!!)
+            Navigator.intentFor<MessageActivity>(requireActivity())
+                //.addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, mUserProfile!!)
                 .finishCaller()
                 .navigate()
         }
@@ -249,9 +249,9 @@ class ViewProfileFragment : Fragment(), Observer {
         fabVoiceCall.setOnClickListener {}
 
         fabVideoCall.setOnClickListener {
-            com.slyworks.navigation.Navigator.intentFor<VideoCallActivity>(requireActivity())
-                .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-                .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
+            Navigator.intentFor<VideoCallActivity>(requireActivity())
+                //.addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+                //.addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
                 .finishCaller()
                 .navigate()
         }

@@ -64,7 +64,7 @@ class CallsHistoryFragment : Fragment() {
         tvError = view.findViewById(R.id.tvError_frag_calls_history)
         fabStartCalls = view.findViewById(R.id.fab_start_new_call)
 
-        mAdapter = RVCallsHistoryAdapter()
+        mAdapter = RVCallsHistoryAdapter(mViewModel.timeUtils)
         rvCallsHistory.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         rvCallsHistory.addItemDecoration(
             CustomDividerDecorator<MaterialDivider>(id = R.id.divider_horizontal_1))

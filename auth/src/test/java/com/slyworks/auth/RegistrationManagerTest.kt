@@ -1,4 +1,4 @@
-package com.slyworks.medix
+package com.slyworks.auth
 
 import com.slyworks.models.models.Outcome
 import io.reactivex.rxjava3.core.Observable

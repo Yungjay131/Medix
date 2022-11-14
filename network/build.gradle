@@ -13,7 +13,7 @@ android {
         minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -35,14 +35,11 @@ android {
 dependencies {
     implementation project(path: ':di')
 
-    implementation depends.core_ktx
-    implementation depends.rxjava
+    implementation impl_depends.core_ktx
+    implementation impl_depends.rxjava
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
 
-    testImplementation depends.junit
-
-    androidTestImplementation depends.android_junit
-    androidTestImplementation depends.espresso
+    testImplementation test_depends.junit
 }

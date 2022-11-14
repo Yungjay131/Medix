@@ -12,6 +12,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import app.slyworks.navigator.Navigator
+import app.slyworks.navigator.Navigator.Companion.getParcelable
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding4.widget.textChanges
@@ -21,8 +23,6 @@ import com.slyworks.medix.R
 import com.slyworks.medix.appComponent
 import com.slyworks.medix.ui.activities.BaseActivity
 
-.Companion.getParcelable
-import com.slyworks.navigation.addExtra
 import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
 import com.slyworks.medix.ui.custom_views.SpacingItemDecorator
 import com.slyworks.medix.utils.*
@@ -106,7 +106,7 @@ class MessageActivity : BaseActivity() {
 
     private fun initData(){
         //fixme:could be a FBUserDetails object with some values missing if it comes from ChatFragment and not ViewProfileActivity
-        mUserProfile = intent.getParcelable<FBUserDetails>(EXTRA_USER_PROFILE_FBU)
+        mUserProfile = intent.getParcelable<FBUserDetails>(EXTRA_USER_PROFILE_FBU)!!
         setUserData(mUserProfile)
 
         this.onBackPressedDispatcher
@@ -181,7 +181,7 @@ class MessageActivity : BaseActivity() {
            onBackPressedDispatcher.onBackPressed()
         }
 
-        mAdapter = RVMessageAdapter(rvMessages)
+        mAdapter = RVMessageAdapter(rvMessages, mViewModel.timeUtils)
         rvMessages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvMessages.addItemDecoration(SpacingItemDecorator())
         //rvMessages.addItemDecoration(EdgeItemDecorator())
@@ -231,10 +231,10 @@ class MessageActivity : BaseActivity() {
         }
 
         /*fixme:VideoCallActivity is expecting a Bundle, fix that*/
-        Navigator.intentFor<VideoCallActivity>(this)
+       /* Navigator.intentFor<VideoCallActivity>(this)
             .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
             .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, mUserProfile)
-            .navigate()
+            .navigate()*/
     }
 
     private fun toggleFabSendVisibility(status:Boolean){

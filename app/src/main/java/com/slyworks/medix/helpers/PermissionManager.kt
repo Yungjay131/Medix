@@ -1,6 +1,7 @@
 package com.slyworks.medix.helpers
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,16 +12,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.slyworks.medix.App
 import com.slyworks.medix.ui.dialogs.PermissionsRationaleDialog
+import com.slyworks.medix.utils.onNextAndComplete
 import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.models.Outcome
 import com.slyworks.utils.PreferenceManager
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /**
- *Created by Joshua Sylvanus, 2:48 PM, 12/16/2021.
+ * Created by Joshua Sylvanus, 2:48 PM, 12/16/2021.
  */
 class PermissionManager {
 
@@ -77,7 +81,72 @@ class PermissionManager {
     = (ContextCompat.checkSelfPermission(App.getContext(), permission)
             == PackageManager.PERMISSION_DENIED)
 
+    @SuppressLint("NewApi")
     fun requestPermissions(): Observable<Outcome>{
+        val disposables:CompositeDisposable = CompositeDisposable()
+
+        val internalSubject:PublishSubject<Boolean> = PublishSubject.create()
+        val subject:PublishSubject<Outcome> = PublishSubject.create()
+
+        val condition_1:(String) -> Boolean = { isPermissionGranted(it) }
+
+        val condition_2:Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+
+        val condition_3:(String) -> Boolean = {
+            !isPermissionGranted(it) &&
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.M &&
+            activity!!.shouldShowRequestPermissionRationale(it)
+        }
+
+        val condition_4:(String) -> Boolean = {
+            !isPermissionGranted(it) &&
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.M &&
+            isPermissionDenied(it)
+        }
+
+        val condition_5:(String) -> Boolean = {
+            !isPermissionGranted(it) &&
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.M &&
+            !isPermissionDenied(it)
+        }
+
+        disposables +=
+        mO
+         .toList()
+         .doOnTerminate {
+             disposables.clear()
+             activity = null
+         }
+         .subscribeOn(AndroidSchedulers.mainThread())
+         .observeOn(AndroidSchedulers.mainThread())
+         .subscribe { it:List<Boolean> ->
+             var r: Outcome = Outcome.SUCCESS(true)
+             if (it.contains(false))
+                 r = Outcome.FAILURE(false)
+
+             subject.onNextAndComplete(r)
+         }
+
+        disposables +=
+        Observable.fromIterable(permissions)
+            .forEach {
+               if(condition_1(it))
+                   mO.onNext(true)
+               else if(condition_2 || condition_5(it)){
+                   mPermissionsLauncher.launch(it)
+               }else if(condition_3(it)){
+                   //show permission rationale dialog, passing it internalSubject
+                   PermissionsRationaleDialog(mPermissionsLauncher, it, mO)
+                       .show((activity as AppCompatActivity).supportFragmentManager, "")
+               }else if(condition_4(it)){
+                   internalSubject.onNext(false)
+               }
+            }
+
+        return subject.hide()
+    }
+
+    /*fun requestPermissions2(): Observable<Outcome>{
      val subscriptions:CompositeDisposable = CompositeDisposable()
 
      return Observable.fromIterable(permissions)
@@ -95,7 +164,7 @@ class PermissionManager {
 
                                     subscriptions +=
                                         Observable.merge(
-                                            /*in case the dialog is cancelled and mO didn't get a value to emit*/
+                                            *//*in case the dialog is cancelled and mO didn't get a value to emit*//*
                                             dialog.getObservable(),
                                             mO)
                                             .subscribe { it2:Boolean ->
@@ -107,7 +176,7 @@ class PermissionManager {
                                     dialog.show((activity as AppCompatActivity).supportFragmentManager, "")
                                 }else {
                                     if(isPermissionDenied(it)){
-                                        /* means the permission was requested and denied */
+                                        *//* means the permission was requested and denied *//*
                                         emitter.onNext(Outcome.FAILURE(false, it))
                                         emitter.onComplete()
                                     }else{
@@ -153,7 +222,7 @@ class PermissionManager {
             .doOnDispose {
                 activity = null
             }
-     }
+     }*/
 }
 
 

@@ -5,6 +5,7 @@ plugins {
 }
 
 apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
     compileSdk sdk_details.compileSDK
 
@@ -14,7 +15,7 @@ android {
         versionCode sdk_details.versionCode
         versionName sdk_details.versionName
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -31,19 +32,37 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    /*testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }*/
 }
 
 dependencies {
     implementation project(path: ':di')
 
-    implementation depends.appcompat
-    implementation depends.preference_ktx
-    implementation depends.security_crypto
-    implementation depends.timber
+    implementation impl_depends.appcompat
+    implementation impl_depends.preference_ktx
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    /*
+     requires API level 23
+     implementation impl_depends.security_crypto
+    * */
 
-    testImplementation depends.junit
-    testImplementation depends.mockito_kotlin
+    implementation impl_depends.timber
+
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
+
+    testImplementation test_depends.junit
+    //testImplementation test_depends.jupiter
+    testImplementation test_depends.mockito_kotlin
+    testImplementation test_depends.core_testing
+    testImplementation test_depends.robolectric
+    androidTestImplementation test_depends.android_junit
+
 }

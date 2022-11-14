@@ -11,11 +11,11 @@ android {
 
     defaultConfig {
         minSdk sdk_details.minSdk
-        targetSdk sdk_details.targetSDk
+        targetSdk sdk_details.targetSDK
         versionCode sdk_details.versionCode
         versionName sdk_details.versionName
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -38,14 +38,14 @@ dependencies {
     implementation project(path: ":di")
     implementation project(path: ":constants")
 
-    api platform(depends.firebase_bom)
-    api depends.firebase_analytics
-    api depends.firebase_auth
-    api depends.firebase_database
-    api depends.firebase_storage
-    api depends.firebase_crashlytics
-    api depends.firebase_messaging
+    api platform(impl_depends.firebase_bom)
+    api impl_depends.firebase_analytics
+    api impl_depends.firebase_auth
+    api impl_depends.firebase_database
+    api impl_depends.firebase_storage
+    api impl_depends.firebase_crashlytics
+    api impl_depends.firebase_messaging
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
 }

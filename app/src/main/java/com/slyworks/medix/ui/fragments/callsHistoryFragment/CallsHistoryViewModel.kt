@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.slyworks.communication.CallHistoryManager
 import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.room_models.CallHistory
+import com.slyworks.utils.TimeUtils
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
@@ -16,7 +17,8 @@ import javax.inject.Inject
  */
 class CallsHistoryViewModel
     @Inject
-    constructor(private val callHistoryManager: CallHistoryManager) : ViewModel() {
+    constructor(private val callHistoryManager: CallHistoryManager,
+                val timeUtils: TimeUtils) : ViewModel() {
     //region Vars
     private val _errorState:MutableLiveData<Boolean> = MutableLiveData()
     val errorState:LiveData<Boolean>

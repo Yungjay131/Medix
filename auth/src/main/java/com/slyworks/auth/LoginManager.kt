@@ -1,6 +1,8 @@
 package com.slyworks.auth
 
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
 import com.slyworks.constants.KEY_FCM_REGISTRATION
 import com.slyworks.constants.KEY_LAST_SIGN_IN_TIME
 import com.slyworks.constants.KEY_LOGGED_IN_STATUS
@@ -11,10 +13,12 @@ import com.slyworks.userdetails.UserDetailsUtils
 import com.slyworks.utils.PreferenceManager
 import com.slyworks.utils.TimeUtils
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -34,19 +38,39 @@ class LoginManager(
     //endregion
 
     init {
-        mAuthStateListener = object:FirebaseAuth.AuthStateListener{
-            override fun onAuthStateChanged(p0: FirebaseAuth) {
-                mLoggedInStatus = p0.currentUser == null
-                preferenceManager.set(KEY_LOGGED_IN_STATUS, mLoggedInStatus)
-            }
+        mAuthStateListener = FirebaseAuth.AuthStateListener { p0 ->
+            mLoggedInStatus = p0.currentUser == null
+            preferenceManager.set(KEY_LOGGED_IN_STATUS, mLoggedInStatus)
         }
         firebaseAuth.addAuthStateListener(mAuthStateListener)
     }
 
-    fun getLoginStatus():Boolean {
-        return preferenceManager.get(KEY_LOGGED_IN_STATUS, false)  &&
+    fun handleForgotPassword(email: String): Observable<Boolean> {
+        return Observable.create<Boolean> { emitter ->
+            firebaseAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener {
+                    val r:Boolean
+
+                    if (it.isSuccessful) {
+                        Timber.e("handleForgotPassword: password reset email successfully sent")
+                        r = true
+                    } else {
+                        Timber.e("handleForgotPassword: password reset email was not successfully sent", it.exception)
+                        r = false
+                    }
+
+                    emitter.onNext(r)
+                    emitter.onComplete()
+                }
+        }
+    }
+
+    fun getLoginStatus():Boolean = mLoggedInStatus
+
+    fun getLoginStatus2():Boolean {
+        return preferenceManager.get(KEY_LOGGED_IN_STATUS, false)!!  &&
                 with(preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())){
-                    timeUtils.isWithin3DayPeriod(this)
+                    timeUtils.isWithin3DayPeriod(this!!)
                 }
     }
 
@@ -65,6 +89,7 @@ class LoginManager(
                       Observable.just(it)
               }
 
+
     private fun signInUser(email:String, password: String):Observable<Outcome> =
         Observable.create { emitter ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -81,7 +106,7 @@ class LoginManager(
                             emitter.onComplete()
                         }
                     } else {
-                        val r:Outcome = Outcome.FAILURE(value = "login was not successful, please try again")
+                        val r:Outcome = Outcome.FAILURE(value = "login attempt was not successful, please try again")
                         emitter.onNext(r)
                         emitter.onComplete()
                     }
@@ -92,8 +117,8 @@ class LoginManager(
         /* upload the FCMRegistration token specific to  this phone, since
         * its not based on FirebaseUID, but on device */
         Observable.create { emitter ->
-           val fcmToken:String = preferenceManager.get(KEY_FCM_REGISTRATION, "")
-            if(fcmToken == ""){
+           val fcmToken:String? = preferenceManager.get(KEY_FCM_REGISTRATION)
+            fcmToken?.equals(null)?.not() ?: let{
                 emitter.onNext(Outcome.SUCCESS(value = "no token to upload"))
                 emitter.onComplete()
                 return@create
@@ -137,13 +162,11 @@ class LoginManager(
                }
          }
 
-
-
     fun logoutUser(){
             firebaseAuth.signOut()
             usersManager.clearUserDetails()
             userDetailsUtils.clearUserData()
-            preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
+            preferenceManager.clearPreference(KEY_LAST_SIGN_IN_TIME)
     }
 
     fun onDestroy(){

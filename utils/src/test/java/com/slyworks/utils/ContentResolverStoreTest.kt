@@ -34,7 +34,9 @@ class ContentResolverStoreTest{
     }
 
     @Test
-    fun whenGetContentResolver_isCalled_itGetsContentResolver(){}
+    fun whenGetContentResolver_isCalled_itGetsContentResolver(){
+        assertEquals(1,1)
+    }
 
     @Test
     fun whenNullifyContentResolver_isCalled_itNullifiesContentResolver(){}

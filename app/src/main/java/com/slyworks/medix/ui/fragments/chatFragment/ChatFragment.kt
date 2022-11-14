@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import app.slyworks.navigator.Navigator
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.slyworks.constants.EVENT_OPEN_MESSAGE_ACTIVITY
@@ -36,7 +37,6 @@ import com.slyworks.medix.ui.fragments.homeFragment.DoctorHomeFragment
 import com.slyworks.models.room_models.FBUserDetails
 import com.slyworks.models.room_models.Person
 
-import com.slyworks.navigation.addExtra
 import javax.inject.Inject
 
 class ChatFragment : Fragment(), Observer {
@@ -186,7 +186,7 @@ class ChatFragment : Fragment(), Observer {
                     imageUri = result.imageUri)
 
                 Navigator.intentFor<MessageActivity>(requireActivity())
-                    .addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, entity)
+                    //.addExtra<Parcelable>(EXTRA_USER_PROFILE_FBU, entity)
                     .navigate()
             }
         }

@@ -17,7 +17,8 @@ import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.room_models.CallHistory
 import de.hdodenhof.circleimageview.CircleImageView
 
-class RVCallsHistoryAdapter(diffUtil: DiffUtil.ItemCallback<CallHistory> = CallsHistoryDiffUtilCallback()
+class RVCallsHistoryAdapter(private val timeUtils: TimeUtils,
+                            diffUtil: DiffUtil.ItemCallback<CallHistory> = CallsHistoryDiffUtilCallback()
 ): ListAdapter<CallHistory, RVCallsHistoryAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,7 +30,7 @@ class RVCallsHistoryAdapter(diffUtil: DiffUtil.ItemCallback<CallHistory> = Calls
         holder.bind(currentList.get(position))
     }
 
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         //region Vars
         private val ivProfile:CircleImageView = itemView.findViewById(R.id.ivProfile_li_calls_history)
         private val tvName: TextView = itemView.findViewById(R.id.tvName_li_calls_history)
@@ -58,8 +59,8 @@ class RVCallsHistoryAdapter(diffUtil: DiffUtil.ItemCallback<CallHistory> = Calls
                 }
             ivCallStatus.displayImage(callStatus)
 
-            val duration:String = TimeUtils.convertTimeToDuration(entity.duration)
-            val timeStamp:String = TimeUtils.convertTimeToString(entity.timeStamp)
+            val duration:String = timeUtils.convertTimeToDuration(entity.duration)
+            val timeStamp:String = timeUtils.convertTimeToString(entity.timeStamp)
             tvDetails.text = App.getContext()
                 .getString(R.string.li_calls_history, duration, timeStamp)
         }

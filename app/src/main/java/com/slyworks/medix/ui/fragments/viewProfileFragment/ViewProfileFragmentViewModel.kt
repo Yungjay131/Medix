@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slyworks.communication.CloudMessageManager
+import com.slyworks.medix.utils.plusAssign
 import com.slyworks.models.models.ConsultationRequest
 import com.slyworks.models.models.MessageMode
 import com.slyworks.models.room_models.FBUserDetails

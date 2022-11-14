@@ -17,14 +17,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
+import app.slyworks.navigator.Navigator.Companion.getExtra
+import app.slyworks.navigator.Navigator.Companion.getParcelable
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.common.util.concurrent.ListenableFuture
 import com.slyworks.constants.*
 import com.slyworks.medix.R
 import com.slyworks.medix.appComponent
-import com.slyworks.medix.appComponent
-.Companion.getExtra
-.Companion.getParcelable
 import com.slyworks.medix.ui.activities.BaseActivity
 import com.slyworks.medix.utils.ViewUtils.displayImage
 import com.slyworks.models.models.VideoCallRequest

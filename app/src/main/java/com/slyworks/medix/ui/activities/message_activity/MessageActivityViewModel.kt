@@ -30,7 +30,8 @@ class MessageActivityViewModel
                 private val messageManager:MessageManager,
                 private val userDetailsUtils: UserDetailsUtils,
                 private val connectionStatusManager: ConnectionStatusManager,
-                private val personsManager: PersonsManager) : ViewModel(), Observer {
+                private val personsManager: PersonsManager,
+                val timeUtils: TimeUtils) : ViewModel(), Observer {
     //region Vars
     private val mMessageListLiveData: MutableLiveData<MutableList<Message>> = MutableLiveData(mutableListOf())
     private val mConnectionStatusLiveData:MutableLiveData<String> = MutableLiveData()
@@ -122,7 +123,7 @@ class MessageActivityViewModel
                     if(it.status)
                        mConnectionStatusLiveData.postValue("online")
                     else{
-                       val time = TimeUtils.convertTimeToString(it.timestamp.toString())
+                       val time = timeUtils.convertTimeToString(it.timestamp.toString())
                        mConnectionStatusLiveData.postValue(time)
                     }
                 }

@@ -1,33 +1,22 @@
 package com.slyworks.medix.di.components
 
-import android.app.Activity
-import com.slyworks.di.BaseActivityScope
-import com.slyworks.medix.di.modules.BaseActivityModule
+import com.slyworks.di.ApplicationScope
+import com.slyworks.medix.ui.activities.BaseActivity
+import dagger.Component
 import dagger.Subcomponent
+import javax.inject.Singleton
 
 
 /**
- *Created by Joshua Sylvanus, 8:08 PM, 15/10/2022.
+ * Created by Joshua Sylvanus, 1:24 AM, 26/10/2022.
  */
 
-@BaseActivityScope
-@Subcomponent(modules = [
-    BaseActivityModule::class
-])
-abstract class BaseActivityComponent {
-    @JvmField
-    var baseActivityComponent:BaseActivityComponent? = null
+@Subcomponent
+interface BaseActivityComponent {
+  fun inject(ba:BaseActivity)
 
-    fun isThereCachedBaseActivityComponent():Boolean = baseActivityComponent == null
-    fun getBaseActivityComponent():BaseActivityComponent = baseActivityComponent!!
-    fun cacheBaseActivityComponent(bac:BaseActivityComponent){
-        baseActivityComponent = bac;
-    }
-
-    abstract fun inject(activity: Activity)
-
-    @Subcomponent.Builder
-    interface Builder{
-        fun build():BaseActivityComponent
-    }
+  @Subcomponent.Builder
+  interface Builder{
+      fun build():BaseActivityComponent
+  }
 }

@@ -27,8 +27,7 @@ constructor(
     private val firebaseDatabase: FirebaseDatabase,
     private val fcmClientApi: FCMClientApi,
     private val userDetailsUtils:UserDetailsUtils,
-    private val firebaseUtils: FirebaseUtils
-) {
+    private val firebaseUtils: FirebaseUtils) {
     //region Vars
     private var videoCallObserver:PublishSubject<FBUserDetails>? = PublishSubject.create()
     private var voiceCallObserver:PublishSubject<FBUserDetails>? = PublishSubject.create()

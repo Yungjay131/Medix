@@ -63,8 +63,8 @@ class RVChatAdapter2(diffUtil: DiffUtil.ItemCallback<Person> = PersonDiffUtilCal
             tvPersonName.text = name
 
             if(!entity.lastMessageTimeStamp.isNullOrEmpty()){
-                val time:String = TimeUtils.convertTimeToString(entity.lastMessageTimeStamp)
-                tvLastMessageTimestamp.text = time
+                /*val time:String = TimeUtils.convertTimeToString(entity.lastMessageTimeStamp)
+                tvLastMessageTimestamp.text = time*/
             }
 
             tvLastMessage.text = entity.lastMessageContent

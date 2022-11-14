@@ -67,10 +67,10 @@ class Maybe <T> {
     }
 
     fun <U> flatMap(mapper:(t:T) -> Maybe<in U>):Maybe<in U>{
-        if(!this.isPresent())
-            return empty()
+        return if(!this.isPresent())
+            empty()
         else
-            return mapper.invoke(this.value!!)
+            mapper.invoke(this.value!!)
     }
 
     fun or(supplier:() -> Maybe<in T>):Maybe<in T>{

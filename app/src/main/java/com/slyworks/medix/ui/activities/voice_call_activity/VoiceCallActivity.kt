@@ -6,6 +6,7 @@ import android.os.Looper
 import android.os.Parcelable
 import android.text.TextUtils
 import android.widget.TextView
+import app.slyworks.navigator.Navigator
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.slyworks.constants.*
 import com.slyworks.medix.R
@@ -15,7 +16,6 @@ import com.slyworks.medix.ui.activities.video_call_activity.VideoCallActivity
 import com.slyworks.medix.ui.dialogs.SwitchToVideoCallDialog
 import com.slyworks.models.models.VoiceCallRequest
 import com.slyworks.models.room_models.FBUserDetails
-import com.slyworks.navigation.addExtra
 import de.hdodenhof.circleimageview.CircleImageView
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -259,9 +259,9 @@ class VoiceCallActivity : BaseActivity() {
                 if (it) {
                     leaveChannel()
 
-                    com.slyworks.navigation.Navigator.intentFor<VideoCallActivity>(this)
-                        .addExtra<String>(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
-                        .addExtra<Parcelable>(EXTRA_VIDEO_CALL_USER_DETAILS, mUserDetails)
+                    Navigator.intentFor<VideoCallActivity>(this)
+                        //.addExtra<String>(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
+                        //.addExtra<Parcelable>(EXTRA_VIDEO_CALL_USER_DETAILS, mUserDetails)
                         .previousIsTop()
                         .finishCaller()
                         .navigate()

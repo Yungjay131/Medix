@@ -17,8 +17,7 @@ object NetworkModule {
 
     @Provides
     @ApplicationScope
-    fun provideNetworkRegister(@Named("application_context")
-                               context:Context):NetworkRegister{
+    fun provideNetworkRegister(context: Context):NetworkRegister{
         return NetworkRegister(context)
     }
 }

@@ -18,10 +18,9 @@ import javax.inject.Inject
  */
 class LoginActivityViewModel
     @Inject
-    constructor(private var networkRegister: NetworkRegister?,
-                private var loginManager: LoginManager?,
-                private var registrationManager: RegistrationManager?,
-                private var vibrationManager: VibrationManager?) : ViewModel(){
+    constructor(private var networkRegister: NetworkRegister,
+                private var loginManager: LoginManager,
+                private var vibrationManager: VibrationManager) : ViewModel(){
     //region Vars
     private var _passwordResetStatus:MutableLiveData<Boolean> = MutableLiveData()
     val passwordResetLiveData:LiveData<Boolean>
@@ -50,14 +49,14 @@ class LoginActivityViewModel
     private var mSubscription2:Disposable = Disposable.empty()
     //endregion
 
-    fun vibrate(type:Int) = vibrationManager!!.vibrate(type)
+    fun vibrate(type:Int) = vibrationManager.vibrate(type)
 
-    fun getNetworkStatus() = networkRegister!!.getNetworkStatus()
+    fun getNetworkStatus() = networkRegister.getNetworkStatus()
 
     fun subscribeToNetwork():LiveData<Boolean>{
         val l:MutableLiveData<Boolean> = MutableLiveData()
 
-        mSubscription2 = networkRegister!!
+        mSubscription2 = networkRegister
             .subscribeToNetworkUpdates()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
@@ -69,18 +68,18 @@ class LoginActivityViewModel
     }
 
     fun unsubscribeToNetwork(){
-        networkRegister!!.unsubscribeToNetworkUpdates()
+        networkRegister.unsubscribeToNetworkUpdates()
         mSubscription2.dispose()
     }
 
     fun login(email:String, password:String){
-        if(!networkRegister!!.getNetworkStatus()){
+        if(!networkRegister.getNetworkStatus()){
             _loginFailureDataLiveData.postValue("Please check your connection and try again")
             _loginFailureLiveData.postValue(true)
             return
         }
 
-        val d = loginManager!!
+        val d = loginManager
             .loginUser(email, password)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
@@ -101,7 +100,7 @@ class LoginActivityViewModel
     }
 
     fun handleForgotPassword(email: String){
-        if(!networkRegister!!.getNetworkStatus()){
+        if(!networkRegister.getNetworkStatus()){
             _loginFailureDataLiveData.postValue("Please check your connection and try again")
             _loginFailureLiveData.postValue(true)
             return
@@ -109,7 +108,7 @@ class LoginActivityViewModel
 
         _progressStateLiveData.postValue(true)
 
-        val d = registrationManager!!
+        val d = loginManager
             .handleForgotPassword(email)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
@@ -124,9 +123,6 @@ class LoginActivityViewModel
 
     override fun onCleared() {
         mSubscriptions.clear()
-        loginManager!!.onDestroy()
-        loginManager = null
-
         super.onCleared()
     }
 }

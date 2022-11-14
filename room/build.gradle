@@ -14,7 +14,7 @@ android {
         minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner appTestRunners.default
         consumerProguardFiles "consumer-rules.pro"
 
         javaCompileOptions {
@@ -46,14 +46,14 @@ dependencies {
     implementation project(path: ':constants')
     implementation project(path: ':models')
 
-    implementation depends.core_ktx
-    implementation depends.room
-    implementation depends.room_runtime
-    implementation depends.room_rxjava
-    kapt depends.room_kapt
+    implementation impl_depends.core_ktx
+    implementation impl_depends.room
+    implementation impl_depends.room_runtime
+    implementation impl_depends.room_rxjava
+    kapt kapt_depends.room_kapt
 
-    implementation depends.gson
+    implementation impl_depends.gson
 
-    implementation depends.dagger
-    kapt depends.dagger_kapt
+    implementation impl_depends.dagger
+    kapt kapt_depends.dagger_kapt
 }

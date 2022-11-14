@@ -21,4 +21,12 @@ class UtilsModule {
     fun providePreferenceManager(context: Context):PreferenceManager{
         return PreferenceManager(context)
     }
+
+    @Provides
+    @ApplicationScope
+    fun provideTimeUtil():TimeUtils = TimeUtils()
+
+    @Provides
+    @ApplicationScope
+    fun provideTaskManager():TaskManager = TaskManager
 }

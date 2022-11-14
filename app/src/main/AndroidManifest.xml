@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medix">
         <activity
+            android:name=".ui.activities.registration_activity.Registration2Activity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.otp_activity.OTPActivity"
             android:exported="false" />
         <activity
@@ -52,7 +55,7 @@
             android:theme="@style/AppTheme.registration_patient"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".ui.activities.login_activity.LoginActivity"
+            android:name=".ui.activities.com.slyworks.medix.ui.activities.login_activity.LoginActivity"
             android:exported="false"
             android:theme="@style/AppTheme.login"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
