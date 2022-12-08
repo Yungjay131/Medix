@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.slyworks.medix"
+    package="app.slyworks.medix"
     tools:ignore="MissingLeanbackLauncher">
 
     <application
@@ -14,134 +14,20 @@
         android:roundIcon="@mipmap/ic_launcher2_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Medix">
+
+
         <activity
-            android:name=".ui.activities.registration_activity.Registration2Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.otp_activity.OTPActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.requests_activity.RequestsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.settings_activity.SettingsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.voice_call_activity.VoiceCallActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.video_call_activity.VideoCallActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.videoCall" />
-        <activity
-            android:name=".ui.activities.message_activity.MessageActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.message"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".ui.activities.view_request_activity.ViewRequestActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activities.registration_activity.RegistrationDoctorActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.registration_doctor"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".ui.activities.registration_activity.RegistrationPatientActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.registration_patient"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".ui.activities.com.slyworks.medix.ui.activities.login_activity.LoginActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.login"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".ui.activities.registration_activity.RegistrationActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.registration" />
-        <activity
-            android:name=".ui.activities.onboarding_activity.OnBoardingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.main_activity.MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.main"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".ui.activities.splash_activity.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.splash2">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
+            <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/appGrey" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
-        </provider>
-
-        <receiver
-            android:name=".broadcast_receivers.CloudMessageBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.slyworks.medix.BROADCAST_CLOUD_MESSAGE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".broadcast_receivers.VideoCallRequestBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.slyworks.medix.BROADCAST_VIDEO_CALL_REQUEST" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".broadcast_receivers.VoiceCallRequestBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.slyworks.medix.BROADCAST_VOICE_CALL_REQUEST" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name=".services.MFirebaseMessagingService"
-            android:exported="false"
-            android:stopWithTask="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".NavigationService"
-            android:foregroundServiceType="location">
-
-            <!-- Any inner elements would go here. -->
-        </service>
-        <service
-            android:name=".services.ListenerService"
-            android:description="@string/appservice_description_text"
-            android:exported="false"
-            android:stopWithTask="false" />
     </application>
     <uses-feature
         android:name="android.hardware.camera2"
@@ -165,6 +51,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />

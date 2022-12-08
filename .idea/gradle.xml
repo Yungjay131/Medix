@@ -13,21 +13,33 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/auth" />
-            <option value="$PROJECT_DIR$/communication" />
-            <option value="$PROJECT_DIR$/constants" />
-            <option value="$PROJECT_DIR$/controller" />
-            <option value="$PROJECT_DIR$/di" />
-            <option value="$PROJECT_DIR$/fcm_api" />
-            <option value="$PROJECT_DIR$/firebase_commons" />
-            <option value="$PROJECT_DIR$/location" />
-            <option value="$PROJECT_DIR$/models" />
-            <option value="$PROJECT_DIR$/network" />
-            <option value="$PROJECT_DIR$/payment" />
-            <option value="$PROJECT_DIR$/room" />
-            <option value="$PROJECT_DIR$/security" />
-            <option value="$PROJECT_DIR$/userdetails" />
-            <option value="$PROJECT_DIR$/utils" />
+            <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/auth-feature" />
+            <option value="$PROJECT_DIR$/features/base-feature" />
+            <option value="$PROJECT_DIR$/features/call-commons-feature" />
+            <option value="$PROJECT_DIR$/features/core-feature" />
+            <option value="$PROJECT_DIR$/features/message-feature" />
+            <option value="$PROJECT_DIR$/features/navigation-feature" />
+            <option value="$PROJECT_DIR$/features/requests-feature" />
+            <option value="$PROJECT_DIR$/features/video-call-feature" />
+            <option value="$PROJECT_DIR$/features/voice-call-feature" />
+            <option value="$PROJECT_DIR$/libraries" />
+            <option value="$PROJECT_DIR$/libraries/auth-lib" />
+            <option value="$PROJECT_DIR$/libraries/communication-lib" />
+            <option value="$PROJECT_DIR$/libraries/constants-lib" />
+            <option value="$PROJECT_DIR$/libraries/controller-lib" />
+            <option value="$PROJECT_DIR$/libraries/crypto-lib" />
+            <option value="$PROJECT_DIR$/libraries/data-lib" />
+            <option value="$PROJECT_DIR$/libraries/di-base-lib" />
+            <option value="$PROJECT_DIR$/libraries/fcm-api-lib" />
+            <option value="$PROJECT_DIR$/libraries/firebase-commons-lib" />
+            <option value="$PROJECT_DIR$/libraries/location-lib" />
+            <option value="$PROJECT_DIR$/libraries/models-commons-lib" />
+            <option value="$PROJECT_DIR$/libraries/network-lib" />
+            <option value="$PROJECT_DIR$/libraries/payment-lib" />
+            <option value="$PROJECT_DIR$/libraries/room-lib" />
+            <option value="$PROJECT_DIR$/libraries/userdetails-lib" />
+            <option value="$PROJECT_DIR$/libraries/utils-lib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

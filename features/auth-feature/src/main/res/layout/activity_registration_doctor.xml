@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
+    android:animateLayoutChanges="true">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarSize="4dp"
+        android:scrollbars="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvProfilePic_doctor_reg_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/guide_horizontal_1"
+                android:text="Profile Picture"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivProfile_doctor_reg_one"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintTop_toBottomOf="@id/tvProfilePic_doctor_reg_one"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/avatar"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvFirstName_doctor_reg_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/ivProfile_doctor_reg_one"
+                android:text="First Name"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etFirstlName_doctor_reg_one"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/et_selector"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvFirstName_doctor_reg_one" />
+
+            <EditText
+                android:id="@+id/etLastName_doctor_reg_one"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/et_selector"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvLastName_doctor_reg_one" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvLastName_doctor_reg_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/etFirstlName_doctor_reg_one"
+                android:text="Last Name"
+                android:layout_marginTop="16dp"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvEmail_doctor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/etLastName_doctor_reg_one"
+                android:text="Email"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etEmail_doctor"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/et_selector"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvEmail_doctor" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvPassword_doctor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/etEmail_doctor"
+                android:text="Password"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etPassword_doctor"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/et_selector"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvPassword_doctor" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvConfirmPassword_doctor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/etPassword_doctor"
+                android:text="Confirm Password"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/etConfirmPassword_doctor"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/et_selector"
+                android:inputType="textPassword"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvConfirmPassword_doctor" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvSex_doctor_reg_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/etConfirmPassword_doctor"
+                android:text="Sex"
+                android:layout_marginTop="16dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_sex_doctor"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvSex_doctor_reg_one">
+
+                <RadioButton
+                    android:id="@+id/rbMale_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="male"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/_guide_vertical_1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/rbFemale_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="female"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/_guide_vertical_1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/_guide_vertical_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintGuide_percent=".5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvAge_doctor_reg_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/container_sex_doctor"
+                android:layout_marginTop="16dp"
+                android:text="Age"/>
+
+            <EditText
+                android:id="@+id/etAge_doctor"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintTop_toBottomOf="@id/tvAge_doctor_reg_one"
+                android:inputType="number"
+                android:maxLines="1"
+                android:maxLength="2"
+                android:gravity="center_horizontal|center_vertical"
+                android:background="@drawable/et_selector"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_specialization_doctor_reg_one"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintTop_toBottomOf="@id/etAge_doctor"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSpecialization_doctor_reg_one"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="please enter your area(s) of specialization"
+                    android:textSize="16sp"/>
+
+                <View
+                    android:id="@+id/_view_horizontal_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvSpecialization_doctor_reg_one"
+                    android:layout_marginTop="8dp"
+                    android:visibility="invisible"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAddSpecialization"
+                    android:layout_width="120dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/btn_login_selector"
+                    android:text="Add"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/_view_horizontal_1" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/__guide_vertical_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".5"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTandC_doctor_reg_one"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintTop_toBottomOf="@id/container_specialization_doctor_reg_one"
+                android:text="@string/view_tc"
+                android:textColor="@color/appBlue_light"
+                android:textSize="16sp"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="48dp"/>
+
+            <CheckBox
+                android:id="@+id/cbTandC"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="I have read the Terms and Conditions and I agree to the Terms and Conditions"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintTop_toBottomOf="@id/tvTandC_doctor_reg_one"
+                android:layout_marginTop="8dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSignUp_doctor_reg"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+                app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+                app:layout_constraintTop_toBottomOf="@id/cbTandC"
+                android:layout_marginTop="20dp"
+                android:text="Sign Up"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_login_selector"
+                android:enabled="false"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_vertical_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".05"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_vertical_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".95"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_horizontal_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".05"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_horizontal_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".9"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <include
+        layout="@layout/layout_progressbar"
+        android:layout_height="60dp"
+        android:layout_width="60dp"
+        android:layout_gravity="center_horizontal|center_vertical|center"
+        android:visibility="gone"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

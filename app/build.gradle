@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
@@ -22,12 +21,18 @@ android {
         testInstrumentationRunner appTestRunners.default
 
         //for MeowBottomFragment
-        vectorDrawables.useSupportLibrary = true
+        //vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
+        debug {
+            minifyEnabled sdk_details.minifyEnabled
+            shrinkResources sdk_details.shrinkResources
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled sdk_details.minifyEnabled
+            shrinkResources sdk_details.shrinkResources
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -45,12 +50,10 @@ android {
         enabled = true
     }
 
-    buildFeatures {
-        buildConfig = true
-    }
-
     packagingOptions {
-        exclude 'assets/com.slyworks.medix.data.room.AppDatabase/1.json'
+        exclude 'assets/app.slyworks.medix.data.room.AppDatabase/1.json'
+        exclude "${rootProject.projectDir}/libraries/room-lib/src/main/assets/app.slyworks.room_lib.AppDatabase/*"
+        exclude "${rootProject.projectDir}/pictures"
     }
 
     sourceSets {
@@ -60,6 +63,11 @@ android {
         * >> ./gradle test (for both test and sharedTest)
         * >> ./gradle connectedAndroidTest (for androidTest and sharedTest)
         * second is to create a 'run config' for it */
+
+        /* also disable these in Developer Options
+        * Window animation scale
+          Transition animation scale
+          Animator duration scale */
 
         String sharedTestDir = 'src/sharedTest/java'
         test {
@@ -72,64 +80,26 @@ android {
 
 }
 
-/*android.buildTypes.each{ type ->
-    type.buildConfigField 'String', 'SERVER_KEY', SERVER_KEY
-}*/
-
 dependencies {
-    implementation project(path: ':constants')
-    implementation project(path: ':di')
-    implementation project(path: ':firebase_commons')
-    implementation project(path: ':userdetails')
-    implementation project(path: ':auth')
-    implementation project(path: ':controller')
-    implementation project(path: ':utils')
-    implementation project(path: ':communication')
-    implementation project(path: ':fcm_api')
-    implementation project(path: ':room')
-    implementation project(path: ':models')
-    implementation project(path: ':network')
+    implementation project(path: ':features:auth-feature')
+    implementation project(path: ':features:core-feature')
+    implementation project(path: ':features:message-feature')
+    implementation project(path: ':features:requests-feature')
+    implementation project(path: ':features:video-call-feature')
+    implementation project(path: ':features:voice-call-feature')
+    implementation project(path: ':features:navigation-feature')
+    implementation project(path: ':libraries:auth-lib')
+    implementation project(path: ':libraries:data-lib')
+    implementation project(path: ':libraries:utils-lib')
+    implementation project(path: ':libraries:constants-lib')
+    implementation project(path: ':libraries:di-base-lib')
 
     implementation impl_depends.core_ktx
     implementation impl_depends.appcompat
     implementation impl_depends.material
-    implementation impl_depends.recyclerview
-    implementation impl_depends.constraint_layout
-    implementation impl_depends.legacy_support
-    implementation impl_depends.cardview
-    implementation impl_depends.drawerlayout
-    implementation impl_depends.asynclayoutinflater
-
-    implementation impl_depends.camera
-    implementation impl_depends.camera_lifecycle
-    implementation impl_depends.camera_view
-
-    implementation impl_depends.work_runtime
-    implementation impl_depends.multidex
-
-    implementation impl_depends.lifecycle_viewmodel
-    implementation impl_depends.lifecycle_runtime
-    implementation impl_depends.lifecycle_livedata
-
-    implementation impl_depends.coroutines_android
-
-    implementation impl_depends.glide
-
-    implementation impl_depends.circle_imageview
-
-    implementation impl_depends.rxbinding
-
-    implementation impl_depends.agora_sdk
-
-    implementation impl_depends.easyadapter
-
-    implementation impl_depends.lottie
-
+    implementation impl_depends.rxjava
+    implementation impl_depends.rxandroid
     implementation impl_depends.timber
-
-    implementation impl_depends.stetho
-
-    implementation impl_depends.navigator
 
     implementation impl_depends.dagger
     kapt kapt_depends.dagger_kapt
@@ -140,6 +110,7 @@ dependencies {
     testImplementation test_depends.robolectric
     testImplementation test_depends.android_junit
     testImplementation test_depends.espresso
+    testImplementation impl_depends.core_ktx
 
     debugImplementation debug_impl_depends.leakcanary
 }
