@@ -20,7 +20,7 @@ class SelectVerificationMethodBSDialog : app.slyworks.base_feature.BaseBottomShe
     //region Vars
     private lateinit var binding: BottomsheetSelectVerificationMethodBinding
     private val disposables:CompositeDisposable = CompositeDisposable()
-    private var subject:PublishSubject<app.slyworks.auth_lib.VerificationDetails> = PublishSubject.create()
+    private var subject:PublishSubject<VerificationDetails> = PublishSubject.create()
     //endregion
 
     companion object{
@@ -36,35 +36,39 @@ class SelectVerificationMethodBSDialog : app.slyworks.base_feature.BaseBottomShe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initData()
         initViews()
     }
 
-    private fun initData(){}
     private fun initViews(){
         var selected: VerificationDetails = VerificationDetails.EMAIL
 
         disposables +=
-        Observable.combineLatest(binding.sivEmail.observeChanges(),
-                                 binding.sivOtp.observeChanges(),
-            { oEmail:Boolean, oOTP:Boolean ->
-                return@combineLatest when {
-                    oEmail -> VerificationDetails.EMAIL
-                    oOTP -> VerificationDetails.OTP
-                    else -> throw UnsupportedOperationException()
-                }
-            })
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .observeOn(AndroidSchedulers.mainThread())
+        binding.sivEmail.observeChanges()
             .subscribe{
-                when(it){
-                    VerificationDetails.EMAIL -> binding.sivOtp.setCurrentStatus(false)
-                    VerificationDetails.OTP -> binding.sivEmail.setCurrentStatus(false)
+                if(it){
+                    binding.sivOtp.setCurrentStatus(false)
+                    selected = VerificationDetails.EMAIL
                 }
-
-                selected = it
-                binding.btnProceed.isEnabled = true
             }
+
+        disposables +=
+        binding.sivOtp.observeChanges()
+            .subscribe{
+                if(it){
+                    binding.sivEmail.setCurrentStatus(false)
+                    selected = VerificationDetails.OTP
+                }
+            }
+
+        disposables +=
+            Observable.combineLatest(binding.sivEmail.observeChanges(),
+                                     binding.sivOtp.observeChanges(),
+                { isEmail:Boolean, isOTP:Boolean ->
+                    return@combineLatest isEmail || isOTP
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(binding.btnProceed::setEnabled)
 
         binding.btnProceed.setOnClickListener {
             subject.onNext(selected)

@@ -48,6 +48,7 @@
     <color name="appWhite_card">#F6F3F3</color>
 
     <color name="appBlack_semi">#31131313</color>
+    <color name="appBlack_semi2">#11131313</color>
     <color name="appGreen_text">#00E676</color>
     <color name="appGrey_li_message_from">#99999C</color>
     <color name="appBlue_li_message_to">#6681E8</color>
@@ -56,4 +57,5 @@
     <color name="appBlue2">#575CE5</color>
     <color name="appRVBlue2">#575CE5</color>
     <color name="appDarkGrey">#B8B8B8</color>
+    <color name="appOrange">#FFB300</color>
 </resources>

@@ -6,9 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp2Binding
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.navigation_feature.Navigator
+import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.displayMessage
 import com.jakewharton.rxbinding4.widget.textChanges
@@ -31,7 +34,7 @@ class RegistrationOTP2Fragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        viewModel = (requireActivity() as RegistrationActivity).viewModel
+        viewModel = (requireActivity() as IRegViewModel).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -49,12 +52,23 @@ class RegistrationOTP2Fragment : Fragment() {
     private fun initData(){
         viewModel.progressLiveData.observe(viewLifecycleOwner){}
         viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+        viewModel.verificationFailureLiveData.observe(viewLifecycleOwner){}
+
         viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){
             Navigator.intentFor(requireContext(), MAIN_ACTIVITY_INTENT_FILTER)
                 .newAndClearTask()
                 .navigate()
         }
 
+        viewModel.otpCountDownLD.observe(viewLifecycleOwner){
+            binding.tvCounter.setText(it.toString())
+        }
+
+        viewModel.otpCountDownFinishedLD.observe(viewLifecycleOwner){
+            binding.tvResendOtp.isEnabled = it
+        }
+
+        viewModel.initOTPTimeoutCountdown()
     }
 
     private fun initViews(){
@@ -78,14 +92,44 @@ class RegistrationOTP2Fragment : Fragment() {
                    binding.etOTP4.requestFocus()
             }
 
+        disposables +=
+        binding.etOTP4.textChanges()
+            .subscribe {
+               if(it.length == 1)
+                   binding.etOTP5.requestFocus()
+            }
+
+        disposables +=
+        binding.etOTP5.textChanges()
+            .subscribe {
+               if(it.length == 1)
+                   binding.etOTP6.requestFocus()
+            }
+
+        binding.etOTP6.setOnEditorActionListener(
+            TextView.OnEditorActionListener { p0, p1, p2 ->
+                if(p0!!.id == binding.etOTP6.id){
+                    requireActivity().closeKeyboard3()
+
+                    val otp:String =
+                        "${binding.etOTP1.text}${binding.etOTP2.text}" +
+                        "${binding.etOTP3.text}${binding.etOTP4.text}"
+                    viewModel.inputOTPSubject.onNext(otp)
+                    return@OnEditorActionListener true
+                }
+
+                return@OnEditorActionListener false
+            })
 
         disposables +=
         Observable.combineLatest(binding.etOTP1.textChanges(),
                                  binding.etOTP2.textChanges(),
                                  binding.etOTP3.textChanges(),
                                  binding.etOTP4.textChanges(),
-            { t1,t2,t3,t4 ->
-                t1.length == 1 && t2.length == 1 && t3.length == 1 && t4.length == 1
+                                 binding.etOTP5.textChanges(),
+                                 binding.etOTP6.textChanges(),
+            { t1,t2,t3,t4,t5,t6 ->
+                t1.length == 1 && t2.length == 1 && t3.length == 1 && t4.length == 1 && t5.length == 1 && t6.length == 1
             })
             .subscribe(binding.btnNext::setEnabled)
 
@@ -94,6 +138,8 @@ class RegistrationOTP2Fragment : Fragment() {
         }
 
         binding.btnNext.setOnClickListener {
+            requireActivity().closeKeyboard3()
+
             val otp:String =
             "${binding.etOTP1.text}${binding.etOTP2.text}" +
             "${binding.etOTP3.text}${binding.etOTP4.text}"

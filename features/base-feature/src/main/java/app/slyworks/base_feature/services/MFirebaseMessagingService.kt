@@ -7,6 +7,8 @@ import app.slyworks.auth_lib.UsersManager
 import app.slyworks.base_feature.ActivityUtils
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.WorkInitializer
+import app.slyworks.base_feature.di.BaseFeatureComponent
+import app.slyworks.base_feature.di.MFirebaseMSComponent
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.models.FBUserDetailsVModel
@@ -16,10 +18,7 @@ import app.slyworks.utils_lib.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -46,28 +45,25 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
     //endregion
 
       init {
-         /*application.appComponent
-             .serviceComponentBuilder()
+         MFirebaseMSComponent.getInitialBuilder()
              .build()
-             .inject(this)*/
+             .inject(this)
       }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
         GlobalScope.launch(Dispatchers.IO) {
-            //TODO:save offline to DB, maybe use WorkManager
             preferenceManager.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, true)
             preferenceManager.set(KEY_FCM_REGISTRATION, token)
 
-            if(networkRegister.getNetworkStatus()) {
-                if(loginManager.getLoginStatus())
-                   usersManager.sendFCMTokenToServer(token)
-                else
-                    workInitializer.initFCMTokenUploadWork(token)
-            }else
-                /* enqueue task for upload since there is no network connection */
+            if(networkRegister.getNetworkStatus() && loginManager.getLoginStatus())
+                usersManager.sendFCMTokenToServer(token)
+            else
+                 /*enqueue task for upload since there is no network connection or user is not logged in */
                 workInitializer.initFCMTokenUploadWork(token)
+
+            cancel()
         }
     }
 
@@ -155,9 +151,8 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
        }
     }
 
-    private fun getMessageType(remoteMessage:RemoteMessage):String{
-        return remoteMessage.data.get("type")!!
-    }
+    private fun getMessageType(remoteMessage:RemoteMessage):String =
+      remoteMessage.data.get("type")!!
 
     override fun onDeletedMessages() {
         super.onDeletedMessages()

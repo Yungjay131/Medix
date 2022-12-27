@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider
 import app.slyworks.base_feature.BaseDialogFragment
 import app.slyworks.base_feature.BuildConfig
 import app.slyworks.base_feature.R
+import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 import app.slyworks.utils_lib.utils.showToast
@@ -72,12 +73,10 @@ class ChangePhotoDialog(): BaseDialogFragment() {
             override fun onActivityResult(result: ActivityResult) {
                 when(result.resultCode) {
                     Activity.RESULT_OK -> {
-                        o.onNext(result.data?.data)
-                        o.onComplete()
+                        o.onNextAndComplete(result.data?.data!!)
                         //AppController.notifyObservers(EVENT_SELECT_PROFILE_IMAGE, selectedImageUri)
                     }
                     else -> {
-                        o.onNext(null)
                         o.onComplete()
                         //AppController.notifyObservers(EVENT_SELECT_PROFILE_IMAGE, null)
                     }

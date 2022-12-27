@@ -1,8 +1,10 @@
 package app.slyworks.auth_lib.di
 
+import app.slyworks.auth_lib.MAuthStateListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import app.slyworks.auth_lib.RegistrationManager
+import app.slyworks.auth_lib.VerificationHelper
 import app.slyworks.crypto_lib.CryptoHelper
 import app.slyworks.crypto_lib.di.CryptoComponent
 import app.slyworks.crypto_lib.di.CryptoModule
@@ -26,14 +28,26 @@ import dagger.Provides
 object AuthActivityScopedModule {
     @Provides
     @AuthLibActivityScope
+    fun provideVerificationHelper(authStateListener: MAuthStateListener,
+                                  fbcComponent: FirebaseCommonsComponent,
+                                  cryptoComponent: CryptoComponent):VerificationHelper =
+        VerificationHelper(authStateListener,
+                           fbcComponent.getFirebaseAuth(),
+                           fbcComponent.getFirebaseUtils(),
+                           cryptoComponent.getCryptoHelper())
+
+    @Provides
+    @AuthLibActivityScope
     fun provideRegistrationManager(fbcComponent: FirebaseCommonsComponent,
                                    utilsComponent: UtilsComponent,
-                                   cComponent:CryptoComponent): RegistrationManager =
+                                   cComponent:CryptoComponent,
+                                   authStateListener: MAuthStateListener): RegistrationManager =
         RegistrationManager(fbcComponent.getFirebaseAuth(),
                             fbcComponent.getFirebaseMessaging(),
                             fbcComponent.getFirebaseUtils(),
                             utilsComponent.getTaskManager(),
-                            cComponent.getCryptoHelper())
+                            cComponent.getCryptoHelper(),
+                            authStateListener)
 
 
 }

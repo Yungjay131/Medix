@@ -11,15 +11,12 @@ import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.models_commons_lib.models.Outcome
 import app.slyworks.utils_lib.PreferenceManager
 import app.slyworks.utils_lib.TimeHelper
-import app.slyworks.utils_lib.utils.onNextAndComplete
-import com.google.firebase.auth.*
-import io.reactivex.rxjava3.core.Observable
+import com.google.firebase.auth.FirebaseAuth
+import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
+import kotlin.jvm.Throws
 
 
-/**
- *Created by Joshua Sylvanus, 12:11 PM, 12/10/2021.
- */
 class LoginManager(
     private val preferenceManager: PreferenceManager,
     private val firebaseAuth:FirebaseAuth,
@@ -27,23 +24,19 @@ class LoginManager(
     private val firebaseUtils: FirebaseUtils,
     private val timeHelper: TimeHelper,
     private val cryptoHelper: CryptoHelper,
-    private val dataManager: DataManager) {
+    private val dataManager: DataManager,
+    private val authStateListener: MAuthStateListener) {
 
     //region Vars
     private var loggedInStatus:Boolean = false
-    private var authStateListener:FirebaseAuth.AuthStateListener
     //endregion
 
     init {
-        authStateListener = FirebaseAuth.AuthStateListener { p0 ->
-            loggedInStatus = p0.currentUser == null
-            preferenceManager.set(KEY_LOGGED_IN_STATUS, loggedInStatus)
-        }
         firebaseAuth.addAuthStateListener(authStateListener)
     }
 
-    fun handleForgotPassword(email: String): Observable<Boolean> {
-        return Observable.create<Boolean> { emitter ->
+    fun handleForgotPassword(email: String): Single<Boolean> {
+        return Single.create<Boolean> { emitter ->
             firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener {
                     val r:Boolean
@@ -56,7 +49,7 @@ class LoginManager(
                         r = false
                     }
 
-                    emitter.onNextAndComplete(r)
+                    emitter.onSuccess(r)
                 }
         }
     }
@@ -70,85 +63,132 @@ class LoginManager(
                 }
     }
 
-    /* TODO: retrieve encryption details from FB first*/
-    fun loginUser(email:String, password:String):Observable<Outcome> =
-          cryptoHelper.hashAsync(password)
-              .concatMap { signInUser(email, it) }
-              .concatMap {
-                  if(it.isSuccess)
-                      uploadFCMRegistrationToken()
-                  else
-                      Observable.just(it)
-              }
-              .concatMap {
-                  if(it.isSuccess)
-                      retrieveUserDetails()
-                  else
-                      Observable.just(it)
-              }
+    fun loginUser(email:String, password:String): Single<Outcome> {
+        firebaseAuth.signOut()
 
+       return cryptoHelper.initialize()
+            .concatMap {
+                if (it.first)
+                    cryptoHelper.hashAsync(password)
+                else
+                    Single.just(Outcome.FAILURE("retrieving config details failed", it.second as String))
+            }
+            .concatMap {
+                if (it is String)
+                    signInUser(email, it)
+                else
+                    Single.just(it as Outcome)
+            }
+            .concatMap {
+                if (it.isSuccess)
+                    checkVerificationStatus()
+                else
+                    Single.just(it)
+            }
+            .concatMap {
+                return@concatMap when{
+                    it.isSuccess -> uploadFCMRegistrationToken()
+                    it.isFailure -> Single.just(it)
+                    it.isError ->
+                        uploadFCMRegistrationToken()
+                            .concatMap { it2:Outcome ->
+                                /* kind of including the second error(if there is) and the first */
+                               Single.just(Outcome.ERROR(it2.getAdditionalInfo(), it.getAdditionalInfo()))
+                            }
+                    else -> throw IllegalArgumentException("don't know the Outcome type")
+                }
+            }
+            .concatMap {
+                return@concatMap when{
+                    it.isSuccess -> retrieveUserDetails()
+                    it.isFailure -> Single.just(it)
+                    it.isError ->
+                        uploadFCMRegistrationToken()
+                            .concatMap { it2:Outcome ->
+                                /* kind of including the second error and the first */
+                                Single.just(Outcome.ERROR(it2.getAdditionalInfo(), it.getAdditionalInfo()))
+                            }
+                    else -> throw IllegalArgumentException("don't know the Outcome type")
+                }
+            }
+    }
 
-    private fun signInUser(email:String, password: String):Observable<Outcome> =
-        Observable.create { emitter ->
+    private fun checkVerificationStatus():Single<Outcome> =
+       Single.create { emitter ->
+           firebaseUtils.getUserVerificationStatusRef(firebaseAuth.currentUser!!.uid)
+               .get()
+               .addOnCompleteListener {
+                   if(!it.isSuccessful){
+                       emitter.onSuccess(Outcome.FAILURE("sign in failed", it.exception?.message))
+                   }else{
+                       var isVerified: Boolean = false
+                       if (it.result?.exists() == true)
+                           isVerified = it.result!!.getValue(Boolean::class.java)!!
+
+                       if (isVerified || firebaseAuth.currentUser!!.isEmailVerified) {
+                           preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
+                           emitter.onSuccess(Outcome.SUCCESS("user is verified"))
+                       }else{
+                           preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
+                           /* using Outcome.ERROR as special case */
+                           emitter.onSuccess(Outcome.ERROR("please verify your account before you can login", "please verify your account before you can login"))
+                       }
+                   }
+               }
+       }
+
+    private fun signInUser(email:String, password: String):Single<Outcome> =
+        Single.create { emitter ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    val r:Outcome
-                    if (it.isSuccessful) {
-                        if (firebaseAuth.currentUser!!.isEmailVerified) {
-                            preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
-                            r = Outcome.SUCCESS(value = "sign in was successful")
-                        } else
-                            r = Outcome.FAILURE(value = "please verify your email before you can login")
-                    } else
-                        r = Outcome.FAILURE(value = "login attempt was not successful, please try again")
-
-                    emitter.onNextAndComplete(r)
+                    if (it.isSuccessful)
+                        emitter.onSuccess(Outcome.SUCCESS(value = "login attempt successful"))
+                    else
+                        emitter.onSuccess(Outcome.FAILURE(value = "login attempt was not successful, please try again", it.exception?.message))
                 }
         }
 
-    private fun uploadFCMRegistrationToken():Observable<Outcome> =
-        /* upload the FCMRegistration token specific to  this phone, since
+    private fun uploadFCMRegistrationToken():Single<Outcome> =
+        /* upload the FCMRegistration token specific to this phone, since
         * its not based on FirebaseUID, but on device */
-        Observable.create { emitter ->
+        Single.create { emitter ->
            val isThereNewToken = preferenceManager.get(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)!!
            if(!isThereNewToken)
-               emitter.onNextAndComplete(Outcome.SUCCESS(value = "no token to upload"))
+               emitter.onSuccess(Outcome.SUCCESS(value = "no token to upload"))
 
            val fcmToken:String? = preferenceManager.get(KEY_FCM_REGISTRATION)!!
-            /*fcmToken?.equals(null)?.not() ?: let{
-                emitter.onNextAndComplete(Outcome.SUCCESS(value = "no token to upload"))
-            }*/
 
-            firebaseUtils.getUserDataRef(dataManager.getUserDetailsParam<String>("firebaseUID")!!)
+            firebaseUtils.getUserDataRef(firebaseAuth.currentUser!!.uid)
                 .setValue(fcmToken)
                 .addOnCompleteListener {
                     if(it.isSuccessful) {
                         preferenceManager.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)
-                        emitter.onNextAndComplete(Outcome.SUCCESS(value = "token uploaded successfully"))
+                        emitter.onSuccess(Outcome.SUCCESS(value = "token uploaded successfully"))
                     }else
-                        emitter.onNextAndComplete(Outcome.FAILURE(value = "token was not successfully uploaded", reason = it.exception?.message))
+                        emitter.onSuccess(Outcome.FAILURE(value = "token was not successfully uploaded", reason = it.exception?.message))
                 }
         }
 
-    private fun retrieveUserDetails():Observable<Outcome> =
-        Observable.create { emitter ->
+    private fun retrieveUserDetails():Single<Outcome> =
+        Single.create { emitter ->
            firebaseUtils.getUserDataForUIDRef(firebaseAuth.currentUser!!.uid)
                .get()
                .addOnCompleteListener {
                    if(it.isSuccessful){
                        val user = it.result!!.getValue(FBUserDetailsVModel::class.java)
-                           dataManager.saveUserToDataStore(user!!)
-                               .subscribe()
+
+                       dataManager.saveUserToDataStore(user!!).subscribe()
 
                        val r:Outcome = Outcome.SUCCESS(value = "login successful")
-                       emitter.onNextAndComplete(r)
+                       emitter.onSuccess(r)
                    }else{
                        Timber.e("signInUser: user login failed",it.exception )
                        val r:Outcome = Outcome.FAILURE(value = "oops something went wrong on our end, please try again")
-                       emitter.onNextAndComplete(r)
+                       emitter.onSuccess(r)
                    }
                }
          }
+
 
     fun logoutUser(){
             firebaseAuth.signOut()

@@ -2,7 +2,7 @@
 <resources>
     <dimen name="et_corner_radius">0dp</dimen>
     <dimen name="btn_corner_radius">6dp</dimen>
-    <dimen name="layout_size_margin">20dp</dimen>
+    <dimen name="layout_size_margin">8dp</dimen>
     <dimen name="layout_size_margin2">32dp</dimen>
     <dimen name="layout_size_margin5">32dp</dimen>
     <dimen name="layout_size_margin3">32dp</dimen>
@@ -19,5 +19,5 @@
     <dimen name="btn_radius">24dp</dimen>
     <dimen name="button_radius">24dp</dimen>
     <dimen name="et_corner_radius2">4dp</dimen>
-    <dimen name="divider_top_margin">16dp</dimen>
+    <dimen name="divider_top_margin">8dp</dimen>
 </resources>

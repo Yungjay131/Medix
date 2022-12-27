@@ -44,6 +44,7 @@ object AuthFeatureModule{
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(LoginActivityViewModel::class.java)
 
+
     @Provides
     @IntoMap
     @ViewModelKey(RegistrationActivityViewModel::class)

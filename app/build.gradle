@@ -19,9 +19,6 @@ android {
         versionName sdk_details.versionName
 
         testInstrumentationRunner appTestRunners.default
-
-        //for MeowBottomFragment
-        //vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -111,10 +108,7 @@ dependencies {
     testImplementation test_depends.android_junit
     testImplementation test_depends.espresso
     testImplementation impl_depends.core_ktx
-
-    debugImplementation debug_impl_depends.leakcanary
 }
-
 
 /*task runOutcomeUnitTests(){
     doLast{

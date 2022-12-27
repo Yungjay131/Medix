@@ -17,6 +17,7 @@ import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.EXTRA_IS_ACTIVITY_RECREATED
 import app.slyworks.constants_lib.GENERAL
 import app.slyworks.base_feature.custom_views.NetworkStatusView
+import app.slyworks.base_feature.custom_views.setStatus
 import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.REGISTRATION_ACTIVITY_INTENT_FILTER
 import app.slyworks.navigation_feature.Navigator
@@ -45,23 +46,6 @@ class OnBoardingActivity : BaseActivity() {
 
     override fun isValid(): Boolean = false
 
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.subscribeToNetwork().observe(this) {
-            if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView, GENERAL)
-
-            networkStatusView!!.setVisibilityStatus(it)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        viewModel.unsubscribeToNetwork()
-    }
-
     /*TODO:use to determine when to do animations*/
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -69,6 +53,8 @@ class OnBoardingActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(app.slyworks.base_feature.R.style.AppTheme_splash3)
+
         initDI()
 
         super.onCreate(savedInstanceState)
@@ -99,6 +85,13 @@ class OnBoardingActivity : BaseActivity() {
     private fun initData() {
         this.onBackPressedDispatcher
             .addCallback(this, MOnBackPressedCallback(this))
+
+        viewModel.subscribeToNetwork().observe(this) {
+            if(networkStatusView == null)
+                networkStatusView = NetworkStatusView.from(rootView, GENERAL)
+
+            networkStatusView!!.setStatus(it)
+        }
     }
 
     private fun initViews_landscape() {
@@ -108,6 +101,7 @@ class OnBoardingActivity : BaseActivity() {
         nestedLayout = findViewById(R.id.layout_btns_onboarding)
 
         btnGetStarted.setOnClickListener {
+            //startActivity(Intent(this, RegistrationActivity::class.java))
             Navigator.intentFor(this, REGISTRATION_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
@@ -153,15 +147,6 @@ class OnBoardingActivity : BaseActivity() {
         val animImage4 = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_image_4_anim)
         val animImage5 = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_image_5_anim)
         val animLayout = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_layout_anim)
-
-/*
-        animImage5.setAnimationListener(object: Animation.AnimationListener{
-            override fun onAnimationStart(p0: Animation?) {}
-            override fun onAnimationRepeat(p0: Animation?) {}
-            override fun onAnimationEnd(p0: Animation?) {
-                nestedLayout.startAnimation(animLayout)
-            }
-        })*/
 
         materialCV1.startAnimation(animImage1)
         materialCV2.startAnimation(animImage2)

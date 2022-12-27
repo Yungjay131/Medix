@@ -64,6 +64,7 @@ dependencies {
     api impl_depends.core_ktx
     api impl_depends.appcompat
     api impl_depends.material
+    implementation impl_depends.spinkit
     api impl_depends.coroutines_android
     implementation impl_depends.coroutines_play_services
     api impl_depends.lifecycle_viewmodel
@@ -71,7 +72,7 @@ dependencies {
     api impl_depends.lifecycle_livedata
     implementation impl_depends.work_runtime
     implementation impl_depends.cardview
-    implementation impl_depends.constraint_layout
+    api impl_depends.constraint_layout
     implementation impl_depends.recyclerview
     implementation impl_depends.glide
     implementation impl_depends.circle_imageview

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.slyworks.auth_feature.login.LoginActivity
 import app.slyworks.auth_feature.onboarding.OnBoardingActivity
 import app.slyworks.auth_feature.registration.RegistrationActivity
+import app.slyworks.auth_feature.verification.VerificationActivity
 import app.slyworks.auth_lib.di.AuthActivityScopedComponent
 import app.slyworks.auth_lib.di.AuthApplicationScopedComponent
 import app.slyworks.base_feature.di.BaseFeatureComponent
@@ -50,5 +51,6 @@ interface AuthFeatureComponent {
 
     fun inject(activity:OnBoardingActivity)
     fun inject(activity:LoginActivity)
+    fun inject(activity:VerificationActivity)
     fun inject(activity:RegistrationActivity)
 }

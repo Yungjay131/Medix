@@ -7,11 +7,13 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
@@ -25,7 +27,9 @@ import app.slyworks.navigation_feature.Navigator.Companion.getParcelable
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.video_call_feature.databinding.ActivityVideoCallBinding
-import com.google.common.util.concurrent.ListenableFuture
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+//import com.google.common.util.concurrent.ListenableFuture
+import de.hdodenhof.circleimageview.CircleImageView
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
@@ -35,17 +39,17 @@ import javax.inject.Inject
 
 class VideoCallActivity : BaseActivity() {
     //region Vars
-    /*private lateinit var rootView:ConstraintLayout
+    private lateinit var rootView: ConstraintLayout
     private lateinit var flMainVideoContainer:FrameLayout
     private lateinit var flSmallVideoContainer:FrameLayout
-    private lateinit var fabAcceptCall:FloatingActionButton
+    private lateinit var fabAcceptCall: FloatingActionButton
     private lateinit var fabDeclineCall:FloatingActionButton
     private lateinit var fabToggleMute:FloatingActionButton
     private lateinit var fabSwitchVideo:FloatingActionButton
     private lateinit var fabEndCall:FloatingActionButton
-    private lateinit var ivProfile:CircleImageView
-    private lateinit var tvProfileName:TextView
-    private lateinit var pvMain:PreviewView*/
+    private lateinit var ivProfile: CircleImageView
+    private lateinit var tvProfileName: TextView
+    private lateinit var pvMain:PreviewView
     private lateinit var binding:ActivityVideoCallBinding
 
     private var isMuted:Boolean = false
@@ -57,7 +61,7 @@ class VideoCallActivity : BaseActivity() {
 
     private lateinit var rtcEngine: RtcEngine
     
-    private lateinit var cameraProviderFuture:ListenableFuture<ProcessCameraProvider>
+    //private lateinit var cameraProviderFuture:ListenableFuture<ProcessCameraProvider>
 
     @Inject
     lateinit var viewModel: VideoCallViewModel
@@ -114,13 +118,13 @@ class VideoCallActivity : BaseActivity() {
     }
 
     private fun initCameraPreview(){
-       cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+      /* cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
-        /*verifying that the initialization succeeded*/
+        *//*verifying that the initialization succeeded*//*
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider:ProcessCameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider)
-        }, ContextCompat.getMainExecutor(this))
+        }, ContextCompat.getMainExecutor(this))*/
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider){

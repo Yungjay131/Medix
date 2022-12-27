@@ -117,7 +117,7 @@ class MessageActivity : BaseActivity() {
         }
 
         viewModel.observeMessagesForUID(userProfile.firebaseUID).observe(this) {
-                      adapter.submitList(it)
+            adapter.submitList(it)
         }
 
         viewModel.progressLiveData.observe(this){

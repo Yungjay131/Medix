@@ -21,19 +21,19 @@ private constructor(private val value:Any? = null) {
 
     fun <T> getTypedValue():T{
         when{
-            //noinspection UNCHECKED_CAST
             isSuccess -> return (value as Success<T>).value as T
             isFailure -> return (value as Failure<T>).value as T
             isError -> return(value as Error<T>).value as T
             else -> throw UnsupportedOperationException("how far my guy?, what the f*ck are you doing?")
         }
     }
+
     fun getValue():Any?{
         when {
             isSuccess -> return (value as Success<*>).value
             isFailure -> return (value as Failure<*>).value
             isError -> return (value as Error<*>).value
-            else -> return null
+            else -> throw UnsupportedOperationException("how far my guy?, what the f*ck are you doing?")
         }
     }
 
@@ -47,31 +47,17 @@ private constructor(private val value:Any? = null) {
 
     companion object{
         fun <T> SUCCESS(value: T? = null, additionalInfo:String? = null): Outcome {
-            return Outcome(createSuccessClass(value, additionalInfo))
+            return Outcome(Success(value, additionalInfo))
         }
         fun <T> FAILURE(value: T? = null, reason:String? = null): Outcome {
-            return Outcome(createFailureClass(value, reason))
+            return Outcome(Failure(value, reason))
         }
         fun <T> ERROR(value: T? = null, additionalInfo: String? = null) : Outcome {
-            return Outcome(createErrorClass(value, additionalInfo))
-        }
-
-        private fun <T> createSuccessClass(value:T, additionalInfo: String?):Any{
-            return Success(value, additionalInfo)
-        }
-
-        private fun <T> createFailureClass(value:T, additionalInfo: String?):Any{
-            return Failure(value,additionalInfo)
-        }
-
-        private fun <T>createErrorClass(value:T, additionalInfo:String?):Any{
-            return Error(value, additionalInfo)
+            return Outcome(Error(value, additionalInfo))
         }
     }
 
     private data class Success<T>(val value:T?, val additionalInfo:String?)
     private data class Failure<T>(val value:T?, val additionalInfo:String?)
-   /* @JvmInline
-    private value class Failure(val value:String?)*/
     private data class Error<T>(val value:T?, val additionalInfo:String?)
 }

@@ -50,6 +50,9 @@ android {
 dependencies {
     implementation project(path: ':libraries:di-base-lib')
 
+    implementation platform(impl_depends.firebase_bom)
+    implementation impl_depends.firebase_firestore
+
     implementation impl_depends.rxjava
 
     implementation impl_depends.dagger

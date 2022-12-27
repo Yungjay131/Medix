@@ -5,6 +5,7 @@ import app.slyworks.di_base_lib.FirebaseCommonsLibScope
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Component
@@ -33,5 +34,6 @@ interface FirebaseCommonsComponent {
     fun getFirebaseStorage():FirebaseStorage
     fun getFirebaseDatabase():FirebaseDatabase
     fun getFirebaseMessaging():FirebaseMessaging
+    fun getFirebaseFirestore(): FirebaseFirestore
     fun getFirebaseUtils(): FirebaseUtils
 }

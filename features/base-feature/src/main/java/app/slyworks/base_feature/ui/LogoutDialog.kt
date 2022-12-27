@@ -24,8 +24,7 @@ class LogoutDialog: BaseDialogFragment() {
     private lateinit var tvCancel: TextView
     private lateinit var tvLogout: TextView
 
-    @Inject
-    lateinit var loginManager: LoginManager
+    private lateinit var loginManager: LoginManager
     //endregion
 
     companion object{

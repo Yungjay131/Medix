@@ -189,10 +189,7 @@ class PermissionManager {
                     PermissionsRationaleDialog(permissionsLauncher, it, internalSubject)
                         .show(fragmentManager, "")
                 }else {
-                    /*if(isPermissionGranted(it))
-                        internalSubject.onNext(constructPermissionStatus(CurrentStatus.PERMANENTLY_DECLINED))
-                    else*/
-                        permissionsLauncher.launch(it)
+                    permissionsLauncher.launch(it)
                 }
             }
         }
@@ -226,83 +223,6 @@ class PermissionManager {
         processPermission(permissions[++currentPermissionIndex])
     }
 
-    /*fun requestPermissions2(): Observable<Outcome>{
-     val subscriptions:CompositeDisposable = CompositeDisposable()
-
-     return Observable.fromIterable(permissions)
-              .concatMap {
-                Observable.create<Outcome> { emitter ->
-                    when{
-                        isPermissionGranted(it) ->{
-                            emitter.onNext(Outcome.SUCCESS(true))
-                            emitter.onComplete()
-                        }
-                        else ->{
-                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                                if (activity!!.shouldShowRequestPermissionRationale(it)) {
-                                    val dialog = PermissionsRationaleDialog(mPermissionsLauncher, it)
-
-                                    subscriptions +=
-                                        Observable.merge(
-                                            *//*in case the dialog is cancelled and mO didn't get a value to emit*//*
-                                            dialog.getObservable(),
-                                            mO)
-                                            .subscribe { it2:Boolean ->
-                                            val o = if(it2) Outcome.SUCCESS(it) else Outcome.FAILURE(false, it)
-                                            emitter.onNext(o)
-                                            emitter.onComplete()
-                                        }
-
-                                    dialog.show((activity as AppCompatActivity).supportFragmentManager, "")
-                                }else {
-                                    if(isPermissionDenied(it)){
-                                        *//* means the permission was requested and denied *//*
-                                        emitter.onNext(Outcome.FAILURE(false, it))
-                                        emitter.onComplete()
-                                    }else{
-                                        mPermissionsLauncher.launch(it)
-                                        subscriptions +=
-                                            mO.subscribe { it3:Boolean ->
-                                                val o = if(it3) Outcome.SUCCESS(it3) else Outcome.FAILURE(false, it)
-                                                emitter.onNext(o)
-                                                emitter.onComplete()
-                                            }
-                                    }
-                                }
-                            }else{
-                                mPermissionsLauncher.launch(it)
-                                subscriptions +=
-                                mO.subscribe { it4:Boolean ->
-                                    val o = if(it4) Outcome.SUCCESS(it4) else Outcome.FAILURE(false, it)
-                                    emitter.onNext(o)
-                                    emitter.onComplete()
-                                }
-                            }
-                        }
-                    }
-                }
-                .doOnComplete {
-                    subscriptions.clear()
-                }
-            }
-            .toList()
-            .toObservable()
-            .map {
-                val l:MutableList<Outcome> = mutableListOf()
-                it.forEach { it5:Outcome ->
-                    if(it5.isFailure)
-                      l.add(it5)
-                }
-
-                if(l.isNotEmpty())
-                    return@map Outcome.FAILURE(value = l)
-
-                return@map Outcome.SUCCESS(true)
-            }
-            .doOnDispose {
-                activity = null
-            }
-     }*/
 }
 
 

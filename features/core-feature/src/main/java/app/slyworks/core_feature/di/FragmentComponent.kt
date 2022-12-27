@@ -1,6 +1,7 @@
 package app.slyworks.core_feature.di
 
 import androidx.fragment.app.Fragment
+import app.slyworks.core_feature.ProfileHostFragment
 import app.slyworks.core_feature.calls_history.CallsHistoryFragment
 import app.slyworks.core_feature.chat.ChatFragment
 import app.slyworks.core_feature.chat.ChatHostFragment
@@ -19,12 +20,10 @@ import dagger.Subcomponent
 @FragmentScope
 @Subcomponent(modules = [FragmentViewModelModule::class])
 interface FragmentComponent {
-   fun inject(fragment:CallsHistoryFragment)
-   fun inject(fragment:ChatFragment)
    fun inject(fragment:ChatHostFragment)
    fun inject(fragment:DoctorHomeFragment)
    fun inject(fragment:PatientHomeFragment)
-   fun inject(fragment:ViewProfileFragment)
+   fun inject(fragment:ProfileHostFragment)
 
    @Subcomponent.Builder
    interface Builder{

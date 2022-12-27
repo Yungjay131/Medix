@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 9:21 AM, 27/06/2022.
+ * Created by Joshua Sylvanus, 9:21 AM, 27/06/2022.
  */
 class ViewProfileFragmentViewModel
     @Inject

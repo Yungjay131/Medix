@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.base_feature.custom_views.CustomDividerDecorator
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RVCallsHistoryAdapter
+import app.slyworks.core_feature.chat.ChatHostFragment
+import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import javax.inject.Inject
 
 class CallsHistoryFragment : Fragment() {
     //region Vars
@@ -30,9 +31,7 @@ class CallsHistoryFragment : Fragment() {
     private lateinit var fabStartCalls:FloatingActionButton
 
     private lateinit var adapter: RVCallsHistoryAdapter
-
-    @Inject
-    lateinit var viewModel: CallsHistoryViewModel
+    private lateinit var viewModel: ChatHostFragmentViewModel
     //endregion
 
     companion object {
@@ -43,18 +42,19 @@ class CallsHistoryFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        /*context.activityComponent
-            .fragmentComponentBuilder()
-            .setFragment(this)
-            .build()
-            .inject(this)*/
+        viewModel = (parentFragment as ChatHostFragment).viewModel
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calls_history, container, false)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initViews(view)
         initData()
-        return view
     }
 
     private fun initViews(view:View){

@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.auth_lib.LoginManager
+import app.slyworks.auth_lib.RegistrationManager
+import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.VibrationManager
+import app.slyworks.models_commons_lib.models.Outcome
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -18,38 +22,42 @@ import javax.inject.Inject
  */
 class LoginActivityViewModel
     @Inject
-    constructor(private var networkRegister: NetworkRegister,
-                private var loginManager: LoginManager,
-                private var vibrationManager: VibrationManager)
+    constructor(private val networkRegister: NetworkRegister,
+                private val loginManager: LoginManager,
+                private val vibrationManager: VibrationManager)
     : ViewModel(){
     //region Vars
-    private var _passwordResetStatus:MutableLiveData<Boolean> = MutableLiveData()
+    private val _passwordResetStatus:MutableLiveData<Boolean> = MutableLiveData()
     val passwordResetLiveData:LiveData<Boolean>
     get() = _passwordResetStatus as LiveData<Boolean>
 
-    private var _progressStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    private val _progressStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val progressStateLiveData:LiveData<Boolean>
     get() = _progressStateLiveData
 
-    private var _loginSuccessLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    private val _loginSuccessLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val loginSuccessLiveData:LiveData<Boolean>
     get() = _loginSuccessLiveData as LiveData<Boolean>
 
-    private var _loginFailureDataLiveData:MutableLiveData<String> = MutableLiveData()
-    val loginFailureDataLiveData:LiveData<String>
-    get() = _loginFailureDataLiveData as LiveData<String>
-
-    private var _loginFailureLiveData:MutableLiveData<Boolean> = MutableLiveData()
-    val loginFailureLiveData:LiveData<Boolean>
-    get() = _loginFailureLiveData as LiveData<Boolean>
-
-    private var _resetPasswordFailureDataLiveData:MutableLiveData<String> = MutableLiveData()
+    private val _resetPasswordFailureDataLiveData:MutableLiveData<String> = MutableLiveData()
     val resetPasswordFailureDataLiveData:LiveData<String>
         get() = _resetPasswordFailureDataLiveData as LiveData<String>
 
-     private var _resetPasswordFailedLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    private val _resetPasswordFailedLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val resetPasswordFailedLiveData:LiveData<Boolean>
     get() = _resetPasswordFailedLiveData as LiveData<Boolean>
+
+    private val _messageLiveData:MutableLiveData<String> = MutableLiveData()
+    val messageLiveData:LiveData<String>
+    get() = _messageLiveData
+
+    private val _accountNotVerifiedLD:MutableLiveData<Boolean> = MutableLiveData()
+    val accountNotVerifiedLD:LiveData<Boolean>
+    get() = _accountNotVerifiedLD
+
+    private val _forgotPasswordLoadingLD:MutableLiveData<Boolean> = MutableLiveData()
+    val forgotPasswordLoadingLD:LiveData<Boolean>
+    get() = _forgotPasswordLoadingLD
 
     var emailVal:String = ""
     var passwordVal:String = ""
@@ -83,51 +91,44 @@ class LoginActivityViewModel
 
     fun login(email:String, password:String){
         if(!networkRegister.getNetworkStatus()){
-            _loginFailureDataLiveData.postValue("Please check your connection and try again")
-            _loginFailureLiveData.postValue(true)
+            _messageLiveData.postValue("Please check your connection and try again")
             return
         }
 
-        val d = loginManager
+        disposables +=
+        loginManager
             .loginUser(email, password)
+            .doOnSubscribe { _progressStateLiveData.postValue(true)  }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe {
+            .subscribe { it: Outcome ->
                 _progressStateLiveData.postValue(false)
 
                 when{
-                    it.isSuccess ->{
-                        _loginFailureLiveData.postValue(false)
-                        _loginSuccessLiveData.postValue(true)
-                    }it.isFailure || it.isError ->{
-                        _loginFailureDataLiveData.postValue(it.getTypedValue<String>())
-                        _loginFailureLiveData.postValue(true)
-                    }
+                    it.isSuccess -> _loginSuccessLiveData.postValue(true)
+                    it.isFailure -> _messageLiveData.postValue(it.getAdditionalInfo())
+                    it.isError -> _accountNotVerifiedLD.postValue(true)
                 }
             }
-        disposables.add(d)
     }
 
     fun handleForgotPassword(email: String){
         if(!networkRegister.getNetworkStatus()){
-            _resetPasswordFailureDataLiveData.postValue("Please check your connection and try again")
-            _resetPasswordFailedLiveData.postValue(true)
+            _messageLiveData.postValue("Please check your connection and try again")
             return
         }
-
-        _progressStateLiveData.postValue(true)
 
         disposables +=
         loginManager
             .handleForgotPassword(email)
+            .doOnSubscribe { _forgotPasswordLoadingLD.postValue(true) }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe {
+            .subscribe { it:Boolean ->
                 _progressStateLiveData.postValue(false)
                 _passwordResetStatus.postValue(it)
             }
     }
-
 
     override fun onCleared() {
         disposables.clear()

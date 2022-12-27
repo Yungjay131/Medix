@@ -1,5 +1,6 @@
 package app.slyworks.core_feature
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -40,15 +41,19 @@ class FindDoctorsFragment : Fragment(), app.slyworks.controller_lib.Observer {
 
     private lateinit var adapter: RVFindDoctorsAdapter
 
-    @Inject
-    lateinit var viewModel: FindDoctorsFragmentViewModel
-
+    private lateinit var viewModel: ProfileHostFragmentViewModel
     //endregion
 
    companion object {
        @JvmStatic
        fun getInstance(): FindDoctorsFragment = FindDoctorsFragment()
    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        viewModel = (parentFragment as ProfileHostFragment).viewModel
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_find_doctors, container, false)

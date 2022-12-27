@@ -7,6 +7,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 
@@ -39,7 +40,13 @@ object FirebaseCommonsModule {
 
     @Provides
     @FirebaseCommonsLibScope
+    fun provideFirebaseFirestore():FirebaseFirestore =
+        FirebaseFirestore.getInstance()
+
+    @Provides
+    @FirebaseCommonsLibScope
     fun provideFirebaseUtils(firebaseDatabase:FirebaseDatabase,
-                             firebaseStorage:FirebaseStorage): FirebaseUtils =
-        FirebaseUtils(firebaseDatabase, firebaseStorage)
+                             firebaseStorage:FirebaseStorage,
+                             firebaseFirestore:FirebaseFirestore): FirebaseUtils =
+        FirebaseUtils(firebaseDatabase, firebaseStorage, firebaseFirestore)
 }

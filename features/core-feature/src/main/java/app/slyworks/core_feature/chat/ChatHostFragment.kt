@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.VPAdapter
+import app.slyworks.core_feature.main.activityComponent
 import app.slyworks.utils_lib.utils.displayImage
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -31,13 +32,12 @@ class ChatHostFragment : Fragment() {
 
     private lateinit var vpAdapter: VPAdapter
 
-    @Inject
     lateinit var viewModel: ChatHostFragmentViewModel
     //endregion
 
     companion object {
-        //region Vars
-        val mTabTitles:MutableList<String> = mutableListOf("Chats", "Call History")
+        val tabTitles:MutableList<String> = mutableListOf("Chats", "Call History")
+
         @JvmStatic
         fun getInstance(): ChatHostFragment = ChatHostFragment()
     }
@@ -45,11 +45,11 @@ class ChatHostFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        /*context.activityComponent
+        context.activityComponent
             .fragmentComponentBuilder()
             .setFragment(this)
             .build()
-            .inject(this)*/
+            .inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -76,7 +76,7 @@ class ChatHostFragment : Fragment() {
         TabLayoutMediator(tabLayoutChatHostFragment, vpChatHostFragment,
             object: TabLayoutMediator.TabConfigurationStrategy {
                 override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    tab.setText(mTabTitles[position])
+                    tab.setText(tabTitles[position])
                 }
             }).attach()
 

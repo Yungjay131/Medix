@@ -75,7 +75,7 @@ data class ActivityContinuationImpl(@PublishedApi
 
     override fun navigate(){
         var options:ActivityOptionsCompat? = null
-        if(!transitionPairs.isEmpty())
+        if(transitionPairs.isNotEmpty())
            options = ActivityOptionsCompat.makeSceneTransitionAnimation(this.activity!!, *transitionPairs.toTypedArray())
 
         activity!!.startActivity(this.intent, options?.toBundle())

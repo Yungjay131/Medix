@@ -138,5 +138,10 @@
         <item name="cornerSizeBottomRight">4%</item>
     </style>
 
+    <style name="TextInputLayout" parent="Base.Widget.MaterialComponents.TextInputLayout">
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="boxBackgroundMode">none</item>
+    </style>
+
 
 </resources>

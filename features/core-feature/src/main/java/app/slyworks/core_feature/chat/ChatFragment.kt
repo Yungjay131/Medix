@@ -46,8 +46,7 @@ class ChatFragment : Fragment(), Observer {
     private lateinit var personToMessagesMap:Map<PersonVModel, MutableList<MessageVModel>>
     private lateinit var adapter2: RVChatAdapter2
 
-    @Inject
-    lateinit var viewModel: ChatFragmentViewModel
+    private lateinit var viewModel: ChatHostFragmentViewModel
 
     private var subscriptionsList:MutableList<Subscription> = mutableListOf()
 
@@ -62,11 +61,7 @@ class ChatFragment : Fragment(), Observer {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        /*context.activityComponent
-            .fragmentComponentBuilder()
-            .setFragment(this)
-            .build()
-            .inject(this)*/
+        viewModel = (parentFragment as ChatHostFragment).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

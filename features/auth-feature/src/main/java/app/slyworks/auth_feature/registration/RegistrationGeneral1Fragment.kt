@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral1Binding
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.closeKeyboard3
@@ -16,6 +18,7 @@ import app.slyworks.utils_lib.utils.displayMessage
 import com.jakewharton.rxbinding4.widget.textChanges
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import java.lang.reflect.Modifier
 
 class RegistrationGeneral1Fragment : Fragment() {
     //region Vars
@@ -49,7 +52,14 @@ class RegistrationGeneral1Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initData()
         initViews()
+    }
+
+    private fun initData(){
+       viewModel.progressLiveData.observe(viewLifecycleOwner){
+           (requireActivity() as IRegViewModel).toggleProgressView(it)
+       }
     }
 
     private fun initViews(){
@@ -80,7 +90,8 @@ class RegistrationGeneral1Fragment : Fragment() {
         }
     }
 
-    private fun check(email:String, password:String, confirmPassword:String):Boolean{
+    @VisibleForTesting(otherwise = Modifier.PRIVATE)
+    internal fun check(email:String, password:String, confirmPassword:String):Boolean{
         var result = true
 
         if(TextUtils.isEmpty(email)){
@@ -104,7 +115,7 @@ class RegistrationGeneral1Fragment : Fragment() {
         }else if(!password.contains("[0-9]".toRegex())){
             displayMessage("Password should contain at least 1 number", binding.root)
             result = false
-        }else if(!password.contains("[@#\$%^&+=]".toRegex())){
+        }else if(!password.contains("[@#\$%^&+=.]".toRegex())){
             displayMessage("Password should contain at least 1 special character(&,%,#,@,$, e.t.c)", binding.root)
             result = false
         }else if(!TextUtils.equals(password, confirmPassword)){

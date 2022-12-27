@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral0Binding
 import app.slyworks.constants_lib.ACCOUNT_TYPE_NOT_SET
 import app.slyworks.constants_lib.DOCTOR
@@ -34,7 +35,7 @@ class RegistrationGeneral0Fragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = (context as RegistrationActivity).viewModel
+        viewModel = (context as IRegViewModel).viewModel
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
        binding = FragmentRegistrationGeneral0Binding.inflate(layoutInflater, container, false)
@@ -50,7 +51,7 @@ class RegistrationGeneral0Fragment : Fragment() {
     private fun initViews(){
         // val animationLogo = AnimationUtils.loadAnimation(this, R.anim.registration_logo_anim)
 
-        binding.ivLogo.alpha = 0F
+      /*  binding.ivLogo.alpha = 0F
         val logoAnimator: ValueAnimator = ValueAnimator.ofFloat(0f,1f)
         logoAnimator.duration = 1_500
         logoAnimator.interpolator = LinearInterpolator()
@@ -66,7 +67,7 @@ class RegistrationGeneral0Fragment : Fragment() {
         val animationText = AnimationUtils.loadAnimation(requireContext(), app.slyworks.base_feature.R.anim.regisrtration_text_anim)
         animationText.startOffset = 500
 
-        binding.tvText.startAnimation(animationText)
+        binding.tvText.startAnimation(animationText)*/
 
         disposables +=
         binding.sivPatient.observeChanges()

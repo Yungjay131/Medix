@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "163035604631-sva25h6oealsmutb7og4m8vpinf8ss12.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.slyworks.medix",
+            "certificate_hash": "f108695ec25fc79fcb9a35c25d878318fd35832b"
+          }
+        },
+        {
           "client_id": "163035604631-j4hdhtiqtgklf4sklovabili72dlkeih.apps.googleusercontent.com",
           "client_type": 3
         }

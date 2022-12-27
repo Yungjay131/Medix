@@ -35,6 +35,7 @@
     <string name="user_uid">" "</string>
     <string name="consultation_doctor">Dr. %1$s</string>
     <string name="register_here"><u>register here</u></string>
+    <string name="verify_text"><u>verify your account</u></string>
 
     <string name="appservice_description_text">This is a Service important for the proper functioning of the GADS_2021 app</string>
 
@@ -47,5 +48,8 @@
     <string name="li_calls_history">%1$s, %2$s</string>
     <string name="reg_patient_intro">We aim to provide the best virtual medical consultation possible, providing us with information about your medical history would help in speeding up the consultation process. Your information is private and is only shared with doctors when you allow it.</string>
     <string name="reg_header">Please check any of the boxes that apply to you, or add a different health condition by clicking the \"add\" button.</string>
+    <string name="reg_header_doctor">Please enter your area(s) of specialization by clicking the \"add\" button.</string>
     <string name="resend_otp_text"><u>Resend OTP</u></string>
+
+    <string name="continue_text"><u>continue</u></string>
 </resources>

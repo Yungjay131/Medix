@@ -2,32 +2,93 @@ package app.slyworks.base_feature.custom_views
 
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.*
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import app.slyworks.base_feature.R
 import app.slyworks.constants_lib.COORDINATOR
 import app.slyworks.constants_lib.GENERAL
 import app.slyworks.constants_lib.MAIN
+import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.px
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 /**
  *Created by Joshua Sylvanus, 8:38 AM, 26/04/2022.
  */
+
+fun animateIn(view:View){
+    with(ObjectAnimator.ofFloat(view, "translationY", -0.25f, 1f)){
+        duration = 1_000
+        start()
+        addListener(onEnd = {} )
+    }
+}
+
+fun animateOut(view:View){
+    with(ObjectAnimator.ofFloat(view, "translationY", 1f, -0.25f)){
+        duration = 1_000
+        start()
+    }
+}
+
+fun NetworkStatusView.setStatus(status:Boolean){
+    if(!status){
+        this@setStatus.findViewById<CircleImageView>(R.id.ivNetworkNotifier)
+            .setImageResource(R.color.appRed)
+        this@setStatus.findViewById<TextView>(R.id.tvStatus_network_status)
+            .setText("offline")
+
+        val anim = AnimationUtils.loadAnimation(this@setStatus.context, R.anim.network_notifier_offline)
+        anim.setAnimationListener(object : Animation.AnimationListener{
+            override fun onAnimationStart(p0: Animation?) {}
+            override fun onAnimationRepeat(p0: Animation?) {}
+            override fun onAnimationEnd(p0: Animation?) {
+                isVisible = true
+            }
+        })
+        startAnimation(anim)
+    }else{
+        if(visibility != View.VISIBLE)
+            return
+
+        CoroutineScope(Dispatchers.Main).launch {
+             this@setStatus.findViewById<CircleImageView>(R.id.ivNetworkNotifier)
+                 .setImageResource(R.color.appGreen)
+             this@setStatus.findViewById<TextView>(R.id.tvStatus_network_status)
+                 .setText("online")
+
+            delay(1_000)
+
+            val anim = AnimationUtils.loadAnimation(this@setStatus.context, R.anim.network_notifier_online)
+            anim.setAnimationListener(object : Animation.AnimationListener{
+                override fun onAnimationStart(p0: Animation?) {}
+                override fun onAnimationRepeat(p0: Animation?) {}
+                override fun onAnimationEnd(p0: Animation?) {
+                    isVisible = false
+                }
+            })
+            startAnimation(anim)
+        }
+
+    }
+}
 
 @IntDef(GENERAL, COORDINATOR, MAIN)
 @Retention(AnnotationRetention.SOURCE)
@@ -195,6 +256,7 @@ constructor(
               }
           }
 
+          view.isVisible = false
           return view
         }
     }
@@ -236,7 +298,7 @@ constructor(
 
             delay(2000)
 
-            val anim = AnimationUtils.loadAnimation(context,R.anim.network_notifier_online)
+            val anim = AnimationUtils.loadAnimation(context,R.anim.network_notifier_offline)
             this@NetworkStatusView.startAnimation(anim)
             this@NetworkStatusView.visibility = View.GONE
         }

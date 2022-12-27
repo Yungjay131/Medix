@@ -2,6 +2,7 @@ package app.slyworks.auth_lib.di
 
 import com.google.firebase.auth.FirebaseAuth
 import app.slyworks.auth_lib.LoginManager
+import app.slyworks.auth_lib.MAuthStateListener
 import app.slyworks.auth_lib.PersonsManager
 import app.slyworks.auth_lib.UsersManager
 import app.slyworks.crypto_lib.CryptoHelper
@@ -47,7 +48,8 @@ object AuthApplicationScopedModule {
                             fbcComponent: FirebaseCommonsComponent,
                             cComponent: CryptoComponent,
                             usersManager: UsersManager,
-                            dComponent: DataComponent ): LoginManager =
+                            dComponent: DataComponent,
+                            authStateListener:MAuthStateListener): LoginManager =
         LoginManager(
             uComponent.getPreferenceManager(),
             fbcComponent.getFirebaseAuth(),
@@ -55,6 +57,7 @@ object AuthApplicationScopedModule {
             fbcComponent.getFirebaseUtils(),
             uComponent.getTimeHelper(),
             cComponent.getCryptoHelper(),
-            dComponent.getDataManager());
+            dComponent.getDataManager(),
+            authStateListener);
 
 }

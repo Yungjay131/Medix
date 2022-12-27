@@ -56,6 +56,7 @@ dependencies {
     implementation impl_depends.camera
     implementation impl_depends.camera_lifecycle
     implementation impl_depends.camera_view
+    implementation impl_depends.camera_video
     implementation impl_depends.circle_imageview
 
     kapt kapt_depends.dagger_kapt

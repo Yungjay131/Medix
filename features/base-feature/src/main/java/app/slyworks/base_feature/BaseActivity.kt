@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.slyworks.base_feature.custom_views.NetworkStatusView
+import app.slyworks.base_feature.di.BaseFeatureComponent
+import app.slyworks.base_feature.di.DaggerBaseFeatureComponent
 import app.slyworks.constants_lib.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -21,37 +23,14 @@ import kotlin.system.exitProcess
 
 open class BaseActivity : AppCompatActivity(), IValidForListening {
     //region Vars
-    /*@Inject
-    @JvmField
-    var connectionStatusManager:ConnectionStatusManager? = null*/
-
-    //lateinit var networkStatusView:NetworkStatusView
-
-    @Inject
-    @JvmField
-    var listenerManager: ListenerManager? = null
+    private var listenerManager: ListenerManager? = null
     //endregion
-
-    companion object{
-     // private var bac:BaseActivityComponent? = null
-    }
 
     override fun onDestroy() {
         super.onDestroy()
         listenerManager = null
         ActivityUtils.decrementActivityCount()
     }
-
-   /* private fun isCurrentActivityValid():Boolean{
-        *//* not for login, registration, onboarding and splash activity *//*
-        val condition1 = this::class.simpleName == SplashActivity::class.simpleName
-        val condition2 = this::class.simpleName == app.slyworks.auth_feature.OnBoardingActivity::class.simpleName
-        val condition3 = this::class.simpleName == app.slyworks.auth_feature.LoginActivity::class.simpleName
-        val condition4 = this::class.simpleName == app.slyworks.auth_feature.RegistrationActivity::class.simpleName
-        val condition5 = this::class.simpleName == app.slyworks.auth_feature.RegistrationPatientActivity::class.simpleName
-        val condition6 = this::class.simpleName == app.slyworks.auth_feature.RegistrationDoctorActivity::class.simpleName
-        return !(condition1 || condition2 || condition3 || condition4 || condition5 || condition6)
-    }*/
 
     override fun isValid(): Boolean = true
 
@@ -67,15 +46,10 @@ open class BaseActivity : AppCompatActivity(), IValidForListening {
     }
 
     private fun initDI(){
-       /* if(bac == null)
-            bac = application.appComponent
-                .baseActivityComponentBuilder()
-                .build()
-
-        App.getListenerManager()
-           .ifPresentOrElse({this.listenerManager = it}, { bac!!.inject(this) })
-
-        App.cacheListenerManager(this.listenerManager!!)*/
+      if(listenerManager == null)
+        listenerManager =
+            BaseFeatureComponent.getInstance()
+            .getListenerManager()
     }
 
     private fun initNetworkStatusView(){ }
@@ -95,7 +69,7 @@ open class BaseActivity : AppCompatActivity(), IValidForListening {
         ActivityUtils.setForegroundStatus(false, this@BaseActivity::class.simpleName!!)
 
         if(isValid())
-            listenerManager!!.stop()
+          listenerManager!!.stop()
     }
 
     override fun onResume() {

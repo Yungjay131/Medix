@@ -130,11 +130,13 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/btn_login_selector"
-                android:text="Add"
+                android:text="add"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/_view_horizontal_1" />
+                app:layout_constraintTop_toBottomOf="@id/_view_horizontal_1"
+                android:stateListAnimator="@xml/btn_state_list_animator" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -142,11 +144,21 @@
             android:id="@+id/cbTandC"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="I have read the Terms and Conditions and I agree to the Terms and Conditions"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container"
-            android:layout_marginTop="32dp"/>
+            android:layout_marginTop="32dp"
+             />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTandC"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/cbTandC"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cbTandC"
+            app:layout_constraintBottom_toBottomOf="@id/cbTandC"
+            android:textSize="16sp"
+            tools:text="I have read and agree to the Terms and Conditions"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUp"
@@ -155,10 +167,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cbTandC"
-            android:layout_marginTop="8dp"
-            android:text="Sign Up"
+            android:layout_marginTop="32dp"
+            android:text="sign up"
+            android:textAllCaps="false"
             android:textColor="@color/white"
+            android:textSize="20sp"
             android:background="@drawable/btn_login_selector"
+            android:stateListAnimator="@xml/btn_state_list_animator"
             android:enabled="false"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,26 +1,18 @@
 package app.slyworks.auth_lib.di
 
 import app.slyworks.auth_lib.LoginManager
+import app.slyworks.auth_lib.MAuthStateListener
 import app.slyworks.auth_lib.PersonsManager
 import app.slyworks.auth_lib.UsersManager
 import app.slyworks.crypto_lib.di.CryptoComponent
-import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.di.DataComponent
-import app.slyworks.di_base_lib.ApplicationScope
 import app.slyworks.di_base_lib.AuthLibScope
-import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.firebase_commons_lib.di.FirebaseCommonsComponent
 import app.slyworks.utils_lib.PreferenceManager
-import app.slyworks.utils_lib.TaskManager
-import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.di.UtilsComponent
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.storage.FirebaseStorage
-import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
+import dagger.Provides
 
 
 /**
@@ -37,6 +29,8 @@ interface AuthApplicationScopedComponent {
             if(instance == null)
                 instance =
                 DaggerAuthApplicationScopedComponent.builder()
+                    .setAuthStateListener(
+                        MAuthStateListener(UtilsComponent.getInstance().getPreferenceManager()))
                     .setCryptoComponent(
                         CryptoComponent.getInstance())
                     .setDataComponent(
@@ -51,12 +45,16 @@ interface AuthApplicationScopedComponent {
         }
     }
 
-    fun provideUsersManager():UsersManager
+    fun getUsersManager():UsersManager
     fun providePersonsManager(): PersonsManager
-    fun provideLoginManager(): LoginManager
+    fun getLoginManager(): LoginManager
+    fun getAuthStateListener():MAuthStateListener
+
+    fun authActivityComponent(): AuthActivityScopedComponent
 
     @Component.Builder
     interface Builder{
+       fun setAuthStateListener(@BindsInstance listener: MAuthStateListener):Builder
        fun setFBCComponent(@BindsInstance fbcComponent: FirebaseCommonsComponent): Builder
        fun setUtilsComponent(@BindsInstance uComponent:UtilsComponent):Builder
        fun setCryptoComponent(@BindsInstance cCryptoComponent: CryptoComponent):Builder

@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral2Binding
 import app.slyworks.base_feature.PermissionManager
 import app.slyworks.base_feature.PermissionStatus
@@ -89,6 +91,10 @@ import java.util.*
      private fun initData(){
          ContentResolverStore.setContentResolver(requireActivity().contentResolver)
 
+         viewModel.progressLiveData.observe(viewLifecycleOwner){
+             (requireActivity() as IRegViewModel).toggleProgressView(it)
+         }
+
          viewModel.profileImageUriLiveData.observe(viewLifecycleOwner){
              binding.ivProfile.displayImage(it)
              imageUri = it
@@ -137,6 +143,17 @@ import java.util.*
              permissionManager.requestPermissions()
          }
 
+         binding.etLastName.setOnEditorActionListener(
+             TextView.OnEditorActionListener{ p0, p1, p2 ->
+                 if(p0!!.id == binding.etLastName.id){
+                     requireActivity().closeKeyboard3()
+                     binding.datePicker.requestFocus()
+                     return@OnEditorActionListener true
+                 }
+
+                 return@OnEditorActionListener false
+             })
+
          binding.datePicker.setOnClickListener{
              val calendar: Calendar = SimpleDateFormat.getDateInstance().calendar
              val year:Int = calendar.get(Calendar.YEAR)
@@ -159,6 +176,13 @@ import java.util.*
              if(!check())
                  return@setOnClickListener
 
+             val firstName:String = binding.etFirstName.text.toString().trim()
+             val lastName:String = binding.etLastName.text.toString().trim()
+
+             viewModel.registrationDetails.firstName = firstName
+             viewModel.registrationDetails.lastName = lastName
+             viewModel.registrationDetails.age = date
+             viewModel.registrationDetails.sex = gender
              val f =
                  if(viewModel.registrationDetails.accountType == AccountType.PATIENT)
                      RegistrationPatientFragment.newInstance()

@@ -24,6 +24,8 @@ import app.slyworks.controller_lib.Observer
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.controller_lib.clearAndRemove
 import app.slyworks.core_feature.AppBarStateChangeListener
+import app.slyworks.core_feature.ProfileHostFragment
+import app.slyworks.core_feature.ProfileHostFragmentViewModel
 import app.slyworks.core_feature.R
 import app.slyworks.data_lib.models.ConsultationRequestVModel
 import app.slyworks.data_lib.models.FBUserDetailsVModel
@@ -42,8 +44,6 @@ import javax.inject.Inject
 
 class ViewProfileFragment : Fragment(), Observer {
     //region Vars
-    private val TAG: String? = ViewProfileFragment::class.simpleName
-
     private lateinit var ivBack:ImageView
     private lateinit var ivBack2:ImageView
     private lateinit var ivProfileSmall:CircleImageView
@@ -75,15 +75,14 @@ class ViewProfileFragment : Fragment(), Observer {
 
     private var ANCHOR:Int = R.id.divider_horizontal_3
 
-    @Inject
-    lateinit var viewModel: ViewProfileFragmentViewModel
-
     private val subscriptionList:MutableList<Subscription> = mutableListOf()
     private val disposables:CompositeDisposable = CompositeDisposable()
 
     private var userProfile: FBUserDetailsVModel? = null
 
     private var areFABsDisplayed:Boolean = false
+
+    lateinit var viewModel: ProfileHostFragmentViewModel
     //endregion
 
     companion object {
@@ -101,11 +100,7 @@ class ViewProfileFragment : Fragment(), Observer {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-       /* context.activityComponent
-            .fragmentComponentBuilder()
-            .setFragment(this)
-            .build()
-            .inject(this)*/
+         viewModel = (parentFragment as ProfileHostFragment).viewModel
     }
 
     override fun onDestroy() {

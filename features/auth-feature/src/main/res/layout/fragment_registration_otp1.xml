@@ -22,16 +22,22 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/et_selector"
         android:imeOptions="actionNext"
-        android:inputType="phone" />
+        android:inputType="phone"
+        android:maxLength="16"
+        android:paddingStart="@dimen/et_padding"
+        android:paddingEnd="@dimen/et_padding"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnNext"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="80dp"
-        android:text="Continue"
+        android:text="get OTP"
+        android:textSize="20sp"
+        android:textAllCaps="false"
         android:textColor="@color/white"
         android:background="@drawable/btn_login_selector"
+        android:stateListAnimator="@xml/btn_state_list_animator"
         android:enabled="false"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

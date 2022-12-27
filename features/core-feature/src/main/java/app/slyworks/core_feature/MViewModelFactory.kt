@@ -2,7 +2,7 @@ package app.slyworks.core_feature
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.core_feature.calls_history.CallsHistoryViewModel
+import app.slyworks.core_feature.calls_history.CallsHistoryFragmentViewModel
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
 import app.slyworks.core_feature.home.HomeFragmentViewModel
@@ -23,8 +23,8 @@ constructor(private val viewModels:
             modelClass.isAssignableFrom(MainActivityViewModel::class.java) ->
                 viewModels[MainActivityViewModel::class.java] as T
 
-            modelClass.isAssignableFrom(CallsHistoryViewModel::class.java) ->
-                viewModels[CallsHistoryViewModel::class.java] as T
+            modelClass.isAssignableFrom(CallsHistoryFragmentViewModel::class.java) ->
+                viewModels[CallsHistoryFragmentViewModel::class.java] as T
 
             modelClass.isAssignableFrom(ChatHostFragmentViewModel::class.java) ->
                 viewModels[ChatHostFragmentViewModel::class.java] as T

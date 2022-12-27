@@ -8,23 +8,29 @@ import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.*
 import app.slyworks.auth_feature.di.AuthFeatureComponent
 import app.slyworks.auth_feature.registration.RegistrationActivity
+import app.slyworks.auth_feature.registration.RegistrationOTP1Fragment
+import app.slyworks.auth_feature.registration.SelectVerificationMethodBSDialog
+import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
 import app.slyworks.navigation_feature.Navigator
 import app.slyworks.navigation_feature.Navigator.Companion.getExtra
 import app.slyworks.base_feature.custom_views.NetworkStatusView
+import app.slyworks.base_feature.custom_views.ProgressOverlayView
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.setChildViewsStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
 import com.jakewharton.rxbinding4.InitialValueObservable
 import com.jakewharton.rxbinding4.widget.textChanges
@@ -37,22 +43,22 @@ import javax.inject.Inject
 
 class LoginActivity : BaseActivity() {
     //region Vars
-    private lateinit var etEmail:EditText
-    private lateinit var etPassword: EditText
+    private lateinit var etEmail: EditText
+    private lateinit var etPassword: TextInputEditText
 
     private lateinit var tvRegister:MaterialTextView
     private lateinit var tvForgotPassword:MaterialTextView
 
-    private lateinit var btnLogin: Button
-    private lateinit var progress:ProgressBar
-    private lateinit var rootView:CoordinatorLayout
+    private lateinit var ivBack:ImageView
 
-    private var networkStatusView: NetworkStatusView? = null
+    private lateinit var btnLogin: Button
+    private lateinit var progress:ProgressOverlayView
+    private lateinit var rootView:ConstraintLayout
+
+    private lateinit var networkStatusView: NetworkStatusView
 
     private var etEmailTextWatcher: TextWatcherImpl? = null
     private var etPasswordTextWatcher: TextWatcherImpl? = null
-
-    private var destinationIntentFilter:String = MAIN_ACTIVITY_INTENT_FILTER
 
     private val disposables:CompositeDisposable = CompositeDisposable()
 
@@ -90,7 +96,6 @@ class LoginActivity : BaseActivity() {
 
         initData()
         initViews()
-        initRx()
         initMediaPlayer()
 
         if(savedInstanceState != null)
@@ -108,9 +113,11 @@ class LoginActivity : BaseActivity() {
         this.onBackPressedDispatcher
             .addCallback(this, MOnBackPressedCallback(this))
 
-        if(intent.getExtra<String>(EXTRA_LOGIN_DESTINATION) != null)
-            //destinationClazz = ActivityUtils.from(intent.getStringExtra(EXTRA_LOGIN_DESTINATION)!!)
-            destinationIntentFilter = intent.getExtra<String>(EXTRA_LOGIN_DESTINATION)!!
+        val destinationIntentFilter:String = intent.getExtra<String>(EXTRA_LOGIN_DESTINATION, MAIN_ACTIVITY_INTENT_FILTER)!!
+
+        viewModel.subscribeToNetwork().observe(this) {
+            networkStatusView.setVisibilityStatus(it)
+        }
 
         viewModel.passwordResetLiveData.observe(this){
             if(it)
@@ -129,12 +136,27 @@ class LoginActivity : BaseActivity() {
                 .navigate()
         }
 
-        viewModel.loginFailureLiveData.observe(this){
-            displayMessage(viewModel.loginFailureDataLiveData.value!!)
+        viewModel.accountNotVerifiedLD.observe(this){ _ ->
+           Navigator.intentFor(this, VERIFICATION_ACTIVITY_INTENT_FILTER)
+               .addExtra(KEY_EMAIL, etEmail.text.toString().trim())
+               .addExtra(KEY_PASS, etPassword.text.toString().trim())
+               .navigate()
         }
 
-        viewModel.resetPasswordFailedLiveData.observe(this){
+        viewModel.messageLiveData.observe(this){
+            displayMessage(it)
         }
+
+        viewModel.forgotPasswordLoadingLD.observe(this){ status ->
+            forgotPasswordBSDialog?.view
+                ?.findViewById<Button>(R.id.btnBSFPResend)
+                ?.isVisible = !status
+
+            forgotPasswordBSDialog?.view
+                ?.findViewById<CircularProgressIndicator>(R.id.progress_BSFP)
+                ?.isVisible = status
+        }
+
     }
 
     private fun initMediaPlayer(){
@@ -143,24 +165,6 @@ class LoginActivity : BaseActivity() {
 
         mediaPlayer = MediaPlayer.create(this, app.slyworks.base_feature.R.raw.positive_button_sound)
     }
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.subscribeToNetwork().observe(this) {
-            if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView, COORDINATOR)
-
-            networkStatusView!!.setVisibilityStatus(it)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        viewModel.unsubscribeToNetwork()
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -174,17 +178,22 @@ class LoginActivity : BaseActivity() {
         tvRegister = findViewById(R.id.tvLoginRegister_2)
         tvForgotPassword = findViewById(R.id.tvLoginForgotPassword)
         btnLogin = findViewById(R.id.btnLoginLogin)
+        progress = findViewById(R.id.progress)
+        networkStatusView = findViewById(R.id.network_status_view)
+        ivBack = findViewById(R.id.iv_back)
+
+        ivBack.setOnClickListener{ onBackPressedDispatcher.onBackPressed() }
 
         tvRegister.setOnClickListener {
             Navigator.intentFor(this@LoginActivity, REGISTRATION_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
 
-        tvForgotPassword.setOnClickListener {   initBottomSheetForgotPassword() }
-
-        progress = findViewById(R.id.progress_layout)
+        tvForgotPassword.setOnClickListener { initBottomSheetForgotPassword() }
 
         btnLogin.setOnClickListener {
+            closeKeyboard3()
+
             login(etEmail.text.toString().trim(),
                 etPassword.text.toString().trim())
         }
@@ -204,7 +213,7 @@ class LoginActivity : BaseActivity() {
             object: TextView.OnEditorActionListener{
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if(v!!.id == etPassword.id){
-                    closeKeyboard3()
+                     closeKeyboard3()
                      login(etEmail.text.toString().trim(),
                            etPassword.text.toString().trim())
                     return true
@@ -213,32 +222,19 @@ class LoginActivity : BaseActivity() {
                 return false
             }
         })
+
+        disposables +=
+            Observable.combineLatest(
+                etEmail.textChanges(),
+                etPassword.textChanges())
+                { email: CharSequence, password: CharSequence ->
+                    email.isNotEmpty() && password.isNotEmpty() }
+                .subscribe(btnLogin::setEnabled)
     }
 
     private fun initViews2(){
         etEmail.setText(viewModel.emailVal)
         etPassword.setText(viewModel.passwordVal)
-    }
-
-    private fun initRx(){
-        val etEmailObservable: InitialValueObservable<CharSequence> = etEmail.textChanges()
-        val etPasswordObservable:InitialValueObservable<CharSequence> = etPassword.textChanges()
-
-        val etObservables: Observable<Boolean> =
-            Observable
-                .combineLatest(etEmailObservable,
-                               etPasswordObservable)
-                { eo1, eo2 ->
-                    if (eo1.toString().isNotEmpty() && eo2.toString().isNotEmpty())
-                        return@combineLatest true
-
-                    return@combineLatest false
-                }
-
-        disposables +=
-            etObservables
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { btnLogin.isEnabled = it }
     }
 
     private fun initBottomSheetForgotPassword(){
@@ -260,16 +256,14 @@ class LoginActivity : BaseActivity() {
         }
 
         btnResendBSFP.setOnClickListener {
-            progressBSFP.visibility = View.VISIBLE
-
             val email = etEmailBSFP.text.toString().trim()
             if(TextUtils.isEmpty(email)){
                 /* display CustomSnackbar that stays at the top */
-               displayMessage("please enter your email")
+               Snackbar.make(view, "please enter your email", Snackbar.LENGTH_SHORT).show()
                return@setOnClickListener
             }else if(!email.contains("@")){
-                displayMessage("please enter a valid email address")
-                return@setOnClickListener
+               Snackbar.make(view, "please enter a valid email address", Snackbar.LENGTH_SHORT).show()
+               return@setOnClickListener
             }
 
             viewModel.handleForgotPassword(email)
@@ -293,6 +287,8 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun login(email:String, password:String){
+        closeKeyboard3()
+
         if(!check(email, password))
             return
 
@@ -324,7 +320,6 @@ class LoginActivity : BaseActivity() {
 
     private fun toggleLoadingStatus(status: Boolean){
         progress.isVisible = status
-        rootView.setChildViewsStatus(!status)
     }
 
     private fun displayMessage(message:String){

@@ -37,8 +37,8 @@ interface BaseFeatureComponent {
         }
     }
 
-    fun provideListenerManager(): ListenerManager
-    fun provideVibrationManager(): VibrationManager
+    fun getListenerManager(): ListenerManager
+    fun getVibrationManager(): VibrationManager
 
     @Component.Builder
     interface Builder{

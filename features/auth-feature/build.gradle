@@ -59,12 +59,24 @@ dependencies {
 
     implementation impl_depends.circle_imageview
     implementation impl_depends.glide
+    implementation impl_depends.material
+    implementation impl_depends.legacy_support
     kapt kapt_depends.dagger_kapt
 
     testImplementation test_depends.junit
     testImplementation test_depends.truth
     testImplementation test_depends.mockito_kotlin
     testImplementation test_depends.robolectric
-    testImplementation test_depends.android_runner
-    testImplementation test_depends.android_junit
+    testImplementation test_depends.espresso
+    testImplementation test_depends.espresso_contrib
+    testImplementation test_depends.espresso_intents
+    testImplementation test_depends.uiautomator
+
+    //androidTestImplementation test_depends.android_runner
+    androidTestImplementation test_depends.android_junit_ktx
+    androidTestImplementation test_depends.espresso
+    androidTestImplementation test_depends.espresso_contrib
+    androidTestImplementation test_depends.espresso_intents
+
+    //debugImplementation test_depends.fragment_testing
 }

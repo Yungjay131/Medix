@@ -22,6 +22,7 @@ class SplashActivity : AppCompatActivity() {
     lateinit var viewModel: SplashActivityViewModel
     //endregion
 
+
    override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
         super.onCreate(savedInstanceState)

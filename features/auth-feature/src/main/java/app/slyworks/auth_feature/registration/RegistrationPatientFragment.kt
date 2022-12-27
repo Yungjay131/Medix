@@ -2,9 +2,12 @@ package app.slyworks.auth_feature.registration
 
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils
+import android.text.*
 import android.text.method.KeyListener
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +16,16 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.FragmentRegistrationPatientBinding
 import app.slyworks.auth_lib.VerificationDetails
+import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.navigation_feature.Navigator
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.displayMessage
+import app.slyworks.utils_lib.utils.px
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -61,7 +67,9 @@ class RegistrationPatientFragment : Fragment() {
     }
 
     private fun initData(){
-       viewModel.progressLiveData.observe(viewLifecycleOwner){}
+       viewModel.progressLiveData.observe(viewLifecycleOwner){
+           (requireActivity() as IRegViewModel).toggleProgressView(it)
+       }
        viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
        viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){ _ ->
            Navigator.intentFor(requireContext(), MAIN_ACTIVITY_INTENT_FILTER)
@@ -69,7 +77,7 @@ class RegistrationPatientFragment : Fragment() {
                .navigate()
        }
 
-       viewModel.loginSuccessfulLiveData.observe(viewLifecycleOwner){
+       viewModel.registrationSuccessfulLiveData.observe(viewLifecycleOwner){
            val dialog = SelectVerificationMethodBSDialog.getInstance()
            disposables +=
            dialog.getSubject()
@@ -80,12 +88,11 @@ class RegistrationPatientFragment : Fragment() {
                          (requireActivity() as RegistrationActivity).navigator
                              .hideCurrent()
                              .show(RegistrationOTP1Fragment.newInstance())
-                             .after { viewModel.verifyUser(it) }
                              .navigate()
                        return@subscribe
                      }
 
-                    viewModel.verifyUser(it)
+                    viewModel.verifyByEmail()
                  }
 
            dialog.show(requireActivity().supportFragmentManager,"")
@@ -93,6 +100,35 @@ class RegistrationPatientFragment : Fragment() {
     }
 
     private fun initViews(){
+        val spannableText:SpannableString = SpannableString("I have read and agree to the Terms and Conditions")
+        val clickableSpan:ClickableSpan =
+           object : ClickableSpan() {
+               override fun updateDrawState(ds: TextPaint) {
+                   super.updateDrawState(ds)
+                   ds.setUnderlineText(true)
+               }
+
+               override fun onClick(p0: View) {
+                  TermsAndConditionsBSDialog.getInstance()
+                      .show(childFragmentManager, "")
+               }
+           }
+        
+        spannableText.setSpan(
+            clickableSpan,
+            spannableText.length - 21,
+            spannableText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE )
+
+        /* remember to set textColorLink*/
+        binding.tvTandC.setText(spannableText)
+        binding.tvTandC.setMovementMethod(LinkMovementMethod.getInstance())
+        binding.tvTandC.setHighlightColor(Color.TRANSPARENT)
+
+        binding.cbTandC.setOnCheckedChangeListener { _, status ->
+            binding.btnSignUp.setEnabled(status)
+        }
+
         binding.btnAddDiseases.setOnClickListener{
             if (createdLayoutsList.isNotEmpty() ){
                 val textView:EditText = createdLayoutsList.last()
@@ -175,9 +211,10 @@ class RegistrationPatientFragment : Fragment() {
         val ivCancel: ImageView = layout.findViewById(app.slyworks.base_feature.R.id.ivCancel)
         ivCancel.setOnClickListener { removeCreatedView(layout) }
 
+        val lp:ViewGroup.LayoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1.px)
         val divider:View = View(context)
+        divider.setLayoutParams(lp)
         divider.setId(View.generateViewId())
-        divider.layoutParams.height = 1
 
         binding.container.addView(layout)
         binding.container.addView(divider)
@@ -285,6 +322,7 @@ class RegistrationPatientFragment : Fragment() {
         }
 
     }
+
     private fun toggleEditState(editText: EditText, status:Boolean){
         if (status) {
             editText.keyListener = editText.tag as KeyListener

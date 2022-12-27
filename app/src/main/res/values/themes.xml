@@ -18,4 +18,9 @@
         <item name="android:windowTranslucentStatus">false</item>
     </style>
 
+    <style name="AppTheme.splash4" parent="Theme.Medix">
+        <item name="android:statusBarColor">@color/appBlue</item>
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
+
 </resources>

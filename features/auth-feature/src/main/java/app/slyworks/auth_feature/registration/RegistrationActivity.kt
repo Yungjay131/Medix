@@ -1,24 +1,40 @@
 package app.slyworks.auth_feature.registration
 
 import android.os.Bundle
+import android.widget.ImageView
+import androidx.core.view.children
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import app.slyworks.auth_feature.IRegViewModel
+import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.ActivityRegistrationBinding
 import app.slyworks.auth_feature.di.AuthFeatureComponent
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
+import app.slyworks.constants_lib.*
 import app.slyworks.navigation_feature.Navigator
+import app.slyworks.navigation_feature.Navigator.Companion.getExtra
 import app.slyworks.navigation_feature.interfaces.FragmentContinuationStateful
 import app.slyworks.utils_lib.utils.setStatusBarVisibility
 import javax.inject.Inject
 
 
-class RegistrationActivity : BaseActivity() {
+class RegistrationActivity : IRegViewModel, BaseActivity() {
     //region Vars
     private lateinit var binding: ActivityRegistrationBinding
 
-    lateinit var navigator: FragmentContinuationStateful
+    private val fragmentMap:Map<String, Fragment> = mapOf(
+        FRAGMENT_REG_ZERO to RegistrationGeneral0Fragment.newInstance(),
+        FRAGMENT_REG_ONE to RegistrationGeneral1Fragment.newInstance(),
+        FRAGMENT_REG_TWO to RegistrationGeneral2Fragment.newInstance(),
+        FRAGMENT_REG_PATIENT to RegistrationPatientFragment.newInstance(),
+        FRAGMENT_REG_DOCTOR to RegistrationDoctorFragment.newInstance(),
+        FRAGMENT_REG_OTP to RegistrationOTP1Fragment.newInstance() )
+
+    override lateinit var navigator: FragmentContinuationStateful
 
     @Inject
-    lateinit var viewModel: RegistrationActivityViewModel
+    override lateinit var viewModel: RegistrationActivityViewModel
     //endregion
 
     override fun isValid(): Boolean = false
@@ -27,6 +43,20 @@ class RegistrationActivity : BaseActivity() {
         super.onDestroy()
 
         navigator.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.subscribeToNetwork().observe(this) {
+            binding.networkStatusView.isVisible = !it
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        viewModel.unsubscribeToNetwork()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,11 +91,19 @@ class RegistrationActivity : BaseActivity() {
     }
 
     private fun initViews(){
-       navigator
+        binding.appbar.findViewById<ImageView>(R.id.iv_back).setOnClickListener { this.onBackPressedDispatcher.onBackPressed() }
+
+        val frag_key:String = intent.getExtra<String>(KEY_FRAGMENT, FRAGMENT_REG_ZERO)!!
+        val f:Fragment = fragmentMap[frag_key]!!
+
+        navigator
            .into(binding.rootView.id)
-           .show(RegistrationGeneral0Fragment.newInstance())
+           .show(f)
            .navigate()
     }
 
+    override fun toggleProgressView(status:Boolean):Unit{
+        binding.progress.isVisible = status
+    }
 
 }

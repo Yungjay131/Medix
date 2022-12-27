@@ -1,4 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,22 +6,29 @@
     android:layout_height="match_parent"
     android:id="@+id/rootView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <include
+        layout="@layout/layout_appbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <ProgressBar
-            android:id="@+id/progress_layout"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:indeterminateTint="#5F6298"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+    <app.slyworks.base_feature.custom_views.NetworkStatusView
+        android:id="@+id/network_status_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <app.slyworks.base_feature.custom_views.ProgressOverlayView
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="gone"
+        android:elevation="10dp" />
 
     <ImageView
         android:id="@+id/ivEmail"
@@ -55,20 +62,31 @@
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
             app:layout_constraintTop_toBottomOf="@id/ivEmail" />
 
-        <EditText
-            android:id="@+id/etLoginPassword"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLoginPassword"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="60dp"
+            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
+            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
+            app:layout_constraintTop_toBottomOf="@id/ivPassword"
+            app:passwordToggleEnabled="true"
+            style="@style/TextInputLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etLoginPassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@drawable/et_selector"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
             android:inputType="textPassword"
+            android:layout_marginTop="8dp"
             android:imeOptions="actionDone"
             android:imeActionId="6"
             android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding"
-            app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
-            app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintTop_toBottomOf="@id/ivPassword" />
+            android:paddingEnd="@dimen/et_padding" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
         android:id="@+id/ivPassword"
@@ -120,7 +138,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@id/guide_vertical_2"
             app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
-            app:layout_constraintTop_toBottomOf="@id/etLoginPassword" />
+            app:layout_constraintTop_toBottomOf="@id/tilLoginPassword" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvLoginRegister_1"
@@ -194,6 +212,4 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".2"/>
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>

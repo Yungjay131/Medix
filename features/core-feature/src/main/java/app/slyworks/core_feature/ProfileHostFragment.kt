@@ -8,9 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
+import app.slyworks.core_feature.main.activityComponent
 import app.slyworks.navigation_feature.Navigator
+import javax.inject.Inject
 
 class ProfileHostFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModel:ProfileHostFragmentViewModel
+
     companion object {
         @JvmStatic
         fun getInstance(): ProfileHostFragment {
@@ -21,11 +27,10 @@ class ProfileHostFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        /*context.activityComponent
+        context.activityComponent
             .fragmentComponentBuilder()
             .setFragment(this)
             .build()
-            .inject(this)*/
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

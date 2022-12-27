@@ -16,6 +16,7 @@ import app.slyworks.base_feature.custom_views.HorizontalSpacingItemDecorator
 import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RvHealthAreasAdapter
+import app.slyworks.core_feature.main.activityComponent
 import app.slyworks.utils_lib.utils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
@@ -66,11 +67,11 @@ class PatientHomeFragment : Fragment() {
         super.onAttach(context)
         parentActivity = context as MainActivity
 
-       /*context.activityComponent
+       context.activityComponent
            .fragmentComponentBuilder()
            .setFragment(this)
            .build()
-           .inject(this)*/
+           .inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

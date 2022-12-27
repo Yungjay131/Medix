@@ -14,4 +14,4 @@ data class CryptoDetails(
     val hs:String,
     val ha:String,
     val hic:Int,
-    val hl:Int)
+    val hl:Int )

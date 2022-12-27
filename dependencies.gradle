@@ -32,6 +32,7 @@
     impl_depends.constraint_layout = "androidx.constraintlayout:constraintlayout:2.1.3"
     impl_depends.cardview = "androidx.cardview:cardview:1.0.0"
     impl_depends.drawerlayout = "androidx.drawerlayout:drawerlayout:1.1.1"
+    impl_depends.spinkit = "com.github.ybq:Android-SpinKit:1.4.0"
     impl_depends.asynclayoutinflater =  "androidx.asynclayoutinflater:asynclayoutinflater:1.0.0"
 
     impl_depends.legacy_support = "androidx.legacy:legacy-support-v4:1.0.0"
@@ -84,16 +85,21 @@
     def android_junit = "1.1.2"
     test_depends.android_junit = "androidx.test.ext:junit:$android_junit"
     test_depends.android_junit_ktx = "androidx.test.ext:junit-ktx:$android_junit"
-
+    /* ensure its debugImplementation */
+    test_depends.fragment = "androidx.fragment:fragment:1.5.5"
+    test_depends.fragment_testing = "androidx.fragment:fragment-testing:1.5.5"
     test_depends.android_runner = "androidx.test:runner:1.3.0"
+    test_depends.android_accessibility = "com.google.android.apps.common.testing.accessibility.framework:accessibility-test-framework:3.1"
     test_depends.jupiter = "org.junit.jupiter:junit-jupiter-engine:5.7.1"
 
-    def espresso = "3.3.0"
+    def espresso = "3.5.0"
     test_depends.espresso = "androidx.test.espresso:espresso-core:$espresso"
     test_depends.espresso_core =  "androidx.test.espresso:espresso-core:$espresso"
     test_depends.espresso_contrib = "androidx.test.espresso:espresso-contrib:$espresso"
     test_depends.espresso_intents = "androidx.test.espresso:espresso-intents:$espresso"
     test_depends.espresso_idling_resource = "androidx.test.espresso:espresso-idling-resource:$espresso"
+    test_depends.espresso_web = "androidx.test.espresso:espresso-web:$espresso"
+    test_depends.espresso_accessibility = "androidx.test.espresso:espresso-accessibility:$espresso"
 
     test_depends.mockito_kotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     test_depends.mockito = "org.mockito.kotlin:mockito-kotlin:3.2.0"
@@ -105,6 +111,10 @@
 
     /* for mocking final class, instead of mockito-maker-inline process */
     test_depends.dexmaker = "com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1"
+
+    test_depends.condition_watcher = "com.azimolabs.conditionwatcher:conditionwatcher:0.2"
+
+    test_depends.uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 
     impl_depends.coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
     impl_depends.coroutines_play_services = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1"

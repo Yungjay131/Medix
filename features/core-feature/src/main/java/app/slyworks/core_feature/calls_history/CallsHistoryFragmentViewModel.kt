@@ -15,7 +15,7 @@ import javax.inject.Inject
 /**
  *Created by Joshua Sylvanus, 1:47 PM, 13/05/2022.
  */
-class CallsHistoryViewModel
+class CallsHistoryFragmentViewModel
     @Inject
     constructor(private val callHistoryManager: CallHistoryManager,
                 val timeHelper: TimeHelper) : ViewModel() {

@@ -31,7 +31,7 @@ class DataManager(private val messageDao: MessageDao,
 
     fun <T> getUserDetailsParam(paramKey:String = "userDetails"):T?{
         return when(paramKey){
-            "userDetails" -> userDetailsUtils.user as? T?
+            "userDetails" -> userDetailsUtils.user?.transform() as? T?
             "accountType" -> userDetailsUtils.user?.accountType as? T?
             "firstName" -> userDetailsUtils.user?.firstName as? T?
             "lastName" -> userDetailsUtils.user?.lastName as? T?

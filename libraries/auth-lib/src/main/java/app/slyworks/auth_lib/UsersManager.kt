@@ -138,12 +138,7 @@ class UsersManager(
             .subscribe()
     }
 
-   /* fun saveUserToDataStore(userDetails: _root_ide_package_.app.slyworks.data_lib.models.FBUserDetailsVModel){
-            userDetailsUtils.user = userDetails
-            userDetailsUtils.saveUserToDataStore(userDetails)
-    }*/
 
-    /*TODO:enqueue work if the user isnt logged in yet*/
     fun sendFCMTokenToServer(token:String){
         val address:String =
         if(!dataManager.getUserDetailsParam<String>("firebaseUID").isNullOrEmpty())

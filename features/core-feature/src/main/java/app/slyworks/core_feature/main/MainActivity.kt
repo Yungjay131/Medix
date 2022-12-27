@@ -1,5 +1,6 @@
 package app.slyworks.core_feature.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.ProgressBar
@@ -20,6 +21,7 @@ import app.slyworks.constants_lib.*
 import app.slyworks.core_feature.ProfileHostFragment
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.chat.ChatHostFragment
+import app.slyworks.core_feature.di.ActivityComponent
 import app.slyworks.core_feature.home.DoctorHomeFragment
 import app.slyworks.core_feature.home.PatientHomeFragment
 import app.slyworks.navigation_feature.Navigator
@@ -31,12 +33,12 @@ import com.google.android.material.navigation.NavigationView
 
 import javax.inject.Inject
 
-/*val Context.activityComponent: ActivityComponent
-get() = (this as MainActivity)._activityComponent*/
+val Context.activityComponent: ActivityComponent
+get() = (this as MainActivity)._activityComponent
 
 class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedListener {
     //region Vars
-    //lateinit var _activityComponent: ActivityComponent
+    lateinit var _activityComponent: ActivityComponent
 
     private lateinit var drawer: DrawerLayout
     private lateinit var navView: NavigationView
@@ -136,11 +138,11 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
         }
     }
     private fun initDI(){
-      /*  _activityComponent = application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
+        _activityComponent =
+        ActivityComponent.getInitialBuilder()
+            .appCompatActivity(this)
             .build()
-        _activityComponent.inject(this)*/
+            .also{ it.inject(this@MainActivity) }
     }
 
     private fun initData(){

@@ -3,15 +3,12 @@ package app.slyworks.core_feature.di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import app.slyworks.constants_lib.DI_FRAGMENT_VIEWMODEL_KEY
 import app.slyworks.core_feature.MViewModelFactory
-import app.slyworks.core_feature.calls_history.CallsHistoryViewModel
+import app.slyworks.core_feature.calls_history.CallsHistoryFragmentViewModel
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
 import app.slyworks.core_feature.home.HomeFragmentViewModel
-import app.slyworks.core_feature.main.MainActivity
-import app.slyworks.core_feature.main.MainActivityViewModel
 import app.slyworks.core_feature.view_profile.ViewProfileFragmentViewModel
 import app.slyworks.di_base_lib.FragmentScope
 import dagger.Module
@@ -36,13 +33,13 @@ object FragmentViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(CallsHistoryViewModel::class)
+    @ViewModelKey(CallsHistoryFragmentViewModel::class)
     @FragmentScope
     fun provideCallsHistoryViewModel(viewModelFactory: MViewModelFactory,
                                        activity: AppCompatActivity)
-    : CallsHistoryViewModel
+    : CallsHistoryFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
-        .get(CallsHistoryViewModel::class.java)
+        .get(CallsHistoryFragmentViewModel::class.java)
 
     @Provides
     @IntoMap

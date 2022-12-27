@@ -33,6 +33,7 @@
 
     <service
         android:name="app.slyworks.base_feature.services.MFirebaseMessagingService"
+        android:description="@string/appservice_description_text"
         android:exported="false"
         android:stopWithTask="false">
         <intent-filter>

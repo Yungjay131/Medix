@@ -126,6 +126,8 @@
             app:layout_constraintTop_toBottomOf="@id/tvGender"
             android:layout_marginTop="8dp"
             android:background="@drawable/et_selector"
+            android:paddingStart="@dimen/et_padding"
+            android:paddingEnd="@dimen/et_padding"
             />
 
         <androidx.appcompat.widget.AppCompatButton

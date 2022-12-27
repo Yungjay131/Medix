@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medix">
 
-
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true"

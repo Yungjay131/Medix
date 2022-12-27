@@ -6,13 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp1Binding
+import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.displayMessage
+import app.slyworks.utils_lib.utils.plusAssign
+import com.jakewharton.rxbinding4.widget.textChanges
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class RegistrationOTP1Fragment : Fragment() {
     //region Vars
     private lateinit var binding: FragmentRegistrationOtp1Binding
     private lateinit var viewModel: RegistrationActivityViewModel
+    private val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
     companion object {
@@ -23,7 +30,7 @@ class RegistrationOTP1Fragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        viewModel = (context as RegistrationActivity).viewModel
+        viewModel = (context as IRegViewModel).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -42,12 +49,36 @@ class RegistrationOTP1Fragment : Fragment() {
         viewModel.progressLiveData.observe(viewLifecycleOwner){}
         viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
         viewModel.beginOTPVerificationLiveData.observe(viewLifecycleOwner){_ ->
-            (requireActivity() as RegistrationActivity).navigator
+            (requireActivity() as IRegViewModel).navigator
                 .hideCurrent()
                 .show(RegistrationOTP2Fragment.newInstance())
                 .navigate()
         }
     }
 
-    private fun initViews(){}
+    private fun initViews(){
+        disposables +=
+        binding.etPhoneNumber.textChanges()
+            .map{ it.length == 14 }
+            .subscribe(binding.btnNext::setEnabled)
+
+        val nextFunc:() -> Unit = {
+            requireActivity().closeKeyboard3()
+
+            val phoneNumber:String = binding.etPhoneNumber.text.toString().trim()
+            viewModel.verifyViaOTP(phoneNumber, requireActivity())
+        }
+
+        binding.etPhoneNumber.setOnEditorActionListener(
+            TextView.OnEditorActionListener{ p0, _, _ ->
+                if(p0!!.id == binding.etPhoneNumber.id){
+                    nextFunc()
+                    return@OnEditorActionListener true
+                }
+
+                return@OnEditorActionListener false
+            })
+
+        binding.btnNext.setOnClickListener{ nextFunc() }
+    }
 }

@@ -4,6 +4,8 @@ import app.slyworks.constants_lib.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -13,7 +15,8 @@ import com.google.firebase.storage.StorageReference
  */
 
 class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
-                    private val firebaseStorage: FirebaseStorage) {
+                    private val firebaseStorage: FirebaseStorage,
+                    private val firebaseFirestore: FirebaseFirestore) {
 
     fun getIsUserTypingRef(myUID:String,userUID:String):DatabaseReference =
         firebaseDatabase
@@ -21,6 +24,11 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
             .child("typing")
             .child(userUID)
             .child(myUID)
+
+    fun getEncryptionDetailsRefFS():DocumentReference =
+        firebaseFirestore
+            .collection("encryption_details")
+            .document("details")
 
     fun getEncryptionDetailsRef(): DatabaseReference =
         firebaseDatabase
@@ -110,7 +118,6 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
             .reference
             .child("users")
             .child(UID)
-            .child("details")
             .child("is_verified")
 
     fun getUserSentConsultationRequestsRef1(params: String): Query {
