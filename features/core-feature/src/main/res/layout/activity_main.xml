@@ -11,9 +11,16 @@
     tools:context="app.slyworks.core_feature.main.MainActivity">
 
 <include
+ android:id="@+id/main_layout"
+ layout="@layout/app_bar_main"
  android:layout_height="match_parent"
- android:layout_width="match_parent"
- layout="@layout/app_bar_main"/>
+ android:layout_width="match_parent" />
+
+ <app.slyworks.base_feature.custom_views.ProgressOverlayView
+     android:id="@+id/progress"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:visibility="gone" />
 
  <com.google.android.material.navigation.NavigationView
      android:id="@+id/nav_view_main"

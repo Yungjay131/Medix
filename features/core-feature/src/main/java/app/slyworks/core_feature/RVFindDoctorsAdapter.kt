@@ -35,7 +35,7 @@ class RVFindDoctorsAdapter : RecyclerView.Adapter<RVFindDoctorsAdapter.ViewHolde
         return list.size
     }
 
-    fun addDoctors(list:MutableList<FBUserDetailsVModel>){
+    fun setDataList(list:MutableList<FBUserDetailsVModel>){
         val startIndex = if(this.list.isEmpty()) 0 else this.list.size - 1
         this.list.addAll(list)
 

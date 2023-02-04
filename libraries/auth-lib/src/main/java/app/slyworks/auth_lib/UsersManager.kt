@@ -89,16 +89,14 @@ class UsersManager(
 
                        AppController.notifyObservers(
                            EVENT_GET_DOCTOR_USERS,
-                           Pair<Boolean, MutableList<FBUserDetailsVModel>?>(true, list)
-                       )
+                           Outcome.SUCCESS(list))
                    }
                }else{
                    Timber.e("error occurred getting doctor users from DB", it.exception)
 
                    AppController.notifyObservers(
                        EVENT_GET_DOCTOR_USERS,
-                       Pair<Boolean, MutableList<FBUserDetailsVModel>?>(false, null)
-                   )
+                       Outcome.FAILURE(Unit, it.exception?.message))
                }
            }
     }

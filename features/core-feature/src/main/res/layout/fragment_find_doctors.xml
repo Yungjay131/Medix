@@ -75,11 +75,10 @@
   </androidx.constraintlayout.widget.ConstraintLayout>
 
   <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/rootView"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_marginTop="?attr/actionBarSize"
-      tools:context="app.slyworks.core_feature.FindDoctorsFragment"
-      android:id="@+id/rootView"
       android:visibility="gone">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -94,11 +93,4 @@
         tools:listitem="@layout/li_find_doctors"/>
   </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
-        android:id="@+id/progress"
-        layout="@layout/layout_progressbar"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:visibility="gone"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

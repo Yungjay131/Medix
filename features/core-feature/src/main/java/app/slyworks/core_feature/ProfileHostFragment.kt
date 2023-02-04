@@ -8,20 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
+import app.slyworks.core_feature.databinding.FragmentProfileHostBinding
+import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.main.activityComponent
 import app.slyworks.navigation_feature.Navigator
+import app.slyworks.utils_lib.utils.displayMessage
 import javax.inject.Inject
 
 class ProfileHostFragment : Fragment() {
+
+    private lateinit var binding:FragmentProfileHostBinding
 
     @Inject
     lateinit var viewModel:ProfileHostFragmentViewModel
 
     companion object {
         @JvmStatic
-        fun getInstance(): ProfileHostFragment {
-            return ProfileHostFragment()
-        }
+        fun getInstance(): ProfileHostFragment = ProfileHostFragment()
     }
 
     override fun onAttach(context: Context) {
@@ -34,7 +37,8 @@ class ProfileHostFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_profile_host, container, false)
+        binding = FragmentProfileHostBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,6 +61,14 @@ class ProfileHostFragment : Fragment() {
                         }
                     }
                 })
+
+        viewModel.progressLD.observe(viewLifecycleOwner){
+            (requireActivity() as MainActivity).toggleProgressVisibility()
+        }
+
+        viewModel.messageLD.observe(viewLifecycleOwner){
+            displayMessage(it, binding.root)
+        }
     }
 
     fun inflateFragment2(f:Fragment){

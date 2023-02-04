@@ -23,13 +23,13 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
     //region Vars
     private lateinit var binding: ActivityRegistrationBinding
 
-    private val fragmentMap:Map<String, Fragment> = mapOf(
-        FRAGMENT_REG_ZERO to RegistrationGeneral0Fragment.newInstance(),
-        FRAGMENT_REG_ONE to RegistrationGeneral1Fragment.newInstance(),
-        FRAGMENT_REG_TWO to RegistrationGeneral2Fragment.newInstance(),
-        FRAGMENT_REG_PATIENT to RegistrationPatientFragment.newInstance(),
-        FRAGMENT_REG_DOCTOR to RegistrationDoctorFragment.newInstance(),
-        FRAGMENT_REG_OTP to RegistrationOTP1Fragment.newInstance() )
+    private val fragmentMap:Map<String, () -> Fragment > = mapOf(
+        FRAGMENT_REG_ZERO to RegistrationGeneral0Fragment::newInstance,
+        FRAGMENT_REG_ONE to RegistrationGeneral1Fragment::newInstance,
+        FRAGMENT_REG_TWO to RegistrationGeneral2Fragment::newInstance,
+        FRAGMENT_REG_PATIENT to RegistrationPatientFragment::newInstance,
+        FRAGMENT_REG_DOCTOR to RegistrationDoctorFragment::newInstance,
+        FRAGMENT_REG_OTP to RegistrationOTP1Fragment::newInstance )
 
     override lateinit var navigator: FragmentContinuationStateful
 
@@ -94,11 +94,10 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
         binding.appbar.findViewById<ImageView>(R.id.iv_back).setOnClickListener { this.onBackPressedDispatcher.onBackPressed() }
 
         val frag_key:String = intent.getExtra<String>(KEY_FRAGMENT, FRAGMENT_REG_ZERO)!!
-        val f:Fragment = fragmentMap[frag_key]!!
 
         navigator
            .into(binding.rootView.id)
-           .show(f)
+           .show(fragmentMap[frag_key]!!())
            .navigate()
     }
 

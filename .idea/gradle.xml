@@ -42,7 +42,6 @@
             <option value="$PROJECT_DIR$/libraries/utils-lib" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

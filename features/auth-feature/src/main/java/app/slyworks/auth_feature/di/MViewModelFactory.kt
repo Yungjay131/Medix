@@ -1,4 +1,4 @@
-package app.slyworks.auth_feature
+package app.slyworks.auth_feature.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -111,7 +111,7 @@ class AppController {
         }
 
         @JvmStatic
-        fun <T> subscribeTo(topic: String): Observable<out T> {
+        fun <T> subscribeTo(topic: String): Observable<in T> {
             if (!topicList.contains(topic))
                 addTopic(topic)
 

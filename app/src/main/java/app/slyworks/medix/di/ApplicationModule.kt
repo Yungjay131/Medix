@@ -3,7 +3,7 @@ package app.slyworks.medix.di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.auth_feature.MViewModelFactory
+import app.slyworks.auth_feature.di.MViewModelFactory
 import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import app.slyworks.medix.splash.SplashActivityViewModel
 import dagger.Module

@@ -9,7 +9,7 @@
             android:name=".main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.main"
+            android:theme="@style/AppTheme.splash3"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
 
             <intent-filter>

@@ -3,7 +3,6 @@ package app.slyworks.auth_feature.di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.auth_feature.MViewModelFactory
 import app.slyworks.auth_feature.login.LoginActivityViewModel
 import app.slyworks.auth_feature.onboarding.OnBoardingActivityViewModel
 import app.slyworks.auth_feature.registration.RegistrationActivityViewModel
@@ -30,7 +29,7 @@ object AuthFeatureModule{
     @IntoMap
     @ViewModelKey(OnBoardingActivityViewModel::class)
     fun provideOnBoardingActivityViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                           activity: AppCompatActivity)
     : OnBoardingActivityViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(OnBoardingActivityViewModel::class.java)
@@ -39,7 +38,7 @@ object AuthFeatureModule{
     @IntoMap
     @ViewModelKey(LoginActivityViewModel::class)
     fun provideLoginActivityViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                      activity: AppCompatActivity)
             : LoginActivityViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(LoginActivityViewModel::class.java)
@@ -49,7 +48,7 @@ object AuthFeatureModule{
     @IntoMap
     @ViewModelKey(RegistrationActivityViewModel::class)
     fun provideRegistrationActivityViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                             activity: AppCompatActivity)
     : RegistrationActivityViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(RegistrationActivityViewModel::class.java)
