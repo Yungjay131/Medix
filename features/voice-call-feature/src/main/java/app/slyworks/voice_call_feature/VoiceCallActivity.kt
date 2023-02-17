@@ -179,6 +179,9 @@ class VoiceCallActivity : BaseActivity() {
         setContentView(R.layout.activity_voice_call)
 
         /*TODO:pass user FBUserDetailsVModel as Intent bundle*/
+
+        initData()
+        initViews()
     }
 
     private fun initDI(){

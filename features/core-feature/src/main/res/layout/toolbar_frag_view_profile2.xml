@@ -42,13 +42,13 @@
                 android:layout_marginBottom="28dp"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabToggleFabsStatus_frag_view_profile"
+                android:id="@+id/fab_toggle_fab_status"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
-                app:layout_constraintStart_toEndOf="@id/fabSendRequest_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fab_send_request"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 android:backgroundTint="@color/appPink"
                 android:enabled="true"
@@ -60,7 +60,7 @@
                 app:rippleColor="#8E24AA" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabSendRequest_frag_view_profile"
+                android:id="@+id/fab_send_request"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:backgroundTint="@color/appPink"
@@ -73,12 +73,12 @@
                 app:fabCustomSize="45dp"
                 app:maxImageSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
-                app:layout_constraintStart_toEndOf="@id/fabMessage_frag_view_profile"
-                app:layout_constraintEnd_toStartOf="@id/fabToggleFabsStatus_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fab_message"
+                app:layout_constraintEnd_toStartOf="@id/fab_toggle_fab_status"
                 app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabMessage_frag_view_profile"
+                android:id="@+id/fab_message"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:backgroundTint="@color/appPink"
@@ -91,12 +91,12 @@
                 app:fabCustomSize="45dp"
                 app:maxImageSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
-                app:layout_constraintStart_toEndOf="@id/fabVoiceCall_frag_view_profile"
-                app:layout_constraintEnd_toStartOf="@id/fabSendRequest_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fab_voice_call"
+                app:layout_constraintEnd_toStartOf="@id/fab_send_request"
                 app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabVoiceCall_frag_view_profile"
+                android:id="@+id/fab_voice_call"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:backgroundTint="@color/appPink"
@@ -109,12 +109,12 @@
                 app:fabCustomSize="45dp"
                 app:maxImageSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
-                app:layout_constraintStart_toEndOf="@id/fabVideoCall_frag_view_profile"
-                app:layout_constraintEnd_toStartOf="@id/fabMessage_frag_view_profile"
+                app:layout_constraintStart_toEndOf="@id/fab_video_call"
+                app:layout_constraintEnd_toStartOf="@id/fab_message"
                 app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabVideoCall_frag_view_profile"
+                android:id="@+id/fab_video_call"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:backgroundTint="@color/appPink"
@@ -127,16 +127,16 @@
                 app:maxImageSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/ivProfile_frag_view_profile"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/fabVoiceCall_frag_view_profile"
+                app:layout_constraintEnd_toStartOf="@id/fab_voice_call"
                 app:layout_constraintTop_toBottomOf="@id/ivProfile_frag_view_profile"
                 android:visibility="gone" />
 
             <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_1_frag_view_profile"
+                android:id="@+id/group_fabs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:constraint_referenced_ids="fabSendRequest_frag_view_profile,fabMessage_frag_view_profile,fabVoiceCall_frag_view_profile,fabVideoCall_frag_view_profile"
+                app:constraint_referenced_ids="fab_send_request,fab_message,fab_voice_call,fab_video_call"
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -246,7 +246,7 @@
                     app:layout_constraintGuide_percent=".80"/>
 
                 <androidx.constraintlayout.widget.Group
-                    android:id="@+id/group_2_frag_view_profile"
+                    android:id="@+id/group_app_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"

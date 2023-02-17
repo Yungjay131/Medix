@@ -22,6 +22,15 @@ import javax.inject.Inject
 /**
  * Created by Joshua Sylvanus, 12:27 PM, 13/1/2022.
  */
+sealed class MessageA_UIState{
+    object END_CALL:MessageA_UIState()
+    data class MessageUpdate(val message:String):MessageA_UIState()
+    data class Loading(val status: Boolean):MessageA_UIState()
+    data class StartCallDetailsUpdate(val status:Boolean, val details: FBUserDetailsVModel? = null):MessageA_UIState()
+    data class MessageListUpdate(val status:Boolean, val list:List<MessageVModel>? = null):MessageA_UIState()
+    data class UserDetailsUpdate(val details:FBUserDetailsVModel):MessageA_UIState()
+    data class ConnectionStatusUpdate(val status:String):MessageA_UIState()
+}
 class MessageActivityViewModel
     @Inject
     constructor(private val usersManager: UsersManager,
@@ -32,6 +41,9 @@ class MessageActivityViewModel
                 val timeHelper: TimeHelper) : ViewModel()  {
 
     //region Vars
+    private val _uiStateLD:MutableLiveData<MessageA_UIState> = MutableLiveData()
+    val uiStateLD:LiveData<MessageA_UIState> = _uiStateLD
+
     private val messageListLiveData: MutableLiveData<MutableList<MessageVModel>> = MutableLiveData(mutableListOf())
     private val connectionStatusLiveData:MutableLiveData<String> = MutableLiveData()
     private val userDetailsLiveData:MutableLiveData<FBUserDetailsVModel> = MutableLiveData()
@@ -58,17 +70,19 @@ class MessageActivityViewModel
             usersManager.getUserDataForUID(firebaseUID)
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe { progressLiveData.postValue(true) }
+                .doOnSubscribe { _uiStateLD.postValue(MessageA_UIState.Loading(true)) }
                 .subscribe {
-                    progressLiveData.postValue(false)
+                    _uiStateLD.postValue(MessageA_UIState.Loading(false))
 
                     when{
                         it.isSuccess ->{
-                            _startCallDataLiveData.postValue(it.getTypedValue())
-                            _startCallStateLiveData.postValue(true)
+                            _uiStateLD.postValue(MessageA_UIState.StartCallDetailsUpdate(true, it.getTypedValue()))
+                          /*  _startCallDataLiveData.postValue(it.getTypedValue())
+                            _startCallStateLiveData.postValue(true)*/
                         }
                         it.isFailure ->{
-                            statusLiveData.postValue(it.getAdditionalInfo())
+                            _uiStateLD.postValue(MessageA_UIState.MessageUpdate(it.getAdditionalInfo()!!))
+                            //statusLiveData.postValue(it.getAdditionalInfo())
                         }
                     }
                 }
@@ -91,23 +105,25 @@ class MessageActivityViewModel
                 }
     }
 
-    private fun updatePersonLastMessageTimeStamp(firebaseUID: String, timeStamp:String) = personsManager.updateLastMessageTimeStamp(firebaseUID, timeStamp)
-    fun updatePersonLastMessageInfo(firebaseUID:String) = personsManager.updateLastMessageInfo(firebaseUID)
+    private fun updatePersonLastMessageTimeStamp(firebaseUID: String, timeStamp:String) =
+        personsManager.updateLastMessageTimeStamp(firebaseUID, timeStamp)
 
+    fun updatePersonLastMessageInfo(firebaseUID:String) =
+        personsManager.updateLastMessageInfo(firebaseUID)
 
     fun observeUserDetails(firebaseUID: String):LiveData<FBUserDetailsVModel>{
        disposables +=
-           usersManager.observeUserDataForUID(firebaseUID)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if(it == null)
-                    return@subscribe
+       usersManager.observeUserDataForUID(firebaseUID)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+            if(it == null)
+                return@subscribe
 
-                 usersManager.updateUserInfo(it)
-                     .subscribe { _ ->}
-                 userDetailsLiveData.value = it
-            }
+             usersManager.updateUserInfo(it)
+                 .subscribe { _ ->}
+             userDetailsLiveData.value = it
+        }
 
 
         return userDetailsLiveData

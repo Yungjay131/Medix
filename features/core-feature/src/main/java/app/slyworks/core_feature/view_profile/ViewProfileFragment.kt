@@ -8,19 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.Group
-import androidx.constraintlayout.widget.Guideline
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import app.slyworks.constants_lib.*
-import app.slyworks.controller_lib.AppController
-import app.slyworks.controller_lib.Observer
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.controller_lib.clearAndRemove
 import app.slyworks.core_feature.AppBarStateChangeListener
@@ -34,23 +28,14 @@ import app.slyworks.models_commons_lib.models.MessageMode
 import app.slyworks.navigation_feature.Navigator
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.displayMessage
-import app.slyworks.utils_lib.utils.plusAssign
-import app.slyworks.utils_lib.utils.setChildViewsStatus
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import timber.log.Timber
-import javax.inject.Inject
 import app.slyworks.base_feature.R as Base_R
 
 class ViewProfileFragment : Fragment() {
     //region Vars
-
-    private lateinit var fabSendRequest:FloatingActionButton
-    private lateinit var fabMessage:FloatingActionButton
-    private lateinit var fabVoiceCall:FloatingActionButton
-    private lateinit var fabVideoCall:FloatingActionButton
 
     private lateinit var group_toolbar:Group
 
@@ -113,21 +98,37 @@ class ViewProfileFragment : Fragment() {
 
             when(it){
                 REQUEST_PENDING -> {
-                    toggleFABStatus(false, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
+                    toggleFABStatus(false,
+                        binding.toolbar.fabSendRequest,
+                        binding.toolbar.fabMessage,
+                        binding.toolbar.fabVoiceCall,
+                        binding.toolbar.fabVideoCall)
                     displayMessage("you have a pending request. you cannot message or video call this user until your request is accepted", binding.root)
                 }
                 REQUEST_ACCEPTED -> {
-                    toggleFABStatus(true, fabSendRequest,fabMessage,fabVoiceCall, fabVideoCall)
+                    toggleFABStatus(true,
+                        binding.toolbar.fabSendRequest,
+                        binding.toolbar.fabMessage,
+                        binding.toolbar.fabVoiceCall,
+                        binding.toolbar.fabVideoCall)
                     displayMessage("${userProfile!!.fullName} accepted your consultation request", binding.root)
                 }
                 REQUEST_DECLINED -> {
-                    toggleFABStatus(true, fabSendRequest)
-                    toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
+                    toggleFABStatus(true,
+                        binding.toolbar.fabSendRequest)
+                    toggleFABStatus(false,
+                        binding.toolbar.fabMessage,
+                        binding.toolbar.fabVoiceCall,
+                        binding.toolbar.fabVideoCall)
                     displayMessage("Sorry this user declined your consultation request. You can still send another consultation request", binding.root)
                 }
                 REQUEST_NOT_SENT -> {
-                    toggleFABStatus(true, fabSendRequest)
-                    toggleFABStatus(false, fabMessage,fabVoiceCall,fabVideoCall)
+                    toggleFABStatus(true,
+                        binding.toolbar.fabSendRequest)
+                    toggleFABStatus(false,
+                        binding.toolbar.fabMessage,
+                        binding.toolbar.fabVoiceCall,
+                        binding.toolbar.fabVideoCall)
                 }
                 REQUEST_ERROR,
                 REQUEST_FAILED -> {
@@ -162,19 +163,19 @@ class ViewProfileFragment : Fragment() {
 
         fun toggleFABAnimation(status:Boolean){
             if (status){
-                binding.toolbar.group1FragViewProfile.visibility = View.VISIBLE
-                binding.toolbar.fabToggleFabsStatusFragViewProfile.startAnimation(anim_fab_rotate_forward)
-                binding.toolbar.fabSendRequestFragViewProfile.startAnimation(anim_fab_open)
-                binding.toolbar.fabMessageFragViewProfile.startAnimation(anim_fab_open)
-                binding.toolbar.fabVoiceCallFragViewProfile.startAnimation(anim_fab_open)
-                binding.toolbar.fabVideoCallFragViewProfile.startAnimation(anim_fab_open)
+                binding.toolbar.groupFabs.visibility = View.VISIBLE
+                binding.toolbar.fabToggleFabStatus.startAnimation(anim_fab_rotate_forward)
+                binding.toolbar.fabSendRequest.startAnimation(anim_fab_open)
+                binding.toolbar.fabMessage.startAnimation(anim_fab_open)
+                binding.toolbar.fabVoiceCall.startAnimation(anim_fab_open)
+                binding.toolbar.fabVideoCall.startAnimation(anim_fab_open)
             } else{
-                binding.toolbar.fabToggleFabsStatusFragViewProfile.startAnimation(anim_fab_rotate_backward)
-                binding.toolbar.fabSendRequestFragViewProfile.startAnimation(anim_fab_close)
-                binding.toolbar.fabMessageFragViewProfile.startAnimation(anim_fab_close)
-                binding.toolbar.fabVoiceCallFragViewProfile.startAnimation(anim_fab_close)
-                binding.toolbar.fabVideoCallFragViewProfile.startAnimation(anim_fab_close)
-                binding.toolbar.group1FragViewProfile.visibility = View.GONE
+                binding.toolbar.fabToggleFabStatus.startAnimation(anim_fab_rotate_backward)
+                binding.toolbar.fabSendRequest.startAnimation(anim_fab_close)
+                binding.toolbar.fabMessage.startAnimation(anim_fab_close)
+                binding.toolbar.fabVoiceCall.startAnimation(anim_fab_close)
+                binding.toolbar.fabVideoCall.startAnimation(anim_fab_close)
+                binding.toolbar.groupFabs.visibility = View.GONE
             }
         }
 
@@ -183,11 +184,11 @@ class ViewProfileFragment : Fragment() {
                when(state){
                    AppBarState.IDLE ->{}
                    AppBarState.EXPANDED ->{
-                       group_toolbar.visibility = View.GONE
+                       binding.toolbar.groupAppBar.visibility = View.GONE
                    }
                    AppBarState.COLLAPSED ->{
                        /*close fab*/
-                       group_toolbar.visibility = View.VISIBLE
+                       binding.toolbar.groupAppBar.visibility = View.VISIBLE
                        toggleFABAnimation(false.also { areFABsDisplayed = false })
                    }
 
@@ -195,18 +196,23 @@ class ViewProfileFragment : Fragment() {
            }
        })
 
-        binding.toolbar.fabToggleFabsStatusFragViewProfile.setOnClickListener {
+        binding.toolbar.fabToggleFabStatus.setOnClickListener {
             toggleFABAnimation(!areFABsDisplayed.also { areFABsDisplayed = !areFABsDisplayed })
         }
 
-        binding.toolbar.fabSendRequestFragViewProfile.setOnClickListener {
-            val request2: ConsultationRequestVModel = ConsultationRequestVModel(userProfile!!.firebaseUID, System.currentTimeMillis().toString(),  viewModel.getUserDetailsUser(), REQUEST_PENDING)
+        binding.toolbar.fabSendRequest.setOnClickListener {
+            val request2: ConsultationRequestVModel =
+                ConsultationRequestVModel(
+                    userProfile!!.firebaseUID,
+                    System.currentTimeMillis().toString(),
+                    viewModel.getUserDetailsUser(),
+                    REQUEST_PENDING)
            viewModel.sendConsultationRequest(request2)
 
             Timber.e("initViews: FirebaseCloudMessage sent to ${userProfile!!.fullName}")
         }
 
-        binding.toolbar.fabSendRequestFragViewProfile.setOnLongClickListener{
+        binding.toolbar.fabSendRequest.setOnLongClickListener{
             val message:String = "Hi i'm ${viewModel.getUserDetailsUser().fullName}. Please i would like a consultation with you"
             val request: ConsultationRequestVModel = ConsultationRequestVModel(userProfile!!.firebaseUID,  System.currentTimeMillis().toString(), viewModel.getUserDetailsUser(), REQUEST_PENDING)
             viewModel.sendConsultationRequest(request, mode = MessageMode.CLOUD_MESSAGE)
@@ -215,20 +221,22 @@ class ViewProfileFragment : Fragment() {
             true
         }
 
-        binding.toolbar.fabMessageFragViewProfile.setOnClickListener {
+        binding.toolbar.fabMessage.setOnClickListener {
             Navigator.intentFor(requireActivity(), MESSAGE_ACTIVITY_INTENT_FILTER)
                 .addExtra(EXTRA_USER_PROFILE_FBU, userProfile!!)
-                .finishCaller()
                 .navigate()
         }
 
-        binding.toolbar.fabVoiceCallFragViewProfile.setOnClickListener {}
+        binding.toolbar.fabVoiceCall.setOnClickListener {
+            Navigator.intentFor(requireActivity(), VOICECALL_ACTIVITY_INTENT_FILTER)
+                .addExtra(EXTRA_USER_PROFILE_FBU, userProfile!!)
+                .navigate()
+        }
 
-        binding.toolbar.fabVideoCallFragViewProfile.setOnClickListener {
+        binding.toolbar.fabVideoCall.setOnClickListener {
             Navigator.intentFor(requireActivity(), VIDEOCALL_ACTIVITY_INTENT_FILTER)
                 .addExtra(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_OUTGOING)
                 .addExtra(EXTRA_VIDEO_CALL_USER_DETAILS, userProfile!!)
-                .finishCaller()
                 .navigate()
         }
 
