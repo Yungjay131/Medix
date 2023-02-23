@@ -1,17 +1,14 @@
 package app.slyworks.auth_feature.onboarding
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.NestedScrollView
 import app.slyworks.auth_feature.R
-import app.slyworks.auth_feature.di.AuthFeatureComponent
-import app.slyworks.auth_feature.registration.RegistrationActivity
-import app.slyworks.auth_feature.login.LoginActivity
+import app.slyworks.auth_feature._di.AuthFeatureComponent
+import app.slyworks.auth_feature.databinding.ActivityOnBoardingBinding
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.EXTRA_IS_ACTIVITY_RECREATED
@@ -20,25 +17,15 @@ import app.slyworks.base_feature.custom_views.NetworkStatusView
 import app.slyworks.base_feature.custom_views.setStatus
 import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.REGISTRATION_ACTIVITY_INTENT_FILTER
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.utils_lib.utils.setStatusBarVisibility
 import com.google.android.material.imageview.ShapeableImageView
+import dev.joshuasylvanus.navigator.Navigator
 import javax.inject.Inject
 
 class OnBoardingActivity : BaseActivity() {
     //region Vars
-    private lateinit var materialCV1: ShapeableImageView
-    private lateinit var materialCV2: ShapeableImageView
-    private lateinit var materialCV3: ShapeableImageView
-    private lateinit var materialCV4: ShapeableImageView
-    private lateinit var materialCV5: ShapeableImageView
-    private lateinit var nestedLayout: NestedScrollView
-
-    private lateinit var rootView: ConstraintLayout
-    private lateinit var btnGetStarted: Button
-    private lateinit var btnLogin: Button
-
     private var networkStatusView: NetworkStatusView? = null
+
+    private lateinit var binding:ActivityOnBoardingBinding
 
     @Inject
     lateinit var viewModel: OnBoardingActivityViewModel
@@ -58,7 +45,8 @@ class OnBoardingActivity : BaseActivity() {
         initDI()
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_on_boarding)
+        binding = ActivityOnBoardingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initData()
 
@@ -77,7 +65,6 @@ class OnBoardingActivity : BaseActivity() {
 
     private fun initDI(){
         AuthFeatureComponent.getInitialBuilder()
-            .appCompatActivity(this)
             .build()
             .inject(this)
     }
@@ -88,48 +75,31 @@ class OnBoardingActivity : BaseActivity() {
 
         viewModel.subscribeToNetwork().observe(this) {
             if(networkStatusView == null)
-                networkStatusView = NetworkStatusView.from(rootView, GENERAL)
+                networkStatusView = NetworkStatusView.from(binding.root, GENERAL)
 
             networkStatusView!!.setStatus(it)
         }
     }
 
     private fun initViews_landscape() {
-        rootView = findViewById(R.id.rootView)
-        btnGetStarted = findViewById(R.id.btnGetStarted_onboarding)
-        btnLogin = findViewById(R.id.btnLogin_onboarding)
-        nestedLayout = findViewById(R.id.layout_btns_onboarding)
-
-        btnGetStarted.setOnClickListener {
-            //startActivity(Intent(this, RegistrationActivity::class.java))
+        binding.btnGetStarted.setOnClickListener {
             Navigator.intentFor(this, REGISTRATION_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
 
-        btnLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             Navigator.intentFor(this, LOGIN_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
     }
 
     private fun initViews_normal() {
-        rootView = findViewById(R.id.rootView)
-        btnGetStarted = findViewById(R.id.btnGetStarted_onboarding)
-        btnLogin = findViewById(R.id.btnLogin_onboarding)
-
-        materialCV1 = findViewById(R.id.onboarding_image_1)
-        materialCV2 = findViewById(R.id.onboarding_image_2)
-        materialCV3 = findViewById(R.id.onboarding_image_3)
-        materialCV4 = findViewById(R.id.onboarding_image_4)
-        materialCV5 = findViewById(R.id.onboarding_image_5)
-        nestedLayout = findViewById(R.id.layout_btns_onboarding)
-
-        btnGetStarted.setOnClickListener {
+        binding.btnGetStarted.setOnClickListener {
             Navigator.intentFor(this, REGISTRATION_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
 
-        btnLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             Navigator.intentFor(this, LOGIN_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
@@ -137,7 +107,7 @@ class OnBoardingActivity : BaseActivity() {
 
     private fun initAnimations_landscape() {
         val animLayout = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_layout_anim)
-        nestedLayout.startAnimation(animLayout)
+        binding.layoutBtns.startAnimation(animLayout)
     }
 
     private fun initAnimations_normal() {
@@ -148,11 +118,11 @@ class OnBoardingActivity : BaseActivity() {
         val animImage5 = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_image_5_anim)
         val animLayout = AnimationUtils.loadAnimation(this, app.slyworks.base_feature.R.anim.onboarding_layout_anim)
 
-        materialCV1.startAnimation(animImage1)
-        materialCV2.startAnimation(animImage2)
-        materialCV3.startAnimation(animImage3)
-        materialCV4.startAnimation(animImage4)
-        materialCV5.startAnimation(animImage5)
+        binding.onboardingImage1.startAnimation(animImage1)
+        binding.onboardingImage2.startAnimation(animImage2)
+        binding.onboardingImage3.startAnimation(animImage3)
+        binding.onboardingImage4.startAnimation(animImage4)
+        binding.onboardingImage5.startAnimation(animImage5)
     }
 
 

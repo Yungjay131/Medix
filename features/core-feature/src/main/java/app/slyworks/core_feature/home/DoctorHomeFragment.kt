@@ -16,7 +16,7 @@ import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RvHealthAreasAdapter
 import app.slyworks.core_feature.main.activityComponent
-import app.slyworks.models_commons_lib.models.AccountType
+import app.slyworks.data_lib.models.AccountType
 import app.slyworks.utils_lib.utils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
@@ -72,7 +72,6 @@ class DoctorHomeFragment : Fragment() {
 
          context.activityComponent
              .fragmentComponentBuilder()
-             .setFragment(this)
              .build()
              .inject(this)
     }

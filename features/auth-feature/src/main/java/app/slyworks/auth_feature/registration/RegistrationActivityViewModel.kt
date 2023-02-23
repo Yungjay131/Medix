@@ -10,8 +10,8 @@ import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_lib.OTPVerificationStage
 import app.slyworks.auth_lib.RegistrationManager
 import app.slyworks.auth_lib.VerificationHelper
-import app.slyworks.models_commons_lib.models.Outcome
-import app.slyworks.models_commons_lib.models.TempUserDetails
+import app.slyworks.data_lib.models.Outcome
+import app.slyworks.data_lib.models.TempUserDetails
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable
@@ -31,7 +31,7 @@ class RegistrationActivityViewModel
     //region Vars
     private var currentTimer:CountDownTimer? = null
 
-    val registrationDetails:TempUserDetails = TempUserDetails()
+    val registrationDetails: TempUserDetails = TempUserDetails()
 
     private var disposable:Disposable = Disposable.empty()
     private val disposables:CompositeDisposable = CompositeDisposable()

@@ -7,17 +7,19 @@ import android.text.TextUtils
 import android.widget.TextView
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.navigation_feature.Navigator
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.plusAssign
+import app.slyworks.voice_call_feature._di.VoiceCallFeatureComponent
 import app.slyworks.voice_call_feature.databinding.ActivityVoiceCallBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hdodenhof.circleimageview.CircleImageView
-import io.agora.rtc.Constants
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
-import io.agora.rtc.models.ChannelMediaOptions
+import dev.joshuasylvanus.navigator.Navigator
+import io.agora.rtc2.ChannelMediaOptions
+import io.agora.rtc2.Constants
+import io.agora.rtc2.IRtcEngineEventHandler
+import io.agora.rtc2.RtcEngine
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
@@ -176,7 +178,9 @@ class VoiceCallActivity : BaseActivity() {
         initDI()
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_voice_call)
+
+        binding = ActivityVoiceCallBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         /*TODO:pass user FBUserDetailsVModel as Intent bundle*/
 
@@ -185,11 +189,9 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun initDI(){
-        /*application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
-            .build()
-            .inject(this)*/
+       VoiceCallFeatureComponent.getInitialBuilder()
+           .build()
+           .inject(this)
     }
 
     private fun initAgoraEngine() {
@@ -204,18 +206,12 @@ class VoiceCallActivity : BaseActivity() {
         ivProfile = findViewById(R.id.ivProfile_activity_voice_call)
         tvName = findViewById(R.id.tvName_activity_voice_call)
         tvCallTime = findViewById(R.id.tvCallTime_activity_voice_call)
-        fabDeclineCall = findViewById(R.id.fabDeclineCall_activity_voice_call)
-        fabAcceptCall = findViewById(R.id.fabAcceptCall_activity_voice_call)
-        fabEndCall = findViewById(R.id.fabEndCall_activity_voice_call)
-        fabLoudSpeaker = findViewById(R.id.fabLoudSpeaker_activity_voice_call)
-        fabSwitchToVideoCall = findViewById(R.id.fabSwitchToVideoCall_activity_voice_call)
-        fabMuteMic = findViewById(R.id.fabMuteMic_activity_voice_call)
 
-        fabAcceptCall.setOnClickListener {
+        binding.fabAcceptCall.setOnClickListener {
             joinChannel()
         }
 
-        fabDeclineCall.setOnClickListener {
+        binding.fabDeclineCall.setOnClickListener {
             viewModel.processVoiceCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
@@ -224,7 +220,7 @@ class VoiceCallActivity : BaseActivity() {
             this.onBackPressedDispatcher.onBackPressed()
         }
 
-        fabEndCall.setOnClickListener {
+        binding.fabEndCall.setOnClickListener {
             leaveChannel()
 
             viewModel.processVoiceCall(
@@ -235,17 +231,17 @@ class VoiceCallActivity : BaseActivity() {
             this.onBackPressedDispatcher.onBackPressed()
         }
 
-        fabLoudSpeaker.setOnClickListener {
+        binding.fabLoudSpeaker.setOnClickListener {
             isOnLoudSpeaker = !isOnLoudSpeaker
             toggleSpeakerHeadphoneStatus(isOnLoudSpeaker)
         }
 
-        fabMuteMic.setOnClickListener {
+        binding.fabMuteMic.setOnClickListener {
             isMuted = !isMuted
             toggleAudioStatus(isMuted)
         }
 
-        fabSwitchToVideoCall.setOnClickListener {
+        binding.fabSwitchToVideoCall.setOnClickListener {
             val o:PublishSubject<Boolean> = PublishSubject.create()
 
             disposables +=
@@ -347,7 +343,6 @@ class VoiceCallActivity : BaseActivity() {
         val response: Int = rtcEngine!!.joinChannel(
             VIDEO_CHANNEL_1_TEMP_TOKEN,
             VIDEO_CALL_CHANNEL,
-            "",
             generateNewVideoCallUserID(),
             option)
 
@@ -360,7 +355,7 @@ class VoiceCallActivity : BaseActivity() {
             return
         }
 
-        /*disable appropriate button*/
+        /*disable appropriate buttons*/
     }
 
     private fun toggleAudioStatus(status: Boolean) {

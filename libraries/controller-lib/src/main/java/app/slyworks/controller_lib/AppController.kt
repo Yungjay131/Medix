@@ -3,22 +3,7 @@ package app.slyworks.controller_lib
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 
-fun Subscription.clear() {
-    AppController.observers[this.event]?.remove(this)
-    AppController.eventMap[this.event]?.second?.remove(this)
-}
 
-fun Subscription.clearAndRemove() {
-    if (AppController.observers[this.event] == null) return
-
-    if (AppController.observers[this.event]!!.contains(this))
-        AppController.observers[this.event]!!.remove(this)
-
-    if (AppController.eventMap[this.event]?.second?.contains(this) == true)
-        AppController.eventMap.remove(this.event)
-
-    AppController.removeEvent(this.event)
-}
 
 class AppController {
     companion object {

@@ -7,6 +7,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.auth_lib"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -43,9 +45,8 @@ dependencies {
     implementation project(path: ':libraries:constants-lib')
     implementation project(path: ':libraries:utils-lib')
     implementation project(path: ':libraries:firebase-commons-lib')
-    implementation project(path: ':libraries:models-commons-lib')
+
     implementation project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:crypto-lib')
     implementation project(path: ':libraries:controller-lib')
 
     implementation impl_depends.coroutines_android

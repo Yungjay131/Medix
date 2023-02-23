@@ -8,8 +8,8 @@ import app.slyworks.auth_lib.UsersManager
 import app.slyworks.communication_lib.ConnectionStatusManager
 import app.slyworks.communication_lib.MessageManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers

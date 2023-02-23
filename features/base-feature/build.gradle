@@ -7,10 +7,11 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.base_feature"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
-
         minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK
         versionCode sdk_details.versionCode
@@ -38,11 +39,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xextended-compiler-checks']
     }
 
-  /*  viewBinding{
+    viewBinding{
         enabled = true
-    }*/
+    }
 }
 
 android.buildTypes.each { type ->
@@ -50,36 +52,42 @@ android.buildTypes.each { type ->
 }
 
 dependencies {
-    api project(path: ':features:navigation-feature')
     api project(path: ':libraries:auth-lib')
-    implementation project(path: ':libraries:communication-lib')
+    api project(path: ':libraries:communication-lib')
     api project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:firebase-commons-lib')
+    api project(path: ':libraries:room-lib')
+    api project(path: ':libraries:firebase-commons-lib')
     api project(path: ':libraries:network-lib')
     api project(path: ':libraries:utils-lib')
-    api project(path: ':libraries:models-commons-lib')
+    api project(path: ':libraries:controller-lib')
     api project(path: ':libraries:constants-lib')
     api project(path: ':libraries:di-base-lib')
 
     api impl_depends.core_ktx
     api impl_depends.appcompat
-    api impl_depends.material
-    implementation impl_depends.spinkit
-    api impl_depends.coroutines_android
-    implementation impl_depends.coroutines_play_services
+    api impl_depends.legacy_support
     api impl_depends.lifecycle_viewmodel
     api impl_depends.lifecycle_runtime
     api impl_depends.lifecycle_livedata
-    implementation impl_depends.work_runtime
-    implementation impl_depends.cardview
+    api impl_depends.work_runtime
+    api impl_depends.coroutines_android
+
+    api impl_depends.material
+    api impl_depends.cardview
     api impl_depends.constraint_layout
-    implementation impl_depends.recyclerview
-    implementation impl_depends.glide
-    implementation impl_depends.circle_imageview
+    api impl_depends.recyclerview
+
+    api impl_depends.spinkit
+    api impl_depends.glide
+    api impl_depends.circle_imageview
+    api impl_depends.lottie
+    api impl_depends.navigator
+
     api impl_depends.rxjava
-    api impl_depends.rxandroid
     api impl_depends.rxbinding
     api impl_depends.timber
+
+    api impl_depends.agora_new_sdk
 
     api impl_depends.dagger
     kapt kapt_depends.dagger_kapt

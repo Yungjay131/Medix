@@ -7,7 +7,7 @@ import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
-import app.slyworks.models_commons_lib.models.ConsultationResponse
+import app.slyworks.data_lib.models.ConsultationResponse
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
@@ -22,6 +22,10 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
     lateinit var dataManager: DataManager
     @Inject
     lateinit var consultationRequestsManager: ConsultationRequestsManager
+
+    init {
+
+    }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val fromUID:String = intent!!.getStringExtra(EXTRA_CLOUD_MESSAGE_FROM_UID)!!

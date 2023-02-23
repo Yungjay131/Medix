@@ -6,11 +6,11 @@ import app.slyworks.constants_lib.NOT_SENT
 import app.slyworks.constants_lib.OUTGOING_MESSAGE
 import app.slyworks.constants_lib.READ
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.data_lib.models.PersonVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
 import app.slyworks.firebase_commons_lib.MValueEventListener
 import com.google.firebase.database.*
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable

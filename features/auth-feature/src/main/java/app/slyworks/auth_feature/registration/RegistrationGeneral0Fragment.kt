@@ -15,7 +15,7 @@ import app.slyworks.constants_lib.ACCOUNT_TYPE_NOT_SET
 import app.slyworks.constants_lib.DOCTOR
 import app.slyworks.constants_lib.NOT_SET
 import app.slyworks.constants_lib.PATIENT
-import app.slyworks.models_commons_lib.models.AccountType
+import app.slyworks.data_lib.models.AccountType
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable

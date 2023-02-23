@@ -2,15 +2,15 @@ package app.slyworks.communication_lib
 
 import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.AppController
-import app.slyworks.data_lib.models.ConsultationRequestVModel
+import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
 import app.slyworks.data_lib.DataManager
+import app.slyworks.data_lib.models.*
 import com.google.firebase.database.*
-import app.slyworks.fcm_api_lib.FCMClientApi
-import app.slyworks.fcm_api_lib.FirebaseCloudMessage
+import app.slyworks.data_lib.FCMClientApi
+import app.slyworks.data_lib.FirebaseCloudMessage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.firebase_commons_lib.MChildEventListener
 import app.slyworks.firebase_commons_lib.MValueEventListener
-import app.slyworks.models_commons_lib.models.*
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
@@ -82,9 +82,8 @@ class ConsultationRequestsManager(
                 MValueEventListener(
                     onDataChangeFunc = {
                         //"REQUEST_PENDING,REQUEST_ACCEPTED,REQUEST_DECLINED,("NOT_SENT")
-                        val result: ConsultationRequestVModel? = it.getValue<ConsultationRequestVModel>(
-                            ConsultationRequestVModel::class.java
-                        )
+                        val result: ConsultationRequestVModel? =
+                            it.getValue<ConsultationRequestVModel>(ConsultationRequestVModel::class.java)
 
                         val status: String =
                             if (result == null)
@@ -123,7 +122,7 @@ class ConsultationRequestsManager(
 
     private fun sendConsultationRequestResponseViaFCM(response: ConsultationResponse):Observable<Outcome>
        =  Observable.create<Outcome> { emitter ->
-           val fcMessage: app.slyworks.fcm_api_lib.FirebaseCloudMessage = mapConsultationResponseToFCMessage(response)
+           val fcMessage: FirebaseCloudMessage = mapConsultationResponseToFCMessage(response)
 
             fcmClientApi
                 .sendCloudMessage(fcMessage)
@@ -217,7 +216,8 @@ class ConsultationRequestsManager(
                             sendConsultationRequestResponseToDB(
                                 ConsultationResponse(toUID = fcMessage.to,
                                                      fromUID = dataManager.getUserDetailsParam<String>("firebaseUID")!!,
-                                                     fullName = request.details.fullName))
+                                                     fullName = request.details.fullName)
+                            )
 
                             dataManager.addConsultationRequests(request)
 
@@ -254,7 +254,7 @@ class ConsultationRequestsManager(
         return FirebaseCloudMessage(response.toFCMRegistrationToken, data)
     }
 
-    private fun mapConsultationRequestToFCMessage(request: ConsultationRequestVModel): app.slyworks.fcm_api_lib.FirebaseCloudMessage {
+    private fun mapConsultationRequestToFCMessage(request: ConsultationRequestVModel): FirebaseCloudMessage {
         val message: String = "Hi i'm ${dataManager.getUserDetailsParam<String>("fullName")}. Please i would like a consultation with you"
         val data: Data =
             ConsultationRequestData(message = message,

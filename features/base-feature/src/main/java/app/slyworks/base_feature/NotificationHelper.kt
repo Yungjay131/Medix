@@ -17,9 +17,9 @@ import app.slyworks.base_feature.broadcast_receivers.CloudMessageBroadcastReceiv
 import app.slyworks.base_feature.broadcast_receivers.VideoCallRequestBroadcastReceiver
 import app.slyworks.base_feature.broadcast_receivers.VoiceCallRequestBroadcastReceiver
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.navigation_feature.Navigator
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
+
 
 
 /**
@@ -70,7 +70,7 @@ class NotificationHelper(private val context:Context){
                                                message:String,
                                                status:String,
                                                fullName:String){
-        val intent:Intent = Navigator.intentFromIntentFilter(context, VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
+        val intent:Intent = Intent(VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
             .apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
@@ -109,7 +109,7 @@ class NotificationHelper(private val context:Context){
                                               fullName:String,
                                               message:String){
 
-        val intent:Intent = Navigator.intentFromIntentFilter(context, VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
+        val intent:Intent = Intent(VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
             .apply {
                 val b:Bundle = Bundle().apply {
                 putString(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
@@ -176,7 +176,7 @@ class NotificationHelper(private val context:Context){
     }
 
     fun createNewMessageNotification(message: MessageVModel, profileImage:Bitmap){
-        val intent:Intent = Navigator.intentFromIntentFilter(context, MAIN_ACTIVITY_INTENT_FILTER).apply {
+        val intent:Intent = Intent(MAIN_ACTIVITY_INTENT_FILTER).apply {
             putExtra(EXTRA_MAIN_FRAGMENT, FRAGMENT_CHAT_HOST)
             putExtra(EXTRA_RECEIVED_MESSAGE, message)
 
@@ -209,7 +209,7 @@ class NotificationHelper(private val context:Context){
     }
 
     fun createReceivedMessageNotification(){
-        val intent:Intent = Navigator.intentFromIntentFilter(context, MAIN_ACTIVITY_INTENT_FILTER).apply {
+        val intent:Intent = Intent(MAIN_ACTIVITY_INTENT_FILTER).apply {
             putExtra(EXTRA_MAIN_FRAGMENT, FRAGMENT_CHAT_HOST)
             setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
@@ -244,7 +244,7 @@ class NotificationHelper(private val context:Context){
     }
 
     fun createIncomingVideoCallNotification(userDetails: FBUserDetailsVModel){
-        val intent = Navigator.intentFromIntentFilter(context, VIDEOCALL_ACTIVITY_INTENT_FILTER).apply {
+        val intent = Intent(VIDEOCALL_ACTIVITY_INTENT_FILTER).apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_VIDEO_CALL_TYPE, VIDEO_CALL_INCOMING)
                 putParcelable(EXTRA_VIDEO_CALL_USER_DETAILS, userDetails)
@@ -298,7 +298,7 @@ class NotificationHelper(private val context:Context){
 
     fun createIncomingVoiceCallNotification(details: FBUserDetailsVModel, bitmap: Bitmap) {
         /*TODO:create notification with custom layout*/
-        val intent = Navigator.intentFromIntentFilter(context, VOICECALL_ACTIVITY_INTENT_FILTER).apply {
+        val intent = Intent(VOICECALL_ACTIVITY_INTENT_FILTER).apply {
             val b:Bundle = Bundle().apply {
                 putString(EXTRA_VOICE_CALL_TYPE, VOICE_CALL_INCOMING)
                 putParcelable(EXTRA_VOICE_CALL_USER_DETAILS, details)

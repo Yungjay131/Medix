@@ -1,7 +1,7 @@
 package app.slyworks.message_feature.message
 
 import androidx.recyclerview.widget.DiffUtil
-import app.slyworks.data_lib.models.MessageVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
 
 /**
  * Created by Joshua Sylvanus, 10:50 PM, 28/11/2022.

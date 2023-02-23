@@ -4,17 +4,16 @@ import app.slyworks.constants_lib.KEY_FCM_REGISTRATION
 import app.slyworks.constants_lib.KEY_IS_THERE_NEW_FCM_REG_TOKEN
 import app.slyworks.constants_lib.KEY_LAST_SIGN_IN_TIME
 import app.slyworks.constants_lib.KEY_LOGGED_IN_STATUS
-import app.slyworks.crypto_lib.CryptoHelper
+import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.PreferenceManager
 import app.slyworks.utils_lib.TimeHelper
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
-import kotlin.jvm.Throws
 
 
 class LoginManager(
@@ -91,7 +90,7 @@ class LoginManager(
                     it.isFailure -> Single.just(it)
                     it.isError ->
                         uploadFCMRegistrationToken()
-                            .concatMap { it2:Outcome ->
+                            .concatMap { it2: Outcome ->
                                 /* kind of including the second error(if there is) and the first */
                                Single.just(Outcome.ERROR(it2.getAdditionalInfo(), it.getAdditionalInfo()))
                             }
@@ -104,7 +103,7 @@ class LoginManager(
                     it.isFailure -> Single.just(it)
                     it.isError ->
                         uploadFCMRegistrationToken()
-                            .concatMap { it2:Outcome ->
+                            .concatMap { it2: Outcome ->
                                 /* kind of including the second error and the first */
                                 Single.just(Outcome.ERROR(it2.getAdditionalInfo(), it.getAdditionalInfo()))
                             }
@@ -179,11 +178,11 @@ class LoginManager(
 
                        dataManager.saveUserToDataStore(user!!).subscribe()
 
-                       val r:Outcome = Outcome.SUCCESS(value = "login successful")
+                       val r: Outcome = Outcome.SUCCESS(value = "login successful")
                        emitter.onSuccess(r)
                    }else{
                        Timber.e("signInUser: user login failed",it.exception )
-                       val r:Outcome = Outcome.FAILURE(value = "oops something went wrong on our end, please try again")
+                       val r: Outcome = Outcome.FAILURE(value = "oops something went wrong on our end, please try again")
                        emitter.onSuccess(r)
                    }
                }

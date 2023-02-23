@@ -1,8 +1,8 @@
 package app.slyworks.communication_lib
 
-import app.slyworks.data_lib.models.CallHistoryVModel
+import app.slyworks.data_lib.vmodels.CallHistoryVModel
 import app.slyworks.data_lib.DataManager
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.rxjava3.core.Observable

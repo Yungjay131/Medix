@@ -19,17 +19,16 @@ import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Observer
 import app.slyworks.controller_lib.Subscription
-import app.slyworks.controller_lib.clearAndRemove
 import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.R
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.data_lib.models.PersonVModel
-import app.slyworks.navigation_feature.Navigator
+import app.slyworks.core_feature.databinding.FragmentChatBinding
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
+
 import app.slyworks.utils_lib.utils.addMultiple
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-
-import javax.inject.Inject
+import dev.joshuasylvanus.navigator.Navigator
 
 class ChatFragment : Fragment(), Observer {
     //region Vars
@@ -45,6 +44,8 @@ class ChatFragment : Fragment(), Observer {
 
     private lateinit var personToMessagesMap:Map<PersonVModel, MutableList<MessageVModel>>
     private lateinit var adapter2: RVChatAdapter2
+
+    private lateinit var binding: FragmentChatBinding
 
     private lateinit var viewModel: ChatHostFragmentViewModel
 
@@ -65,43 +66,13 @@ class ChatFragment : Fragment(), Observer {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_chat, container, false)
-        initViews(view)
-        return view
+        binding = FragmentChatBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initData()
-    }
-
-    private fun initViews(view:View){
-        layout_chat_empty = view.findViewById(R.id.layout_no_messages_content_chat)
-        rvChats = view.findViewById(R.id.rvChats_frag_chat)
-        fabStartChat = view.findViewById(R.id.fabStatChat_frag_chat)
-        rootView = view.findViewById(R.id.rootView)
-        progress = view.findViewById(R.id.progress_layout)
-        layout_error = view.findViewById(R.id.layout_error)
-        tvRetry = view.findViewById(R.id.tvRetry_content_chat)
-        btnRetry = view.findViewById(R.id.btnRetry_content_chat)
-        progress_retry = view.findViewById(R.id.progrss_retry)
-
-        fabStartChat.setOnClickListener {
-            val f:String
-            if(viewModel.getUserAccountType() == PATIENT)
-                f = FRAGMENT_PROFILE_HOST
-            else
-                f = FRAGMENT_DOCTOR_HOME
-
-            (requireActivity() as MainActivity)
-                .inflateFragment(f)
-        }
-
-        adapter2 = RVChatAdapter2()
-        rvChats.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        rvChats.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-        rvChats.adapter = adapter2
-
-        btnRetry.setOnClickListener { getData(1) }
+        initViews()
     }
 
     private fun initData(){
@@ -130,7 +101,7 @@ class ChatFragment : Fragment(), Observer {
         }
 
         viewModel.progressStateLiveData.observe(viewLifecycleOwner){
-            progress.isVisible = it
+            binding.progress.progressLayout.isVisible = it
             if(!it && progress_retry.isVisible)
               progress_retry.visibility = View.GONE
         }
@@ -141,26 +112,46 @@ class ChatFragment : Fragment(), Observer {
     private fun getData(from:Int){
         when(from){
             1 -> progress_retry.isVisible = true
-            2 -> progress.isVisible = true
+            2 -> binding.progress.progressLayout.isVisible = true
         }
 
         viewModel.getChats()
     }
 
+    private fun initViews(){
+        binding.fabStatChatFragChat.setOnClickListener {
+            val f:String
+            if(viewModel.getUserAccountType() == PATIENT)
+                f = FRAGMENT_PROFILE_HOST
+            else
+                f = FRAGMENT_DOCTOR_HOME
+
+            (requireActivity() as MainActivity)
+                .inflateFragment(f)
+        }
+
+        adapter2 = RVChatAdapter2()
+        binding.contentChat.rvChats.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.contentChat.rvChats.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        binding.contentChat.rvChats.adapter = adapter2
+
+        binding.contentChat.btnRetry.setOnClickListener { getData(1) }
+    }
+
     private fun toggleLayoutErrorStatus(status:Boolean,
                                         text:String = "oops, something went wrong on our end, please try again"){
-        layout_error.isVisible = status
-        tvRetry.text = text
+        binding.contentChat.layoutError.isVisible = status
+        binding.contentChat.tvRetry.text = text
     }
 
     private fun toggleLayoutIntroStatus(status:Boolean){
-        layout_chat_empty.isVisible = status
+        binding.contentChat.layoutNoMessagesContentChat.isVisible = status
     }
 
     override fun <T> notify(event: String, data: T?) {
         when(event){
-            EVENT_OPEN_MESSAGE_ACTIVITY ->{}
-            EVENT_OPEN_MESSAGE_ACTIVITY_2 ->{
+            EVENT_OPEN_MESSAGE_ACTIVITY -> {}
+            EVENT_OPEN_MESSAGE_ACTIVITY_2 -> {
                 /*TODO:this is an incomplete FBUserDetails object*/
                 val result: PersonVModel = data as PersonVModel
 

@@ -4,16 +4,13 @@ import android.app.Dialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import app.slyworks.base_feature.custom_views.NetworkStatusView
-import app.slyworks.base_feature.di.BaseFeatureComponent
-import app.slyworks.base_feature.di.DaggerBaseFeatureComponent
+import app.slyworks.base_feature._di.BaseFeatureComponent
 import app.slyworks.constants_lib.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.system.exitProcess
 
 
@@ -48,8 +45,8 @@ open class BaseActivity : AppCompatActivity(), IValidForListening {
     private fun initDI(){
       if(listenerManager == null)
         listenerManager =
-            BaseFeatureComponent.getInstance()
-            .getListenerManager()
+        BaseFeatureComponent.getInstance()
+               .getListenerManager()
     }
 
     private fun initNetworkStatusView(){ }
@@ -74,8 +71,8 @@ open class BaseActivity : AppCompatActivity(), IValidForListening {
 
     override fun onResume() {
         super.onResume()
-        /*to avoid doing too much work on the main thread */
-        CoroutineScope(Dispatchers.Main).launch {
+        /*to avoid doing too much work directly on the main thread ??? */
+        CoroutineScope(Dispatchers.Main.immediate).launch {
           handleGooglePlayServicesAvailability()
         }
     }

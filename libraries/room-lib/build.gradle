@@ -8,6 +8,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.room_lib"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -55,8 +57,8 @@ dependencies {
     implementation project(path: ':libraries:constants-lib')
 
     implementation impl_depends.core_ktx
-    /* because of dagger in Data-lib */
-    api impl_depends.room
+
+    implementation impl_depends.room
     implementation impl_depends.room_runtime
     implementation impl_depends.room_rxjava
     kapt kapt_depends.room_kapt

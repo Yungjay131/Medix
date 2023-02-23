@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.communication_lib.MessageManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.data_lib.models.PersonVModel
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable

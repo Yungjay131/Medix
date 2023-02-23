@@ -3,7 +3,7 @@ package app.slyworks.core_feature
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.auth_lib.UsersManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable

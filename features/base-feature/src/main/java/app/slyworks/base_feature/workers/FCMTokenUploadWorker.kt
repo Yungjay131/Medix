@@ -8,8 +8,9 @@ import app.slyworks.constants_lib.KEY_FCM_UPLOAD_TOKEN
 import app.slyworks.data_lib.DataManager
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 /**
@@ -38,17 +39,17 @@ class FCMTokenUploadWorker(private val context: Context,
         //val UID:String = _job.await() ?: return Result.failure()
         val UID:String = dataManager.getUserDetailsParam<String>("firebaseUID") ?: return Result.success()
 
-        var r: Result = Result.retry()
-        firebaseUtils.getUserDataRefForWorkManager(UID)
-            .setValue(token)
-            .addOnCompleteListener {
-                if (it.isSuccessful)
-                   r = Result.success()
-                else
-                   r = Result.retry()
-            }.await()
+        return suspendCoroutine<Result> { continuation ->
+            firebaseUtils.getUserDataRefForWorkManager(UID)
+                .setValue(token)
+                .addOnCompleteListener {
+                    if (it.isSuccessful)
+                        continuation.resume(Result.success())
+                    else
+                        continuation.resume(Result.retry())
+                }
+        }
 
-        return r
     }
 
 

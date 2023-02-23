@@ -7,6 +7,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.network_lib"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {

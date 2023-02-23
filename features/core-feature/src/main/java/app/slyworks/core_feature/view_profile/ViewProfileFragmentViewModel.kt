@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.ConsultationRequestVModel
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.models_commons_lib.models.MessageMode
+import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.models.MessageMode
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers

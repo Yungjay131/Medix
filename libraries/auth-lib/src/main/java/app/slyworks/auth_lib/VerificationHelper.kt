@@ -1,9 +1,9 @@
 package app.slyworks.auth_lib
 
 import android.app.Activity
-import app.slyworks.crypto_lib.CryptoHelper
+import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.utils.plusAssign
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -13,11 +13,8 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.suspendCoroutine
 
 
 /**
@@ -27,7 +24,8 @@ class VerificationHelper(
     private val authStateListener: MAuthStateListener,
     private val firebaseAuth: FirebaseAuth,
     private val firebaseUtils:FirebaseUtils,
-    private val cryptoHelper: CryptoHelper) {
+    private val cryptoHelper: CryptoHelper
+) {
 
     //region Vars
     private lateinit var phoneNumber:String
@@ -81,7 +79,7 @@ class VerificationHelper(
         Single.create{ emitter:SingleEmitter<Outcome> ->
             authStateListener.currentUser!!.sendEmailVerification()
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if (it.isSuccessful)
                         r = Outcome.SUCCESS(value = "user verification email sent successfully")
@@ -177,7 +175,7 @@ class VerificationHelper(
                     it
             }
             .continueWith {
-                val o:Outcome
+                val o: Outcome
                 if(it.isSuccessful) {
                     o = Outcome.SUCCESS(value = OTPVerificationStage.VERIFICATION_SUCCESS)
                 }else

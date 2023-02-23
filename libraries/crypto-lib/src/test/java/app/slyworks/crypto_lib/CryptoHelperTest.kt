@@ -19,11 +19,11 @@ import javax.crypto.spec.SecretKeySpec
 class CryptoHelperTest{
     private val textToEncrypt:String = "Joshua"
     private val passwordToHash:String = "Apassword@321"
-    private lateinit var cryptoHelper: CryptoHelper
+    private lateinit var cryptoHelper: app.slyworks.data_lib.CryptoHelper
 
     @Before
     fun setUp(){
-      val conf = object : CryptoConfig {
+      val conf = object : app.slyworks.data_lib.CryptoConfig {
           override val encryptionAlgorithmShort: String = "AES"
           override val encryptionAlgorithm: String = "AES/CBC/PKCS5PADDING"
           override val encryptionKey: SecretKey = SecretKeySpec(Base64.decode("f/vFKrzylNzkQ5CIeC3nlme6ROj86tQnjXm/5Gll9HQ=", Base64.DEFAULT), "AES")
@@ -36,7 +36,7 @@ class CryptoHelperTest{
           override val hashLength: Int = 128
       }
 
-      cryptoHelper = CryptoHelper(conf)
+      cryptoHelper = app.slyworks.data_lib.CryptoHelper(conf)
     }
 
     @Test

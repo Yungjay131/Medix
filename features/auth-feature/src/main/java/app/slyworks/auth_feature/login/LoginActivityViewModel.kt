@@ -7,7 +7,7 @@ import app.slyworks.auth_lib.LoginManager
 import app.slyworks.auth_lib.RegistrationManager
 import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.VibrationManager
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable

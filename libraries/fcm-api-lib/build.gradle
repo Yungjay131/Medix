@@ -7,6 +7,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.fcm_api_lib"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -47,7 +49,7 @@ android.buildTypes.each { type ->
 
 dependencies {
     implementation project(path: ':libraries:di-base-lib')
-    implementation project(path: ':libraries:models-commons-lib')
+
 
     implementation impl_depends.retrofit
     implementation impl_depends.retrofit_gson

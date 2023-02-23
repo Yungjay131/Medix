@@ -7,6 +7,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.video_call_feature"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -47,17 +49,12 @@ android {
 }
 
 dependencies {
-    implementation project(':features:call-commons-feature')
-    implementation project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:communication-lib')
-    implementation project(path: ':libraries:utils-lib')
-    implementation project(path: ':libraries:constants-lib')
+    implementation project(path: ':features:base-feature')
 
     implementation impl_depends.camera
     implementation impl_depends.camera_lifecycle
     implementation impl_depends.camera_view
     implementation impl_depends.camera_video
-    implementation impl_depends.circle_imageview
 
     kapt kapt_depends.dagger_kapt
 }

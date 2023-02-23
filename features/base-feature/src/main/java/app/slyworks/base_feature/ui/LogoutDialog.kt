@@ -11,7 +11,8 @@ import app.slyworks.auth_lib.LoginManager
 import app.slyworks.base_feature.BaseDialogFragment
 import app.slyworks.base_feature.R
 import app.slyworks.constants_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
-import app.slyworks.navigation_feature.Navigator
+import dev.joshuasylvanus.navigator.Navigator
+
 
 import javax.inject.Inject
 

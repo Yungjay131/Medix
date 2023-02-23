@@ -3,7 +3,8 @@ package app.slyworks.auth_feature
 import android.app.Activity
 import android.net.Uri
 import app.slyworks.auth_feature.registration.RegistrationActivityViewModel
-import app.slyworks.navigation_feature.interfaces.FragmentContinuationStateful
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
+
 import io.reactivex.rxjava3.core.Observable
 
 

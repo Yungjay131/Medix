@@ -1,7 +1,5 @@
 package app.slyworks.auth_feature.login
 
-import android.app.Activity
-import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.TextUtils
@@ -9,32 +7,25 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.*
-import app.slyworks.auth_feature.di.AuthFeatureComponent
-import app.slyworks.auth_feature.registration.RegistrationActivity
-import app.slyworks.auth_feature.registration.RegistrationOTP1Fragment
-import app.slyworks.auth_feature.registration.SelectVerificationMethodBSDialog
-import app.slyworks.auth_lib.VerificationDetails
+import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getExtra
+
 import app.slyworks.base_feature.custom_views.NetworkStatusView
 import app.slyworks.base_feature.custom_views.ProgressOverlayView
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.closeKeyboard3
-import app.slyworks.utils_lib.utils.setChildViewsStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
-import com.jakewharton.rxbinding4.InitialValueObservable
 import com.jakewharton.rxbinding4.widget.textChanges
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.delay
@@ -104,7 +95,6 @@ class LoginActivity : BaseActivity() {
 
     private fun initDI(){
         AuthFeatureComponent.getInitialBuilder()
-            .appCompatActivity(this)
             .build()
             .inject(this)
     }

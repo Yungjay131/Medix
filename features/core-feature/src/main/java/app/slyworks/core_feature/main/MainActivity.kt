@@ -18,15 +18,16 @@ import app.slyworks.core_feature.ProfileHostFragment
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.chat.ChatHostFragment
 import app.slyworks.core_feature.databinding.ActivityMainBinding
-import app.slyworks.core_feature.di.ActivityComponent
+import app.slyworks.core_feature._di.ActivityComponent
 import app.slyworks.core_feature.home.DoctorHomeFragment
 import app.slyworks.core_feature.home.PatientHomeFragment
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getParcelable
-import app.slyworks.navigation_feature.interfaces.FragmentContinuationStateful
+
 import app.slyworks.utils_lib.utils.px
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.Navigator.Companion.getParcelable
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,7 +109,6 @@ class MainActivity : BaseActivity(),  NavigationView.OnNavigationItemSelectedLis
     private fun initDI(){
         _activityComponent =
         ActivityComponent.getInitialBuilder()
-            .appCompatActivity(this)
             .build()
             .also{ it.inject(this@MainActivity) }
     }

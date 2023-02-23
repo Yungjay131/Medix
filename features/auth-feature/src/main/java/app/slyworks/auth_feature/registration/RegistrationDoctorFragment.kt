@@ -25,10 +25,11 @@ import app.slyworks.auth_feature.databinding.FragmentRegistrationDoctorBinding
 import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.navigation_feature.Navigator
+
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.px
+import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers

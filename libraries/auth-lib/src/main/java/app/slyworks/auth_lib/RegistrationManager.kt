@@ -1,27 +1,19 @@
 package app.slyworks.auth_lib
 
-import android.app.Activity
-import app.slyworks.crypto_lib.CryptoHelper
-import app.slyworks.data_lib.models.FBUserDetailsVModel
+import app.slyworks.data_lib.CryptoHelper
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.models_commons_lib.models.AccountType
-import app.slyworks.models_commons_lib.models.Outcome
-import app.slyworks.models_commons_lib.models.TempUserDetails
+import app.slyworks.data_lib.models.AccountType
+import app.slyworks.data_lib.models.Outcome
+import app.slyworks.data_lib.models.TempUserDetails
 import app.slyworks.utils_lib.CompressImageCallable
 import app.slyworks.utils_lib.IDHelper
 import app.slyworks.utils_lib.TaskManager
-import app.slyworks.utils_lib.utils.onNextAndComplete
-import app.slyworks.utils_lib.utils.plusAssign
-import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.messaging.FirebaseMessaging
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 
 class RegistrationManager(
@@ -29,7 +21,7 @@ class RegistrationManager(
     private val firebaseMessaging: FirebaseMessaging,
     private val firebaseUtils: FirebaseUtils,
     private val taskManager: TaskManager,
-    private val cryptoHelper:CryptoHelper,
+    private val cryptoHelper: CryptoHelper,
     private val authStateListener: MAuthStateListener) {
 
     //region Vars
@@ -92,7 +84,7 @@ class RegistrationManager(
         Single.create { emitter ->
             firebaseAuth.createUserWithEmailAndPassword(email, hashedPassword)
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if (it.isSuccessful) {
                         currentFirebaseUserResult = it.result!!
@@ -127,7 +119,7 @@ class RegistrationManager(
                 storageReference
                     .putBytes(imageByteArray)
                     .addOnCompleteListener {
-                        val r:Outcome
+                        val r: Outcome
 
                         if (it.isSuccessful) {
                             r = Outcome.SUCCESS(value = "user profile image uploaded successfully")
@@ -157,7 +149,7 @@ class RegistrationManager(
 
             storageReference.downloadUrl
                 .addOnCompleteListener { it ->
-                    val r:Outcome
+                    val r: Outcome
 
                     if (it.isSuccessful) {
                         user.imageUri = it.result.toString()
@@ -184,7 +176,7 @@ class RegistrationManager(
             firebaseMessaging
                 .getToken()
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if (it.isSuccessful) {
                         user.FBRegistrationToken = it.result
@@ -212,7 +204,7 @@ class RegistrationManager(
             firebaseUtils.getUserDataForUIDRef(databaseAddress)
                 .setValue(user)
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if (it.isSuccessful) {
                         r = Outcome.SUCCESS(value = "user details successfully uploaded")
@@ -252,7 +244,7 @@ class RegistrationManager(
         return user
     }
 
-    private fun deleteUser(user:TempUserDetails = this.user):Single<Outcome>{
+    private fun deleteUser(user: TempUserDetails = this.user):Single<Outcome>{
         if(firebaseAuth.currentUser == null)
             return Single.just(Outcome.FAILURE(value = false, reason = "no user currently signed in"))
 
@@ -260,7 +252,7 @@ class RegistrationManager(
             firebaseAuth.currentUser!!
                 .delete()
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if(it.isSuccessful){
                         Timber.e("deleteUser: delete successful")
@@ -289,7 +281,7 @@ class RegistrationManager(
             storageReference
                 .delete()
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if(it.isSuccessful){
                         Timber.e("deleteUserProfileImage: delete successful")
@@ -317,7 +309,7 @@ class RegistrationManager(
             firebaseUtils.getUserDataForUIDRef(databaseAddress)
                 .setValue(null)
                 .addOnCompleteListener {
-                    val r:Outcome
+                    val r: Outcome
 
                     if(it.isSuccessful){
                         Timber.e("deleteUserDetailsFromDB: delete successful" )

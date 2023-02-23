@@ -2,27 +2,25 @@ package app.slyworks.auth_feature.registration
 
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.ActivityRegistrationBinding
-import app.slyworks.auth_feature.di.AuthFeatureComponent
+import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getExtra
-import app.slyworks.navigation_feature.interfaces.FragmentContinuationStateful
-import app.slyworks.utils_lib.utils.setStatusBarVisibility
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
+
+
 import javax.inject.Inject
 
 
 class RegistrationActivity : IRegViewModel, BaseActivity() {
     //region Vars
-    private lateinit var binding: ActivityRegistrationBinding
-
     private val fragmentMap:Map<String, () -> Fragment > = mapOf(
         FRAGMENT_REG_ZERO to RegistrationGeneral0Fragment::newInstance,
         FRAGMENT_REG_ONE to RegistrationGeneral1Fragment::newInstance,
@@ -31,6 +29,8 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
         FRAGMENT_REG_DOCTOR to RegistrationDoctorFragment::newInstance,
         FRAGMENT_REG_OTP to RegistrationOTP1Fragment::newInstance )
 
+    private lateinit var binding: ActivityRegistrationBinding
+
     override lateinit var navigator: FragmentContinuationStateful
 
     @Inject
@@ -38,12 +38,6 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
     //endregion
 
     override fun isValid(): Boolean = false
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        navigator.onDestroy()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -72,7 +66,6 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
 
     private fun initDI(){
        AuthFeatureComponent.getInitialBuilder()
-           .appCompatActivity(this)
            .build()
            .inject(this)
     }
@@ -91,13 +84,16 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
     }
 
     private fun initViews(){
-        binding.appbar.findViewById<ImageView>(R.id.iv_back).setOnClickListener { this.onBackPressedDispatcher.onBackPressed() }
+        binding.appbar.ivBack
+            .setOnClickListener {
+                this.onBackPressedDispatcher.onBackPressed()
+            }
 
-        val frag_key:String = intent.getExtra<String>(KEY_FRAGMENT, FRAGMENT_REG_ZERO)!!
+        val fragKey:String = intent.getExtra<String>(KEY_FRAGMENT, FRAGMENT_REG_ZERO)!!
 
         navigator
            .into(binding.rootView.id)
-           .show(fragmentMap[frag_key]!!())
+           .show(fragmentMap[fragKey]!!())
            .navigate()
     }
 

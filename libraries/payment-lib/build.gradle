@@ -3,25 +3,36 @@ plugins {
     id 'kotlin-android'
 }
 
+apply from: "${rootProject.projectDir}/dependencies.gradle"
+
 android {
-    compileSdk 33
+    namespace "app.slyworks.payment_lib"
+
+    compileSdk sdk_details.compileSDK
 
     defaultConfig {
-        minSdk 21
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        minSdk sdk_details.minSDK
+        targetSdk sdk_details.targetSDK
+        versionCode sdk_details.versionCode
+        versionName sdk_details.versionName
+
+        testInstrumentationRunner appTestRunners.default
     }
 
     buildTypes {
+        debug {
+            minifyEnabled sdk_details.minifyEnabled
+            shrinkResources sdk_details.shrinkResources
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled sdk_details.minifyEnabled
+            shrinkResources sdk_details.shrinkResources
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -32,11 +43,6 @@ android {
 }
 
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    api impl_depends.core_ktx
+    api impl_depends.appcompat
 }

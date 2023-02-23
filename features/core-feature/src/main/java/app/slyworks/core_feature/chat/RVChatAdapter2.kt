@@ -13,7 +13,7 @@ import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.AppController
 import app.slyworks.core_feature.PersonDiffUtilCallback
 import app.slyworks.core_feature.R
-import app.slyworks.data_lib.models.PersonVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
 import app.slyworks.utils_lib.utils.displayImage
 import com.google.android.material.textview.MaterialTextView
 import de.hdodenhof.circleimageview.CircleImageView

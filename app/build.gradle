@@ -84,21 +84,8 @@ dependencies {
     implementation project(path: ':features:requests-feature')
     implementation project(path: ':features:video-call-feature')
     implementation project(path: ':features:voice-call-feature')
-    implementation project(path: ':features:navigation-feature')
-    implementation project(path: ':libraries:auth-lib')
-    implementation project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:utils-lib')
-    implementation project(path: ':libraries:constants-lib')
-    implementation project(path: ':libraries:di-base-lib')
+    implementation project(path: ':features:base-feature')
 
-    implementation impl_depends.core_ktx
-    implementation impl_depends.appcompat
-    implementation impl_depends.material
-    implementation impl_depends.rxjava
-    implementation impl_depends.rxandroid
-    implementation impl_depends.timber
-
-    implementation impl_depends.dagger
     kapt kapt_depends.dagger_kapt
 
     testImplementation test_depends.core_testing
@@ -108,6 +95,8 @@ dependencies {
     testImplementation test_depends.android_junit
     testImplementation test_depends.espresso
     testImplementation impl_depends.core_ktx
+
+    debugImplementation debug_impl_depends.leakcanary
 }
 
 /*task runOutcomeUnitTests(){

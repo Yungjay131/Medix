@@ -48,7 +48,7 @@
             tools:visibility="gone"/>
 
         <TextView
-            android:id="@+id/tvRetry_content_chat"
+            android:id="@+id/tv_retry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,12 +59,12 @@
             android:gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnRetry_content_chat"
+            android:id="@+id/btn_retry"
             android:layout_width="200dp"
             android:layout_height="50dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvRetry_content_chat"
+            app:layout_constraintTop_toBottomOf="@id/tv_retry"
             android:layout_marginTop="16dp"
             android:paddingStart="24dp"
             android:text="Retry"
@@ -114,7 +114,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChats_frag_chat"
+        android:id="@+id/rv_chats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"

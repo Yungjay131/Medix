@@ -1,13 +1,11 @@
 package app.slyworks.data_lib
 
-import app.slyworks.crypto_lib.CryptoHelper
-import app.slyworks.data_lib.models.*
+import app.slyworks.data_lib.vmodels.*
 import app.slyworks.room_lib.daos.CallHistoryDao
 import app.slyworks.room_lib.daos.ConsultationRequestDao
 import app.slyworks.room_lib.daos.MessageDao
 import app.slyworks.room_lib.daos.PersonDao
 import app.slyworks.room_lib.room_models.Message
-import app.slyworks.userdetails_lib.UserDetailsUtils
 import io.reactivex.rxjava3.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +21,8 @@ class DataManager(private val messageDao: MessageDao,
                   private val callHistoryDao: CallHistoryDao,
                   private val consultationRequestDao: ConsultationRequestDao,
                   private val userDetailsUtils: UserDetailsUtils,
-                  private val cryptoHelper: CryptoHelper) {
+                  private val cryptoHelper: CryptoHelper
+) {
 
     fun setUserDetails(userDetails: FBUserDetailsVModel) {
         userDetailsUtils.user = userDetails.reverseMap()

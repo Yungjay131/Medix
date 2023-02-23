@@ -13,10 +13,9 @@ import app.slyworks.constants_lib.EVENT_GET_DOCTOR_USERS
 import app.slyworks.constants_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Subscription
-import app.slyworks.controller_lib.clearAndRemove
 import app.slyworks.core_feature.databinding.FragmentFindDoctorsBinding
 import app.slyworks.core_feature.view_profile.ViewProfileFragment
-import app.slyworks.data_lib.models.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.utils_lib.utils.addMultiple
 import app.slyworks.utils_lib.utils.displayMessage
 
@@ -68,7 +67,7 @@ class FindDoctorsFragment : Fragment(), app.slyworks.controller_lib.Observer {
         }
 
         viewModel.progressLD.observe(viewLifecycleOwner){
-            (requireParentFragment() as ProfileHostFragment).toggleProgressVisibility()
+           // (requireParentFragment() as ProfileHostFragment).toggleProgressVisibility()
         }
 
         viewModel.doctorsListLiveData.observe(viewLifecycleOwner, Observer {

@@ -3,11 +3,14 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id "com.google.protobuf" version "0.8.12"
 }
 
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.data_lib"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -36,19 +39,51 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+protobuf {
+    protoc {
+        artifact = impl_depends.protoc
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
 
 dependencies {
     implementation project(path: ':libraries:room-lib')
-    implementation project(path: ':libraries:userdetails-lib')
-    implementation project(path: ':libraries:models-commons-lib')
-    implementation project(path: ':libraries:crypto-lib')
     implementation project(path: ':libraries:di-base-lib')
     implementation project(path: ':libraries:constants-lib')
+
+    implementation platform(impl_depends.firebase_bom)
+    implementation impl_depends.firebase_firestore
 
     implementation impl_depends.core_ktx
     implementation impl_depends.appcompat
     implementation impl_depends.coroutines_android
+    implementation impl_depends.datastore
+    implementation impl_depends.datastore_preferences
+    implementation impl_depends.protobuf_javalite
+
+    implementation impl_depends.retrofit
+    implementation impl_depends.retrofit_gson
+    implementation impl_depends.stetho
+    implementation impl_depends.stetho_okhttp
+
     implementation impl_depends.rxjava
+
     implementation impl_depends.dagger
     kapt kapt_depends.dagger_kapt
+
+    testImplementation test_depends.junit
+    testImplementation test_depends.mockito
+    testImplementation test_depends.mockito_android
+    testImplementation test_depends.robolectric
+    testImplementation test_depends.truth
+    testImplementation test_depends.espresso
 }

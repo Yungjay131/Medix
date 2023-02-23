@@ -10,11 +10,12 @@ import android.widget.TextView
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp2Binding
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.navigation_feature.Navigator
+
 import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.displayMessage
 import com.jakewharton.rxbinding4.widget.textChanges
+import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 

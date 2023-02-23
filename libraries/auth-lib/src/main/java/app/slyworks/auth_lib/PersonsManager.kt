@@ -2,7 +2,7 @@ package app.slyworks.auth_lib
 
 import app.slyworks.constants_lib.READ
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.PersonVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

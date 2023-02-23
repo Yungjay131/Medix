@@ -1,30 +1,23 @@
 package app.slyworks.message_feature.message
 
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.message_feature.R
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.message_feature._di.MessageFeatureComponent
 import app.slyworks.message_feature.custom_views.SpacingItemDecorator
 import app.slyworks.message_feature.databinding.ActivityMessageBinding
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getParcelable
+
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewMessageID
 import app.slyworks.utils_lib.utils.*
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jakewharton.rxbinding4.widget.textChanges
-import de.hdodenhof.circleimageview.CircleImageView
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.Navigator.Companion.getParcelable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -58,11 +51,9 @@ class MessageActivity : BaseActivity() {
     }
 
     private fun initDI(){
-        /*application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
+        MessageFeatureComponent.getInitialBuilder()
             .build()
-            .inject(this)*/
+            .inject(this)
     }
 
     private fun initData(){

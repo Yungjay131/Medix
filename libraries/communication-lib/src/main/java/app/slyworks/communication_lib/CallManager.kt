@@ -3,16 +3,16 @@ package app.slyworks.communication_lib
 import app.slyworks.constants_lib.TYPE_REQUEST
 import app.slyworks.constants_lib.TYPE_RESPONSE
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.FirebaseDatabase
-import app.slyworks.fcm_api_lib.FCMClientApi
-import app.slyworks.fcm_api_lib.FirebaseCloudMessage
+import app.slyworks.data_lib.FCMClientApi
+import app.slyworks.data_lib.FirebaseCloudMessage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.models_commons_lib.models.Outcome
-import app.slyworks.data_lib.models.VideoCallRequest
-import app.slyworks.data_lib.models.VoiceCallData
-import app.slyworks.data_lib.models.VoiceCallRequest
+import app.slyworks.data_lib.models.Outcome
+import app.slyworks.data_lib.vmodels.VideoCallRequest
+import app.slyworks.data_lib.vmodels.VoiceCallData
+import app.slyworks.data_lib.vmodels.VoiceCallRequest
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -106,11 +106,11 @@ constructor(
                 .updateChildren(childNodeUpdate)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val r:Outcome = Outcome.SUCCESS<Nothing>()
+                        val r: Outcome = Outcome.SUCCESS<Nothing>()
                         Timber.e( "processVideoCall: video call status updated successfully in DB")
                         emitter.onNextAndComplete(r)
                     } else {
-                        val r:Outcome = Outcome.FAILURE<Nothing>()
+                        val r: Outcome = Outcome.FAILURE<Nothing>()
                         Timber.e( "processVideoCall: video call status updated with issues in DB")
                         emitter.onNextAndComplete(r)
                     }
@@ -188,11 +188,11 @@ constructor(
                 .updateChildren(childNodeUpdate)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val r:Outcome = Outcome.SUCCESS<Nothing>()
+                        val r: Outcome = Outcome.SUCCESS<Nothing>()
                         Timber.e( "processVoiceCall: voice call status updated successfully in DB")
                         emitter.onNextAndComplete(r)
                     } else {
-                        val r:Outcome = Outcome.FAILURE<Nothing>()
+                        val r: Outcome = Outcome.FAILURE<Nothing>()
                         Timber.e( "processVoiceCall: voice call status updated with issues in DB")
                         emitter.onNextAndComplete(r)
                     }
@@ -211,12 +211,12 @@ constructor(
                 .enqueue(
                     object: Callback<ResponseBody> {
                         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                            val r:Outcome = Outcome.SUCCESS<Nothing>()
+                            val r: Outcome = Outcome.SUCCESS<Nothing>()
                             emitter.onNextAndComplete(r)
                         }
 
                         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            val r:Outcome = Outcome.FAILURE<Nothing>(reason = t.message)
+                            val r: Outcome = Outcome.FAILURE<Nothing>(reason = t.message)
                             emitter.onNextAndComplete(r)
                         }
 

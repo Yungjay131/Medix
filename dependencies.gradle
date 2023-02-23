@@ -143,8 +143,9 @@
     impl_depends.rxbinding_core = "com.jakewharton.rxbinding4:rxbinding-core:$rxbinding"
     impl_depends.rxbinding_appcompat = "com.jakewharton.rxbinding4:rxbinding-appcompat:$rxbinding"
 
+    def agora_v = "4.1.1"
     impl_depends.agora_sdk = "com.github.agorabuilder:native-full-sdk:3.4.1"
-    impl_depends.agora_new_sdk = "io.agora.rtc:full-sdk:4.0.1"
+    impl_depends.agora_new_sdk = "io.agora.rtc:full-sdk:4.1.1"
 
     impl_depends.lottie = "com.airbnb.android:lottie:5.0.3"
 
@@ -174,7 +175,7 @@
     impl_depends.arrow_fx = "io.arrow-kt:arrow-fx-coroutines:$arrow"
     kapt_depends.arrow_kapt = "io.arrow-kt:arrow-meta:$arrow"
 
-    impl_depends.navigator = "app.slyworks.navigator:navigator:1.0.0-alpha"
+    impl_depends.navigator = "dev.joshuasylvanus.navigator:navigator:1.0.0"
 
     debug_impl_depends.leakcanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
 

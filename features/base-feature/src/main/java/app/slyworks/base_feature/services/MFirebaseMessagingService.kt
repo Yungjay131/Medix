@@ -7,12 +7,11 @@ import app.slyworks.auth_lib.UsersManager
 import app.slyworks.base_feature.ActivityUtils
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.WorkInitializer
-import app.slyworks.base_feature.di.BaseFeatureComponent
-import app.slyworks.base_feature.di.MFirebaseMSComponent
+import app.slyworks.base_feature._di.MFirebaseMSComponent
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.PreferenceManager
 import com.bumptech.glide.Glide

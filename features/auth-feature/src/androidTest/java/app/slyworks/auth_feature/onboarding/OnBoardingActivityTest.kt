@@ -1,26 +1,17 @@
 package app.slyworks.auth_feature.onboarding
 
-import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.matcher.IntentMatchers.anyIntent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.rule.IntentsTestRule
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.runner.AndroidJUnitRunner
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.registration.RegistrationActivity
-import org.junit.After
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,13 +32,13 @@ class OnBoardingActivityTest{
 
     @Test
     fun isEspressoWorking(){
-        onView(withId(R.id.btnLogin_onboarding))
+        onView(withId(R.id.`@+id/btn_login`))
             .check(matches(isDisplayed()))
     }
 
     @Test
     fun testNavigatingToRegistrationActivity(){
-        onView(withId(R.id.btnGetStarted_onboarding))
+        onView(withId(R.id.`@+id/btn_get_started`))
             .perform(ViewActions.click())
 
         Intents.intended(hasComponent(RegistrationActivity::class.java.name))

@@ -3,16 +3,11 @@ package app.slyworks.medix.splash
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import app.slyworks.auth_feature.di.AuthFeatureComponent
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
-import app.slyworks.medix.R
-import app.slyworks.medix.di.ApplicationComponent
-import app.slyworks.navigation_feature.Navigator
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import app.slyworks.medix._di.ApplicationComponent
+import dev.joshuasylvanus.navigator.Navigator
+
 
 import javax.inject.Inject
 

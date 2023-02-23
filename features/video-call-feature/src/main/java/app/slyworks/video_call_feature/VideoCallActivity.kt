@@ -7,51 +7,35 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.CallHistoryVModel
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.VideoCallRequest
-import app.slyworks.navigation_feature.Navigator.Companion.getExtra
-import app.slyworks.navigation_feature.Navigator.Companion.getParcelable
+import app.slyworks.data_lib.vmodels.CallHistoryVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.vmodels.VideoCallRequest
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.displayImage
+import app.slyworks.video_call_feature._di.VideoCallFeatureComponent
 import app.slyworks.video_call_feature.databinding.ActivityVideoCallBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
+import dev.joshuasylvanus.navigator.Navigator.Companion.getParcelable
 //import com.google.common.util.concurrent.ListenableFuture
-import de.hdodenhof.circleimageview.CircleImageView
-import io.agora.rtc.Constants
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
-import io.agora.rtc.video.VideoCanvas
-import io.agora.rtc.video.VideoEncoderConfiguration
+import io.agora.rtc2.Constants
+import io.agora.rtc2.IRtcEngineEventHandler
+import io.agora.rtc2.RtcEngine
+import io.agora.rtc2.video.VideoCanvas
+import io.agora.rtc2.video.VideoEncoderConfiguration
 import javax.inject.Inject
 
 class VideoCallActivity : BaseActivity() {
     //region Vars
-    private lateinit var rootView: ConstraintLayout
-    private lateinit var flMainVideoContainer:FrameLayout
-    private lateinit var flSmallVideoContainer:FrameLayout
-    private lateinit var fabAcceptCall: FloatingActionButton
-    private lateinit var fabDeclineCall:FloatingActionButton
-    private lateinit var fabToggleMute:FloatingActionButton
-    private lateinit var fabSwitchVideo:FloatingActionButton
-    private lateinit var fabEndCall:FloatingActionButton
-    private lateinit var ivProfile: CircleImageView
-    private lateinit var tvProfileName: TextView
-    private lateinit var pvMain:PreviewView
-    private lateinit var binding:ActivityVideoCallBinding
-
     private var isMuted:Boolean = false
     private var isVideoSwitched:Boolean = false
 
@@ -60,8 +44,10 @@ class VideoCallActivity : BaseActivity() {
     private lateinit var callHistory: CallHistoryVModel
 
     private lateinit var rtcEngine: RtcEngine
-    
+
     //private lateinit var cameraProviderFuture:ListenableFuture<ProcessCameraProvider>
+
+    private lateinit var binding:ActivityVideoCallBinding
 
     @Inject
     lateinit var viewModel: VideoCallViewModel
@@ -110,11 +96,9 @@ class VideoCallActivity : BaseActivity() {
     }
 
     private fun initDI(){
-       /* application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
-            .build()
-            .inject(this)*/
+       VideoCallFeatureComponent.getInitialBuilder()
+           .build()
+           .inject(this)
     }
 
     private fun initCameraPreview(){
@@ -303,7 +287,8 @@ class VideoCallActivity : BaseActivity() {
         binding.flMainVideoContainer.addView(videoSurface)
 
         rtcEngine.setupRemoteVideo(VideoCanvas(videoSurface, VideoCanvas.RENDER_MODE_FIT, UID))
-        rtcEngine.setRemoteSubscribeFallbackOption(io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+        //rtcEngine.setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+        rtcEngine.setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_DISABLED)
     }
 
     private fun joinChannel(){

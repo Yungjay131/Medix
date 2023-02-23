@@ -1,13 +1,14 @@
 package app.slyworks.auth_lib
 
-import app.slyworks.crypto_lib.CryptoDetails
-import app.slyworks.crypto_lib.CryptoHelper
+import app.slyworks.data_lib.CryptoDetails
+import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import io.reactivex.rxjava3.core.Single
 
 class CryptoDetailsInitializer(private val firebaseUtils: FirebaseUtils,
-                               private val cryptoHelper: CryptoHelper){
+                               private val cryptoHelper: CryptoHelper
+){
 
     fun checkEncryptionDetails(): Single<Outcome> {
         val result: Outcome = Outcome.SUCCESS<Unit>()

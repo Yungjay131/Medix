@@ -17,7 +17,6 @@ import app.slyworks.utils_lib.utils.displayImage
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import de.hdodenhof.circleimageview.CircleImageView
-import javax.inject.Inject
 
 
 class ChatHostFragment : Fragment() {
@@ -47,7 +46,6 @@ class ChatHostFragment : Fragment() {
 
         context.activityComponent
             .fragmentComponentBuilder()
-            .setFragment(this)
             .build()
             .inject(this)
     }

@@ -7,6 +7,8 @@ plugins {
 apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
+    namespace "app.slyworks.message_feature"
+
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -48,27 +50,6 @@ android {
 
 dependencies {
     implementation project(path: ':features:base-feature')
-    implementation project(path: ':features:navigation-feature')
-    implementation project(path: ':libraries:auth-lib')
-    implementation project(path: ':libraries:communication-lib')
-    implementation project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:utils-lib')
-    implementation project(path: ':libraries:di-base-lib')
-    implementation project(path: ':libraries:constants-lib')
-    implementation project(path: ':libraries:models-commons-lib')
 
-    implementation impl_depends.core_ktx
-    implementation impl_depends.appcompat
-    implementation impl_depends.material
-    implementation impl_depends.constraint_layout
-    implementation impl_depends.recyclerview
-    implementation impl_depends.circle_imageview
-    implementation impl_depends.rxjava
-    implementation impl_depends.rxandroid
-    implementation impl_depends.rxbinding
-
-    implementation impl_depends.dagger
     kapt kapt_depends.dagger_kapt
-
-    debugImplementation debug_impl_depends.leakcanary
 }

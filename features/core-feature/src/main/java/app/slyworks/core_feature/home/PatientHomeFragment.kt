@@ -69,7 +69,6 @@ class PatientHomeFragment : Fragment() {
 
        context.activityComponent
            .fragmentComponentBuilder()
-           .setFragment(this)
            .build()
            .inject(this)
     }

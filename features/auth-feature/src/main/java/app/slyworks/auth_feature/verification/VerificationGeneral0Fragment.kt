@@ -15,7 +15,7 @@ import app.slyworks.auth_feature.registration.RegistrationActivityViewModel
 import app.slyworks.auth_feature.registration.RegistrationGeneral1Fragment
 import app.slyworks.auth_feature.registration.RegistrationOTP1Fragment
 import app.slyworks.auth_lib.VerificationDetails
-import app.slyworks.models_commons_lib.models.AccountType
+import app.slyworks.data_lib.models.AccountType
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers

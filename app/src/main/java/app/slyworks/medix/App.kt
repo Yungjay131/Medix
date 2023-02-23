@@ -43,8 +43,6 @@ class App: Application() {
     }
 
     private fun initTimber(){
-        /* to ensure logging does not occur in RELEASE builds*
-          the actual dependency is in :models */
         if(!BuildConfig.DEBUG)
             return
 

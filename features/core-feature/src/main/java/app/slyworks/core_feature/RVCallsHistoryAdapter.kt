@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.CallHistoryVModel
+import app.slyworks.data_lib.vmodels.CallHistoryVModel
 import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.utils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView

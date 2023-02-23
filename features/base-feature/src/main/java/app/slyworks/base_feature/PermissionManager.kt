@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import app.slyworks.base_feature.ui.PermissionsRationaleDialog
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -207,7 +207,7 @@ class PermissionManager {
                         result.add(it)
 
                     if(currentPermissionIndex == permissions.size-1){
-                      var r:Outcome = Outcome.SUCCESS<Unit>()
+                      var r: Outcome = Outcome.SUCCESS<Unit>()
                       if(result.isNotEmpty())
                           r = Outcome.FAILURE<List<PermissionStatus>>(value = result)
 

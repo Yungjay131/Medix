@@ -11,8 +11,9 @@ import androidx.fragment.app.FragmentTransaction
 import app.slyworks.core_feature.databinding.FragmentProfileHostBinding
 import app.slyworks.core_feature.main.MainActivity
 import app.slyworks.core_feature.main.activityComponent
-import app.slyworks.navigation_feature.Navigator
+
 import app.slyworks.utils_lib.utils.displayMessage
+import dev.joshuasylvanus.navigator.Navigator
 import javax.inject.Inject
 
 class ProfileHostFragment : Fragment() {
@@ -32,8 +33,8 @@ class ProfileHostFragment : Fragment() {
 
         context.activityComponent
             .fragmentComponentBuilder()
-            .setFragment(this)
             .build()
+            .inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,6 +44,7 @@ class ProfileHostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initData()
         inflateFragment2(FindDoctorsFragment.getInstance())
     }
@@ -74,7 +76,6 @@ class ProfileHostFragment : Fragment() {
     fun inflateFragment2(f:Fragment){
         Navigator.transactionFrom(childFragmentManager)
             .into(R.id.fragment_container_profile_host)
-            .hideCurrent()
             .show(f)
             .navigate()
     }

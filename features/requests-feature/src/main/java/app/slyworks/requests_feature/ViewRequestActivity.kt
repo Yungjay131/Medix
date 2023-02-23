@@ -6,14 +6,15 @@ import androidx.core.view.isVisible
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.models_commons_lib.models.ConsultationResponse
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getExtra
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.models.ConsultationResponse
+
 import app.slyworks.requests_feature.databinding.ActivityViewRequestBinding
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.setChildViewsStatus
 import app.slyworks.utils_lib.utils.showMessage
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 
 import javax.inject.Inject
 
@@ -58,7 +59,6 @@ class ViewRequestActivity : BaseActivity() {
            Navigator.intentFor(this, LOGIN_ACTIVITY_INTENT_FILTER)
                 .addExtra(EXTRA_LOGIN_DESTINATION, VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
                 .newAndClearTask()
-                .finishCaller()
                 .navigate()
         }
 

@@ -8,9 +8,6 @@ import app.slyworks.constants_lib.EXTRA_INCOMING_VOICE_CALL_FROM_UID
 import app.slyworks.constants_lib.EXTRA_INCOMING_VOICE_CALL_RESPONSE_TYPE
 import app.slyworks.constants_lib.TYPE_RESPONSE
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class VoiceCallRequestBroadcastReceiver : BroadcastReceiver() {
@@ -20,15 +17,13 @@ class VoiceCallRequestBroadcastReceiver : BroadcastReceiver() {
     //endregion
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val pendingResult:PendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            val fromUID:String = intent!!.getStringExtra(EXTRA_INCOMING_VOICE_CALL_FROM_UID)!!
-            val response:String = intent.getStringExtra(EXTRA_INCOMING_VOICE_CALL_RESPONSE_TYPE)!!
+        val pendingResult: PendingResult = goAsync()
+        val fromUID: String = intent!!.getStringExtra(EXTRA_INCOMING_VOICE_CALL_FROM_UID)!!
+        val response: String = intent.getStringExtra(EXTRA_INCOMING_VOICE_CALL_RESPONSE_TYPE)!!
 
-           callManager.processVoiceCallAsync(TYPE_RESPONSE, fromUID, response)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe{ pendingResult.finish() }
-        }
+        callManager.processVoiceCallAsync(TYPE_RESPONSE, fromUID, response)
+            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .subscribe { pendingResult.finish() }
     }
 }

@@ -288,7 +288,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/layout_btns_onboarding"
+            android:id="@+id/layout_btns"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -323,7 +323,7 @@
                     app:layout_constraintTop_toBottomOf="@id/ivLogo_onboarding" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnGetStarted_onboarding"
+                    android:id="@+id/btn_get_started"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="40dp"
@@ -339,7 +339,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tvLogo_onboarding" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnLogin_onboarding"
+                    android:id="@+id/btn_login"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="10dp"
@@ -352,7 +352,7 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toStartOf="@id/_guide_vertical_2"
                     app:layout_constraintStart_toEndOf="@id/_guide_vertical_1"
-                    app:layout_constraintTop_toBottomOf="@id/btnGetStarted_onboarding" />
+                    app:layout_constraintTop_toBottomOf="@id/btn_get_started" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/_guide_vertical_1"

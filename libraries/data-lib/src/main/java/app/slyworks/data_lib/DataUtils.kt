@@ -1,7 +1,7 @@
 package app.slyworks.data_lib
 
-import app.slyworks.data_lib.models.*
-import app.slyworks.models_commons_lib.models.MessageCloudMessage
+import app.slyworks.data_lib.vmodels.*
+import app.slyworks.data_lib.models.MessageCloudMessage
 import app.slyworks.room_lib.room_models.*
 
 
@@ -9,7 +9,7 @@ import app.slyworks.room_lib.room_models.*
  * Created by Joshua Sylvanus, 8:21 PM, 26/11/2022.
  */
 
-fun MessageVModel.toCloudMessage():MessageCloudMessage =
+fun MessageVModel.toCloudMessage(): MessageCloudMessage =
     MessageCloudMessage(
         type = this.type,
         fromUID = this.fromUID,

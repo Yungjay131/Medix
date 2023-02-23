@@ -1,22 +1,17 @@
 package app.slyworks.auth_feature.verification
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import app.slyworks.auth_feature.IRegViewModel
-import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.ActivityVerificationBinding
-import app.slyworks.auth_feature.di.AuthFeatureComponent
+import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.auth_feature.registration.RegistrationActivityViewModel
-import app.slyworks.auth_lib.di.AuthActivityScopedComponent
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.constants_lib.FRAGMENT_REG_ZERO
-import app.slyworks.constants_lib.KEY_FRAGMENT
-import app.slyworks.navigation_feature.Navigator
-import app.slyworks.navigation_feature.Navigator.Companion.getExtra
-import app.slyworks.navigation_feature.interfaces.FragmentContinuationStateful
+import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
+
+
 import javax.inject.Inject
 
 class VerificationActivity : IRegViewModel, BaseActivity() {
@@ -64,7 +59,6 @@ class VerificationActivity : IRegViewModel, BaseActivity() {
 
     private fun initDI(){
        AuthFeatureComponent.getInitialBuilder()
-           .appCompatActivity(this)
            .build()
            .inject(this)
     }

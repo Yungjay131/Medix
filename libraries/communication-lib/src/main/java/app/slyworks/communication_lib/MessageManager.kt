@@ -3,16 +3,15 @@ package app.slyworks.communication_lib
 import androidx.annotation.VisibleForTesting
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageVModel
-import app.slyworks.data_lib.models.PersonVModel
+import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.vmodels.PersonVModel
 import app.slyworks.data_lib.toCloudMessage
-import app.slyworks.fcm_api_lib.FCMClientApi
-import app.slyworks.fcm_api_lib.FirebaseCloudMessage
+import app.slyworks.data_lib.FCMClientApi
+import app.slyworks.data_lib.FirebaseCloudMessage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.firebase_commons_lib.MValueEventListener
-import app.slyworks.models_commons_lib.models.MessageCloudMessage
-import app.slyworks.models_commons_lib.models.Outcome
+import app.slyworks.data_lib.models.MessageCloudMessage
+import app.slyworks.data_lib.models.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.rxjava3.core.Completable
@@ -283,7 +282,7 @@ class MessageManager(
     @VisibleForTesting(otherwise = Modifier.PRIVATE)
     internal fun addMessagesToDB(vararg message: MessageVModel):Observable<Outcome> =
         Observable.create { emitter ->
-            var o:Outcome = Outcome.SUCCESS<Unit>(null)
+            var o: Outcome = Outcome.SUCCESS<Unit>(null)
                 try {
                     dataManager.addMessages(*message)
                 }catch (e:Exception){

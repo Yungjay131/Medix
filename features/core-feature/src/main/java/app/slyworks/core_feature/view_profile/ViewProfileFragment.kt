@@ -16,20 +16,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.Subscription
-import app.slyworks.controller_lib.clearAndRemove
 import app.slyworks.core_feature.AppBarStateChangeListener
 import app.slyworks.core_feature.ProfileHostFragment
 import app.slyworks.core_feature.ProfileHostFragmentViewModel
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.databinding.FragmentViewProfileBinding
-import app.slyworks.data_lib.models.ConsultationRequestVModel
-import app.slyworks.data_lib.models.FBUserDetailsVModel
-import app.slyworks.models_commons_lib.models.MessageMode
-import app.slyworks.navigation_feature.Navigator
+import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
+import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.models.MessageMode
+
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.displayMessage
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import timber.log.Timber
 import app.slyworks.base_feature.R as Base_R
@@ -49,9 +49,9 @@ class ViewProfileFragment : Fragment() {
     private val subscriptionList:MutableList<Subscription> = mutableListOf()
     private val disposables:CompositeDisposable = CompositeDisposable()
 
-    private lateinit var binding:FragmentViewProfileBinding
     private var userProfile: FBUserDetailsVModel? = null
 
+    private lateinit var binding:FragmentViewProfileBinding
     lateinit var viewModel: ProfileHostFragmentViewModel
     //endregion
 
