@@ -31,7 +31,7 @@ class ViewProfileFragmentViewModel
     private lateinit var userUID:String
     //endregion
 
-    fun getUserDetailsUser():FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
+    fun getUserDetailsUser():FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun observeConsultationRequestStatus(userUID:String){
         this.userUID = userUID

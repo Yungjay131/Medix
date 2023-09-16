@@ -2,7 +2,7 @@ package app.slyworks.communication_lib
 
 import app.slyworks.data_lib.vmodels.CallHistoryVModel
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.rxjava3.core.Observable
@@ -67,13 +67,13 @@ class CallHistoryManager(
         Observable.create { emitter ->
             val key:String = FirebaseDatabase.getInstance()
                 .reference
-                .child("/call_history/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+                .child("/call_history/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
                 .push()
                 .key!!
 
             firebaseFS
                 .reference
-                .child("/call_history/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+                .child("/call_history/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
                 .child(key)
                 .setValue(callHistory)
                 .addOnCompleteListener {

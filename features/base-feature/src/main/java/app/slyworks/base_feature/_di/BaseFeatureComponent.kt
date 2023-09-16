@@ -4,6 +4,7 @@ import android.content.Context
 import app.slyworks.auth_lib.*
 import app.slyworks.base_feature.ListenerManager
 import app.slyworks.base_feature.NotificationHelper
+import app.slyworks.base_feature.PermissionManager
 import app.slyworks.base_feature.VibrationManager
 import app.slyworks.communication_lib.*
 import app.slyworks.data_lib.CryptoHelper
@@ -11,6 +12,8 @@ import app.slyworks.data_lib.DataManager
 import app.slyworks.di_base_lib.BaseFeatureScope
 import app.slyworks.data_lib.FCMClientApi
 import app.slyworks.di_base_lib.AppComponent
+import app.slyworks.firebase_commons_lib.FirebaseUtils
+import app.slyworks.location_lib.LocationTracker
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.room_lib.daos.CallHistoryDao
 import app.slyworks.room_lib.daos.ConsultationRequestDao
@@ -47,6 +50,7 @@ interface BaseFeatureComponent {
 
     fun getContext():Context
 
+    fun getPermissionManager(): PermissionManager
     fun getListenerManager(): ListenerManager
     fun getVibrationManager(): VibrationManager
     fun getNotificationHelper(): NotificationHelper
@@ -74,6 +78,10 @@ interface BaseFeatureComponent {
     fun getCryptoHelper(): CryptoHelper
 
     fun getFCMApiClient(): FCMClientApi
+
+    fun getFirebaseUtils():FirebaseUtils
+
+    fun getLocationTracker(): LocationTracker
 
    /* fun getMessageDao(): MessageDao
     fun getPersonDao(): PersonDao

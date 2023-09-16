@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.library'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
@@ -41,8 +42,20 @@ android {
 
 }
 
+secrets {
+    defaultPropertiesFileName "${rootProject.projectDir}/local.properties"
+    // To add your Maps API key to this project:
+    // 1. Open the root project's local.properties file
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+}
+
 dependencies {
+    implementation project(path: ':libraries:utils-lib')
     implementation project(path: ':libraries:di-base-lib')
+
+    //implementation impl_depends.location
+    implementation impl_depends.places
 
     implementation impl_depends.core_ktx
     implementation impl_depends.appcompat
@@ -50,6 +63,6 @@ dependencies {
     implementation impl_depends.rxandroid
     implementation impl_depends.timber
     implementation impl_depends.dagger
-    kapt kapt_depends.dagger_kapt
 
+    kapt kapt_depends.dagger_kapt
 }

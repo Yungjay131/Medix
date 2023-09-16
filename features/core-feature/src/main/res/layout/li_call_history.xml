@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@id/guide_horizontal_1"
         app:layout_constraintBottom_toTopOf="@id/guide_horizontal_2"
         tools:src="@drawable/ic_videocall"
-        tools:tint="@color/appBlue_light"/>
+        tools:tint="@color/app_pink_semi_light"/>
 
     <ImageView
         android:id="@+id/ivStatus_li_calls_history"

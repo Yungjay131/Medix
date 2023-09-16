@@ -13,13 +13,13 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher2_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Medix">
+        android:theme="@style/AppTheme.splash">
 
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash2">
+            >
 
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -28,6 +28,7 @@
         </activity>
 
     </application>
+
     <uses-feature
         android:name="android.hardware.camera2"
         android:required="false" />
@@ -68,4 +69,5 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATION" />
 </manifest>

@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import app.slyworks.auth_lib.LoginManager
 import app.slyworks.auth_lib.UsersManager
 import app.slyworks.communication_lib.ConsultationRequestsManager
+import app.slyworks.constants_lib.NO_INTERNET_CONNECTION_MESSAGE
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.models.ConsultationResponse
+import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -18,79 +20,78 @@ import javax.inject.Inject
  * Created by Joshua Sylvanus, 8:15 PM, 06/07/2022.
  */
 
+sealed class ViewRequestUIState {
+    object LoadingStarted : ViewRequestUIState()
+    object LoadingStopped : ViewRequestUIState()
+    data class UserDetailsRetrieved(val details:FBUserDetailsVModel) : ViewRequestUIState()
+    data class UserDetailsNotRetrieved(val error: String) : ViewRequestUIState()
+    object SendResponseSuccess : ViewRequestUIState()
+    data class SendResponseFailure(val error: String) : ViewRequestUIState()
+    data class Message(val message: String) : ViewRequestUIState()
+}
+
 class ViewRequestViewModel
     @Inject
     constructor(private val loginManager: LoginManager,
                 private val usersManager: UsersManager,
                 private val consultationRequestsManager: ConsultationRequestsManager,
+                private val networkRegister: NetworkRegister,
                 private val dataManager: DataManager) : ViewModel() {
-    //region Vars
-    private val _successData:MutableLiveData<FBUserDetailsVModel> = MutableLiveData()
-    val successData:LiveData<FBUserDetailsVModel>
-    get() = _successData
 
-    private val _successState:MutableLiveData<Boolean> = MutableLiveData()
-    val successState:LiveData<Boolean>
-    get() = _successState
-
-    private val _errorData:MutableLiveData<String> = MutableLiveData()
-    val errorData:LiveData<String>
-    get() = _errorData
-
-    private val _errorState:MutableLiveData<Boolean> = MutableLiveData()
-    val errorState:LiveData<Boolean>
-    get() = _errorState
-
-    val progressState:MutableLiveData<Boolean> = MutableLiveData()
+    private val _uiStateLD:MutableLiveData<ViewRequestUIState> = MutableLiveData()
+    val uiStateLD:LiveData<ViewRequestUIState> = _uiStateLD
 
     private val disposables:CompositeDisposable = CompositeDisposable()
-    //endregion
-    fun getUserDetailsUtils():FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
+
+    fun getUserDetailsUtils():FBUserDetailsVModel =
+        dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun getLoginStatus():Boolean = loginManager.getLoginStatus()
 
     fun getUserDetails(userUID:String){
+        if(!networkRegister.getNetworkStatus()){
+            _uiStateLD.postValue(ViewRequestUIState.Message(NO_INTERNET_CONNECTION_MESSAGE))
+            return
+        }
+
        disposables +=
        usersManager.getUserDataForUID(userUID)
+                  .doOnSubscribe { _uiStateLD.postValue(ViewRequestUIState.LoadingStarted) }
                   .subscribeOn(Schedulers.io())
                   .observeOn(Schedulers.io())
                   .subscribe {
-                      progressState.postValue(false)
+                      _uiStateLD.postValue(ViewRequestUIState.LoadingStopped)
 
                       when{
-                          it.isSuccess ->{
-                              _errorState.postValue(false)
-                              _successData.postValue(it.getTypedValue())
-                              _successState.postValue(true)
-                          }
-                          it.isFailure ->{
-                              _errorData.postValue(it.getAdditionalInfo())
-                              _errorState.postValue(true)
-                          }
+                          it.isSuccess ->
+                              _uiStateLD.postValue(ViewRequestUIState.UserDetailsRetrieved(it.getTypedValue()))
+                          it.isFailure ->
+                              _uiStateLD.postValue(ViewRequestUIState.UserDetailsNotRetrieved(it.getAdditionalInfo()!!))
                       }
                   }
     }
 
     fun respondToRequest(response: ConsultationResponse){
-        progressState.setValue(true)
+        if(!networkRegister.getNetworkStatus()){
+            _uiStateLD.postValue(ViewRequestUIState.Message(NO_INTERNET_CONNECTION_MESSAGE))
+            return
+        }
 
         disposables +=
-            consultationRequestsManager.sendConsultationRequestResponse(response)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
-                    progressState.postValue(false)
+        consultationRequestsManager.sendConsultationRequestResponse(response)
+            .doOnSubscribe { _uiStateLD.postValue(ViewRequestUIState.LoadingStarted) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe {
+                _uiStateLD.postValue(ViewRequestUIState.LoadingStopped)
 
-                    when {
-                        it.isSuccess -> {
-                            _errorState.postValue(false)
-                        }
-                        it.isFailure -> {
-                            _errorData.postValue(it.getAdditionalInfo())
-                            _errorState.postValue(true)
-                        }
-                    }
+                when {
+                    it.isSuccess ->
+                        _uiStateLD.postValue(ViewRequestUIState.SendResponseSuccess)
+                    it.isFailure ->
+                        _uiStateLD.postValue(ViewRequestUIState.SendResponseFailure(it.getAdditionalInfo()!!))
                 }
+            }
 
     }
 

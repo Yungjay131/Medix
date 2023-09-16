@@ -1,7 +1,8 @@
 package app.slyworks.core_feature._di
 
 import app.slyworks.base_feature._di.BaseFeatureComponent
-import app.slyworks.core_feature.main.MainActivity
+import app.slyworks.core_feature.location.LocationActivity
+import app.slyworks.core_feature.main.HomeActivity
 import app.slyworks.di_base_lib.FeatureScope
 import dagger.Component
 
@@ -22,7 +23,8 @@ interface ActivityComponent {
                 .baseFeatureComponent(BaseFeatureComponent.getInstance())
     }
 
-    fun inject(activity:MainActivity)
+    fun inject(activity:HomeActivity)
+    fun inject(activity:LocationActivity)
 
     fun fragmentComponentBuilder(): FragmentComponent.Builder
 }

@@ -3,8 +3,9 @@ package app.slyworks.auth_lib
 import android.app.Activity
 import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.plusAssign
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -51,7 +53,7 @@ class VerificationHelper(
 
      private fun signInTemporarily(email:String, password: String): Single<Outcome> =
         Single.create { emitter ->
-            firebaseAuth.signInWithEmailAndPassword(email, cryptoHelper.hash(password))
+            firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if(it.isSuccessful)
                         emitter.onSuccess(Outcome.SUCCESS("temporary sign in successful"))
@@ -60,24 +62,11 @@ class VerificationHelper(
                 }
         }
 
-    private fun  updateVerificationStatus():Single<Outcome> =
-        Single.create<Outcome> { emitter ->
-            firebaseUtils.getUserVerificationStatusRef(authStateListener.currentUser!!.uid)
-                .setValue(true)
-                .addOnCompleteListener {
-                    if(it.isSuccessful)
-                        emitter.onSuccess(Outcome.SUCCESS("verification status updated"))
-                    else {
-                        Timber.e("updating verification status failed:${it.exception?.stackTrace}")
-                        emitter.onSuccess(Outcome.FAILURE("verification status was not updated", it.exception?.message))
-                    }
-                }
-        }
 
     /* temporarily sign in before calling this method */
     fun verifyBySendingEmail():Single<Outcome> =
         Single.create{ emitter:SingleEmitter<Outcome> ->
-            authStateListener.currentUser!!.sendEmailVerification()
+            authStateListener.getCurrentUser()!!.sendEmailVerification()
                 .addOnCompleteListener {
                     val r: Outcome
 
@@ -93,12 +82,7 @@ class VerificationHelper(
                     emitter.onSuccess(r)
                 }
         }
-        /*.flatMap { it:Outcome ->
-            if(it.isSuccess)
-                updateVerificationStatus()
-            else
-                Single.just(it)
-        }*/
+
 
      fun verifyViaOTP(phoneNumber:String, a:Activity):Observable<Outcome>{
          this.phoneNumber = phoneNumber
@@ -166,26 +150,110 @@ class VerificationHelper(
             .build()
 
     private fun verifyOTPFinalStep(credential: PhoneAuthCredential){
-        firebaseAuth.signInWithCredential(credential)
-            .continueWithTask {
-                if(it.isSuccessful)
-                    firebaseUtils.getUserVerificationStatusRef(firebaseAuth.currentUser!!.uid)
-                        .setValue(true)
-                else
-                    it
-            }
-            .continueWith {
+        disposables +=
+        signInWithCredentialFromOTP(credential)
+           .concatMap {
+               when {
+                   it.isSuccess -> deleteUserAddedWithPhoneNumberFromOTP()
+                   else -> Single.just(it)
+               }
+           }.concatMap {
+               when{
+                   it.isSuccess -> signInUserAfterOTP()
+                   else -> Single.just(it)
+               }
+           }.concatMap {
+               when{
+                   it.isSuccess -> updateUserVerificationStatusAfterOTP()
+                   else -> Single.just(it)
+               }
+           }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe { result:Outcome ->
                 val o: Outcome
-                if(it.isSuccessful) {
+                if(result.isSuccess) {
                     o = Outcome.SUCCESS(value = OTPVerificationStage.VERIFICATION_SUCCESS)
-                }else
-                    o = Outcome.FAILURE(
+                }else {
+                    o = Outcome.SUCCESS(
                         value = OTPVerificationStage.VERIFICATION_FAILURE,
-                        reason = it.exception?.message ?: "verification failed")
+                        additionalInfo = result.getAdditionalInfo() ?: "verification failed" )
+                }
 
                 otpResultSubject.onNext(o)
             }
-
     }
+
+    private fun signInWithCredentialFromOTP(credential: PhoneAuthCredential):Single<Outcome> =
+        Single.create { emitter ->
+            firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener {
+                    val o:Outcome
+                    if(it.isSuccessful){
+                        o = Outcome.SUCCESS(Unit)
+                    }else{
+                        Timber.e(it.exception)
+                        o = Outcome.FAILURE(Unit, it.exception?.message)
+                    }
+
+                    emitter.onSuccess(o)
+                }
+        }
+
+    private fun deleteUserAddedWithPhoneNumberFromOTP():Single<Outcome> =
+        Single.create { emitter ->
+            if(firebaseAuth.currentUser?.phoneNumber != phoneNumber){
+                emitter.onSuccess(Outcome.SUCCESS(Unit, "no user phone number to delete"))
+                return@create
+            }
+
+            firebaseAuth.currentUser!!.delete()
+                .addOnCompleteListener {
+                    val o:Outcome
+                    if(it.isSuccessful){
+                        o = Outcome.SUCCESS(Unit)
+                    }else{
+                        Timber.e(it.exception)
+                        o = Outcome.FAILURE(Unit,it.exception?.message)
+                    }
+
+                    emitter.onSuccess(o)
+                }
+        }
+
+    private fun signInUserAfterOTP():Single<Outcome> =
+        Single.create { emitter ->
+            val (email:String?,password:String?) = authStateListener.getEmailAndPassword()
+            firebaseAuth.signInWithEmailAndPassword(email!!, password!!)
+                .addOnCompleteListener {
+                    val o:Outcome
+                    if (it.isSuccessful){
+                        o = Outcome.SUCCESS(Unit)
+                    }else{
+                        Timber.e(it.exception)
+                        o = Outcome.FAILURE(Unit, it.exception?.message)
+                    }
+
+                    emitter.onSuccess(o)
+                }
+        }
+
+    private fun updateUserVerificationStatusAfterOTP():Single<Outcome> =
+        Single.create { emitter ->
+            firebaseUtils.getUserVerificationStatusRef(firebaseAuth.currentUser!!.uid)
+                .setValue(true)
+                .addOnCompleteListener {
+                    val o:Outcome
+                    if(it.isSuccessful){
+                        o = Outcome.SUCCESS(Unit)
+                    }else{
+                        Timber.e(it.exception)
+                        o = Outcome.FAILURE(Unit, it.exception?.message)
+                    }
+
+                    emitter.onSuccess(o)
+                }
+        }
+
 
 }

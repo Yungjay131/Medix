@@ -2,14 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.slyworks.core_feature">
 
-    <application
-        android:theme="@style/Theme.Medix">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application>
 
         <activity
-            android:name=".main.MainActivity"
+            android:name=".main.HomeActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash3"
+            android:theme="@style/AppTheme.main"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
 
             <intent-filter>
@@ -18,5 +24,22 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".location.LocationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.main">
+            <intent-filter>
+                <action android:name="app.slyworks.core_feature.LocationActivity.open" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
     </application>
 </manifest>

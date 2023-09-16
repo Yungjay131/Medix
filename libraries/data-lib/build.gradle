@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
-    id "com.google.protobuf" version "0.8.12"
+    id "com.google.protobuf" version "0.9.1"
 }
 
 apply from: "${rootProject.projectDir}/dependencies.gradle"
@@ -14,6 +14,7 @@ android {
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
+        buildConfigField "String", "SERVER_KEY", "\"AAAAJfWt5pc:APA91bGWHdW9tWjy6xEbjcm9fq1J8wE0pUobzUQ8acup1GMCN51BgDM_EPmdK_t_ifjS4xafrVD9N1dzZFE3u25qkNujGQtqvh7bKC6xDcqDntc8dduJ7cCLwG7w8n0-5a21ohPIPkeO\""
 
         minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK

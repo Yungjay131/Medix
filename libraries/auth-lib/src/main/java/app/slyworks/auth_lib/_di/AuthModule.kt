@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 
 /**
@@ -56,6 +57,7 @@ object AuthModule {
         RegistrationManager(fa, fm, fu, tm, ch, asl)
 
     @Provides
+    @Singleton
     fun provideMAuthStateListener(pf:PreferenceManager):MAuthStateListener =
         MAuthStateListener(pf)
 }

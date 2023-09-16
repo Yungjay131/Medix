@@ -12,7 +12,7 @@ import app.slyworks.data_lib.vmodels.PersonVModel
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.firebase_commons_lib.MChildEventListener
 import app.slyworks.firebase_commons_lib.MValueEventListener
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.firebase.database.*
 import io.reactivex.rxjava3.core.Observable
@@ -139,8 +139,8 @@ class UsersManager(
 
     fun sendFCMTokenToServer(token:String){
         val address:String =
-        if(!dataManager.getUserDetailsParam<String>("firebaseUID").isNullOrEmpty())
-            dataManager.getUserDetailsParam("firebaseUID")!!
+        if(!dataManager.getUserDetailsProperty<String>("firebaseUID").isNullOrEmpty())
+            dataManager.getUserDetailsProperty("firebaseUID")!!
         else return
 
        firebaseUtils.getFCMRegistrationTokenRef(address)

@@ -1,11 +1,9 @@
 package app.slyworks.auth_feature.registration
 
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import app.slyworks.auth_feature.IRegViewModel
-import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.ActivityRegistrationBinding
 import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.base_feature.BaseActivity
@@ -84,10 +82,10 @@ class RegistrationActivity : IRegViewModel, BaseActivity() {
     }
 
     private fun initViews(){
-        binding.appbar.ivBack
+        /*binding.appbar.ivBacker
             .setOnClickListener {
                 this.onBackPressedDispatcher.onBackPressed()
-            }
+            }*/
 
         val fragKey:String = intent.getExtra<String>(KEY_FRAGMENT, FRAGMENT_REG_ZERO)!!
 

@@ -12,6 +12,9 @@ android {
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        manifestPlaceholders = [MAPS_API_KEY: "${properties.getProperty('MAPS_API_KEY')}"]
 
         minSdk sdk_details.minSDK
         targetSdk sdk_details.targetSDK
@@ -52,6 +55,9 @@ dependencies {
     implementation project(path: ':features:base-feature')
 
     implementation impl_depends.asynclayoutinflater
+
+    implementation impl_depends.maps
+    implementation impl_depends.places
 
     kapt kapt_depends.dagger_kapt
 }

@@ -43,7 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ivRetry_content_chat"
             app:layout_constraintBottom_toBottomOf="@id/ivRetry_content_chat"
-            android:progressTint="@color/appBlue"
+            android:progressTint="@color/app_pink"
             android:visibility="gone"
             tools:visibility="gone"/>
 

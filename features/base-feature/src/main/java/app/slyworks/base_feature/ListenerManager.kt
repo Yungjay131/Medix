@@ -54,13 +54,13 @@ class ListenerManager(
     private fun observeNewConsultationRequests(){
         disposables +=
         consultationRequestsManager.listenForConsultationRequests()
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 notificationHelper.createConsultationRequestNotification(
                     fromUID = it.details.firebaseUID,
                     fullName = it.details.fullName,
-                    toFCMRegistrationToken = it.details.FCMRegistrationToken,
+                    toFCMRegistrationToken = it.details.fcm_registration_token,
                     message = "${it.details.fullName} would like a consultation with you")
             }
     }

@@ -38,7 +38,7 @@ class VoiceCallViewModel
     fun stopVibration() = vibrationManager.stopVibration()
 
     fun getUserDetailsUtils():FBUserDetailsVModel =
-        dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
+        dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun sendVoiceCallRequestViaFCM(userDetails: FBUserDetailsVModel){
         disposables +=

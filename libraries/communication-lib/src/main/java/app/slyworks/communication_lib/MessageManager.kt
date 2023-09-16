@@ -11,7 +11,7 @@ import app.slyworks.data_lib.FirebaseCloudMessage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.firebase_commons_lib.MValueEventListener
 import app.slyworks.data_lib.models.MessageCloudMessage
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.rxjava3.core.Completable
@@ -53,7 +53,7 @@ class MessageManager(
 
             firebaseDatabase.reference
                 .child("messages")
-                .child(dataManager.getUserDetailsParam("firebaseUID")!!)
+                .child(dataManager.getUserDetailsProperty("firebaseUID")!!)
                 .get()
                 .addOnCompleteListener {
                    if(it.isSuccessful){
@@ -295,7 +295,7 @@ class MessageManager(
 
     fun observeUserTypingStatus(uid:String):Observable<Boolean> =
         Observable.create { emitter ->
-            val myUID:String = dataManager.getUserDetailsParam<String>("firebaseUID")!!
+            val myUID:String = dataManager.getUserDetailsProperty<String>("firebaseUID")!!
             firebaseUtils.getIsUserTypingRef(myUID, uid)
                 .addValueEventListener(
                     MValueEventListener(onDataChangeFunc = {
@@ -305,7 +305,7 @@ class MessageManager(
 
     fun updateUserTypingStatus(status:Boolean, UID:String){
         Completable.create { emitter ->
-            val myUID:String = dataManager.getUserDetailsParam<String>("firebaseUID")!!
+            val myUID:String = dataManager.getUserDetailsProperty<String>("firebaseUID")!!
             firebaseUtils.getIsUserTypingRef(myUID, UID)
                 .setValue(status)
                 .addOnCompleteListener {

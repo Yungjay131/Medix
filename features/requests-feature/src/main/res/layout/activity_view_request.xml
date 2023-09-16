@@ -154,6 +154,8 @@
                 app:layout_constraintTop_toBottomOf="@id/tvAge_view_request"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 android:layout_marginTop="48dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
                 android:background="@drawable/btn_accept_selector"
                 android:fontFamily="@font/chivo_regular"
                 android:stateListAnimator="@xml/btn_state_list_animator"
@@ -161,8 +163,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"/>
+                />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnDecline_view_request"
@@ -171,6 +172,8 @@
                 app:layout_constraintStart_toEndOf="@id/btnAccept_view_request"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btnAccept_view_request"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
                 android:background="@drawable/btn_decline_selector"
                 android:fontFamily="@font/chivo_regular"
                 android:stateListAnimator="@xml/btn_state_list_animator"
@@ -178,8 +181,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"/>
+                />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guide_vertical_1"

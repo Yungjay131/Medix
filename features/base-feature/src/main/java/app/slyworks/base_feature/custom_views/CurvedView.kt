@@ -32,7 +32,7 @@ class CurvedView
        try{
           mColor = typedArray.getColor(
               R.styleable.CurvedView_curvedView_backgroundColor,
-              ContextCompat.getColor(this.context, R.color.appBlue))
+              ContextCompat.getColor(this.context, R.color.app_pink))
 
            mPaint = Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
                color = mColor

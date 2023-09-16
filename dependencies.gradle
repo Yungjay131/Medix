@@ -15,8 +15,8 @@
 
     sdk_details.applicationID = "app.slyworks.medix"
     sdk_details.minSDK = 21
-    sdk_details.compileSDK = 32
-    sdk_details.targetSDK = 32
+    sdk_details.compileSDK = 33
+    sdk_details.targetSDK = 33
     sdk_details.versionCode = 1
     sdk_details.versionName = "1.0.0"
     sdk_details.minifyEnabled = false
@@ -60,9 +60,8 @@
     impl_depends.datastore = "androidx.datastore:datastore:$datastore"
     impl_depends.datastore_preferences = "androidx.datastore:datastore-preferences:$datastore"
 
-    impl_depends.protoc = "com.google.protobuf:protoc:3.11.0"
-
-    impl_depends.protobuf_javalite = "com.google.protobuf:protobuf-javalite:3.14.0"
+    impl_depends.protoc = "com.google.protobuf:protoc:3.22.0"
+    impl_depends.protobuf_javalite = "com.google.protobuf:protobuf-javalite:3.22.0"
 
     def camera = "1.1.0-beta03"
     impl_depends.camera = "androidx.camera:camera-camera2:$camera"
@@ -76,6 +75,13 @@
     impl_depends.room_runtime = "androidx.room:room-runtime:$room"
     impl_depends.room_rxjava = "androidx.room:room-rxjava3:$room"
     kapt_depends.room_kapt = "androidx.room:room-compiler:$room"
+
+    impl_depends.paystack = "co.paystack.android:paystack:3.1.3"
+    impl_depends.flutterwave = "com.github.Flutterwave.rave-android:rave_presentation:2.1.39"
+
+    impl_depends.location = "com.google.android.gms:play-services-location:21.0.1"
+    impl_depends.maps = "com.google.android.gms:play-services-maps:18.1.0"
+    impl_depends.places = "com.google.android.libraries.places:places:3.1.0"
 
     test_depends.mock_webserver = "com.squareup.okhttp3:mockwebserver:3.12.0"
     test_depends.core_testing = "androidx.arch.core:core-testing:2.1.0"
@@ -144,7 +150,7 @@
     impl_depends.rxbinding_appcompat = "com.jakewharton.rxbinding4:rxbinding-appcompat:$rxbinding"
 
     def agora_v = "4.1.1"
-    impl_depends.agora_sdk = "com.github.agorabuilder:native-full-sdk:3.4.1"
+    //impl_depends.agora_sdk = "com.github.agorabuilder:native-full-sdk:3.4.1"
     impl_depends.agora_new_sdk = "io.agora.rtc:full-sdk:4.1.1"
 
     impl_depends.lottie = "com.airbnb.android:lottie:5.0.3"

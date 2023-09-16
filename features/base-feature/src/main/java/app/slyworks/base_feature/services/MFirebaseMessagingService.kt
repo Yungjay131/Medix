@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 10:09 PM, 1/11/2022.
+ *Created by Joshua Sylvanus, 10:09 PM, 11/1/2022.
  */
 class MFirebaseMessagingService : FirebaseMessagingService(){
     //region Vars
@@ -62,7 +62,6 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                  /*enqueue task for upload since there is no network connection or user is not logged in */
                 workInitializer.initFCMTokenUploadWork(token)
 
-            cancel()
         }
     }
 
@@ -110,7 +109,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
 
            FCM_RESPONSE_ACCEPTED, FCM_RESPONSE_DECLINED ->{
                val fromUID:String = remoteMessage.data["fromUID"]!!
-               val toUID:String = dataManager.getUserDetailsParam<String>("firebaseUID")!!
+               val toUID:String = dataManager.getUserDetailsProperty<String>("firebaseUID")!!
                val message:String = remoteMessage.data["message"]!!
                val status:String = remoteMessage.data["status"]!!
                val fullName:String = remoteMessage.data["fullName"]!!
@@ -128,7 +127,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                   age = remoteMessage.data["age"]!!,
                   firebaseUID = remoteMessage.data["firebaseUID"]!!,
                   agoraUID = remoteMessage.data["agoraUID"]!!,
-                  FCMRegistrationToken = remoteMessage.data["fcmRegistrationToken"]!!,
+                  fcm_registration_token = remoteMessage.data["fcmRegistrationToken"]!!,
                   imageUri = remoteMessage.data["imageUri"]!!,
                   history = null,
                   specialization = null
@@ -145,7 +144,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                }
            }
            FCM_NEW_UPDATE_MESSAGE ->{
-               /*TODO:retrieve new Url to download new version of app from*/
+               /* TODO:retrieve new Url to download new version of app from */
            }
        }
     }

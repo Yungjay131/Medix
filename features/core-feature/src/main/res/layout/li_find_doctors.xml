@@ -18,8 +18,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfile_find_doctor"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:layout_constraintStart_toEndOf="@id/guide_vertical_1"
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_3"
         app:layout_constraintTop_toBottomOf="@id/guide_horizontal_1"

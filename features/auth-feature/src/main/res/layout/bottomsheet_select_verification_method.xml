@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         app:siv_title="Verify via Email"
-        app:siv_title_color="@color/appBlue"
+        app:siv_title_color="@color/app_pink"
         app:siv_sub_title="Verify your account by clicking a link provided in a verification email that would be sent to the email address entered during registration."
         app:siv_active_outline_color="@color/appCardBlue"
         app:siv_sub_title_color="@color/appDarkGrey"/>
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         app:siv_title="Verify via OTP"
-        app:siv_title_color="@color/appBlue"
+        app:siv_title_color="@color/app_pink"
         app:siv_sub_title="Verify your account by entering a One Time Password (OTP) that would be sent to the phone number entered during registration"
         app:siv_active_outline_color="@color/appCardBlue"
         app:siv_sub_title_color="@color/appDarkGrey"/>

@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:theme="@style/Theme.Medix">
+        >
 
         <activity
             android:name=".VideoCallActivity"

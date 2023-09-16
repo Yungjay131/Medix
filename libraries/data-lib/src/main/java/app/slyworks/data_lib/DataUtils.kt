@@ -49,7 +49,7 @@ fun MutableList<ConsultationRequest>.transformConsultationRequest():MutableList<
 fun MutableList<CallHistory>.transformCallHistory():MutableList<CallHistoryVModel> =
     this.map(::mapCallHistory) as MutableList<CallHistoryVModel>
 
-fun Person.transform(): PersonVModel = mapPerson(this)
+fun Person.transform(): PersonVModel? = mapPerson(this)
 
 fun FBUserDetails.transform(): FBUserDetailsVModel = mapFBUserDetails(this)
 
@@ -69,8 +69,10 @@ fun mapConsultationRequest(requests:MutableList<ConsultationRequest>):MutableLis
 fun mapCallHistory(histories:MutableList<CallHistory>):MutableList<CallHistoryVModel> =
     histories.map(::mapCallHistory) as MutableList<CallHistoryVModel>
 
-fun mapPerson(person: Person): PersonVModel =
-    PersonVModel(
+fun mapPerson(person: Person?): PersonVModel?{
+    person ?: return null
+
+    return PersonVModel(
         firebaseUID = person.firebaseUID,
         userAccountType = person.userAccountType,
         lastMessageType = person.lastMessageType,
@@ -81,6 +83,8 @@ fun mapPerson(person: Person): PersonVModel =
         fullName = person.fullName,
         unreadMessageCount = person.unreadMessageCount,
         FCMRegistrationToken = person.FCMRegistrationToken )
+}
+
 
 fun mapFBUserDetails(details: FBUserDetails): FBUserDetailsVModel =
     FBUserDetailsVModel(
@@ -93,7 +97,7 @@ fun mapFBUserDetails(details: FBUserDetails): FBUserDetailsVModel =
         age = details.age,
         firebaseUID = details.firebaseUID,
         agoraUID = details.agoraUID,
-        FCMRegistrationToken = details.FCMRegistrationToken,
+        fcm_registration_token = details.FCMRegistrationToken,
         imageUri = details.imageUri,
         history = details.history,
         specialization = details.specialization )
@@ -141,7 +145,7 @@ fun reverseMapFBUserDetails(details: FBUserDetailsVModel):FBUserDetails =
         age =details.age,
         firebaseUID = details.firebaseUID,
         agoraUID = details.agoraUID,
-        FCMRegistrationToken = details.FCMRegistrationToken,
+        FCMRegistrationToken = details.fcm_registration_token,
         imageUri = details.imageUri,
         history = details.history,
         specialization = details.specialization )

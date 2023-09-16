@@ -18,8 +18,7 @@ class PersonsManager(private val dataManager: DataManager) {
             val person: PersonVModel =
                dataManager.getPersonByID(firebaseUID) ?: return@launch
 
-               dataManager
-                .updatePersons(person.apply {
+               dataManager.updatePersons(person.apply {
                     lastMessageStatus = READ
                     unreadMessageCount = 0
                 })

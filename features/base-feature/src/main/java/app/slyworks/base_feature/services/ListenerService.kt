@@ -12,11 +12,12 @@ import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 12:03 PM, 1/21/2022.
+ *Created by Joshua Sylvanus, 12:03 PM, 21/1/2022.
  */
 
 class ListenerService : Service() {
     //region Vars
+    private var shouldWorkerBeReInitialized:Boolean = false
     @Inject
     @JvmField
     var listenerManager: ListenerManager? = null
@@ -24,7 +25,6 @@ class ListenerService : Service() {
     @Inject
     lateinit var workInitializer: WorkInitializer
 
-    private var shouldWorkerBeReInitialized:Boolean = false
     //endregion
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -33,7 +33,7 @@ class ListenerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(APP_SERVICE_ID, NotificationHelper.createAppServiceNotification())
+        startForeground(APP_SERVICE_ID, NotificationHelper.createAppServiceNotification(this))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

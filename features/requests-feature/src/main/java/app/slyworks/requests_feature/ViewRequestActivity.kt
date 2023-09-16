@@ -8,27 +8,27 @@ import app.slyworks.base_feature.MOnBackPressedCallback
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.models.ConsultationResponse
+import app.slyworks.requests_feature._di.ActivityComponent
 
 import app.slyworks.requests_feature.databinding.ActivityViewRequestBinding
 import app.slyworks.utils_lib.utils.displayImage
+import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.setChildViewsStatus
-import app.slyworks.utils_lib.utils.showMessage
 import dev.joshuasylvanus.navigator.Navigator
 import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 
 import javax.inject.Inject
 
 class ViewRequestActivity : BaseActivity() {
-    //region Vars
-    private lateinit var binding: ActivityViewRequestBinding
 
     private lateinit var requestStatus:String
     private lateinit var userUID:String
     private lateinit var userDetails: FBUserDetailsVModel
 
+    private lateinit var binding: ActivityViewRequestBinding
+
     @Inject
     lateinit var viewModel: ViewRequestViewModel
-    //endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
@@ -43,11 +43,9 @@ class ViewRequestActivity : BaseActivity() {
     }
 
     private fun initDI(){
-        /*application.appComponent
-            .activityComponentBuilder()
-            .setActivity(this)
-            .build()
-            .inject(this)*/
+      ActivityComponent.getInitialBuilder()
+          .build()
+          .inject(this)
     }
 
     private fun initData(){
@@ -58,6 +56,7 @@ class ViewRequestActivity : BaseActivity() {
         if(!viewModel.getLoginStatus()){
            Navigator.intentFor(this, LOGIN_ACTIVITY_INTENT_FILTER)
                 .addExtra(EXTRA_LOGIN_DESTINATION, VIEW_REQUESTS_ACTIVITY_INTENT_FILTER)
+                .addExtra(EXTRA_INITIAL_EXTRA, intent.getExtra<Bundle>(EXTRA_ACTIVITY)!!)
                 .newAndClearTask()
                 .navigate()
         }
@@ -67,26 +66,47 @@ class ViewRequestActivity : BaseActivity() {
             userUID = getString(EXTRA_CLOUD_MESSAGE_FROM_UID)!!
         }
 
-        viewModel.progressState.observe(this){
-            binding.progressLayout.isVisible = it
-            binding.rootView.setChildViewsStatus(it)
-        }
+        viewModel.uiStateLD.observe(this){
+            when(it){
+                is ViewRequestUIState.LoadingStarted -> {
+                    binding.progressLayout.isVisible = true
+                    binding.rootView.setChildViewsStatus(false)
+                }
 
-        viewModel.successState.observe(this){
-             if(it){
-                 userDetails = viewModel.successData.value!!
-                 binding.toolbarViewRequest.ivProfileSmallViewRequest.displayImage(userDetails.imageUri)
-                 binding.toolbarViewRequest.ivProfileViewRequest.displayImage(userDetails.imageUri)
-                 binding.toolbarViewRequest.tvProfileSmallViewRequest.text = userDetails.fullName
-                 binding.tvNameViewRequest.text = userDetails.fullName
-                 binding.tvSexViewRequest.text = userDetails.sex
-                 binding.tvAgeViewRequest.text = userDetails.age
-             }
-        }
+                is ViewRequestUIState.LoadingStopped -> {
+                    binding.progressLayout.isVisible = false
+                    binding.rootView.setChildViewsStatus(true)
+                }
 
-        viewModel.errorState.observe(this){
-            if(it)
-              showMessage(viewModel.errorData.value!!, binding.rootView)
+                is ViewRequestUIState.UserDetailsRetrieved -> {
+                    userDetails = it.details
+                    binding.toolbarViewRequest.ivProfileSmallViewRequest.displayImage(userDetails.imageUri)
+                    binding.toolbarViewRequest.ivProfileViewRequest.displayImage(userDetails.imageUri)
+                    binding.toolbarViewRequest.tvProfileSmallViewRequest.text = userDetails.fullName
+                    binding.tvNameViewRequest.text = userDetails.fullName
+                    binding.tvSexViewRequest.text = userDetails.sex
+                    binding.tvAgeViewRequest.text = userDetails.age
+                }
+
+                is ViewRequestUIState.UserDetailsNotRetrieved ->{
+                    displayMessage(it.error, binding.root)
+                }
+
+                is ViewRequestUIState.SendResponseSuccess -> {
+                    displayMessage("response sent", binding.root)
+                    finish()
+                }
+
+                is ViewRequestUIState.SendResponseFailure ->{
+                    displayMessage(it.error, binding.root)
+                }
+
+                is ViewRequestUIState.Message ->{
+                    displayMessage(it.message, binding.root)
+                }
+
+
+            }
         }
 
         viewModel.getUserDetails(userUID)
@@ -94,9 +114,9 @@ class ViewRequestActivity : BaseActivity() {
 
     private fun initViews(){
         val response = ConsultationResponse(
-            toUID = userDetails.firebaseUID,
+            toUID = userUID,
             fromUID = viewModel.getUserDetailsUtils().firebaseUID,
-            toFCMRegistrationToken = viewModel.getUserDetailsUtils().FCMRegistrationToken,
+            toFCMRegistrationToken = viewModel.getUserDetailsUtils().fcm_registration_token,
             status = REQUEST_ACCEPTED,
             fullName = viewModel.getUserDetailsUtils().fullName )
 
@@ -104,6 +124,7 @@ class ViewRequestActivity : BaseActivity() {
 
         binding.toolbarViewRequest.ivBackViewRequest.setOnClickListener(navigateBackFunc)
         binding.toolbarViewRequest.ivBackViewRequest2.setOnClickListener(navigateBackFunc)
+
         binding.btnAcceptViewRequest.setOnClickListener{
             viewModel.respondToRequest(response)
         }

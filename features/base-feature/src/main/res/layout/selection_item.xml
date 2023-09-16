@@ -16,7 +16,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/siv_title"
             app:layout_constraintBottom_toBottomOf="@id/siv_title"
-            android:buttonTint="@color/appBlue"
+            android:buttonTint="@color/app_pink"
             android:gravity="center"/>
 
         <TextView
@@ -30,7 +30,7 @@
             android:fontFamily="@font/chivo_regular"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/appBlue"
+            android:textColor="@color/app_pink"
             tools:text="Verify Via OTP"/>
 
         <TextView

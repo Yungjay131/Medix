@@ -3,7 +3,6 @@ package app.slyworks.core_feature.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -24,15 +23,18 @@ class HomeFragmentViewModel
     fun observeUserProfilePic(){
         disposables +=
         dataManager.observeUserDetailsFromDataStore()
+            .map{ it.imageUri }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe { imageUriLiveData.postValue(it.imageUri) }
+            .subscribe(imageUriLiveData::postValue)
     }
+
+    /* proxy to DataManager */
+    fun <T> getUserProperty(propertyName:String):T =
+        dataManager.getUserDetailsProperty<T>(propertyName)!!
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
     }
-
-    fun getUser(): FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
 }

@@ -16,12 +16,15 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.FragmentRegistrationPatientBinding
 import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
+import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.utils.closeKeyboard3
 
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.displayMessage
@@ -30,9 +33,10 @@ import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class RegistrationPatientFragment : Fragment() {
-    //region Vars
     private lateinit var binding: FragmentRegistrationPatientBinding
     private lateinit var viewModel: RegistrationActivityViewModel
 
@@ -42,17 +46,16 @@ class RegistrationPatientFragment : Fragment() {
     private var isThereCreatedLayout:Boolean = false
 
     private val disposables = CompositeDisposable()
-    //endregion
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): RegistrationPatientFragment = RegistrationPatientFragment()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         viewModel = (context as RegistrationActivity).viewModel
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(): RegistrationPatientFragment = RegistrationPatientFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,26 +74,41 @@ class RegistrationPatientFragment : Fragment() {
        viewModel.progressLiveData.observe(viewLifecycleOwner){
            (requireActivity() as IRegViewModel).toggleProgressView(it)
        }
+
        viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+
        viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){ _ ->
-           Navigator.intentFor(requireContext(), MAIN_ACTIVITY_INTENT_FILTER)
-               .newAndClearTask()
-               .navigate()
+
+           lifecycleScope.launch {
+               displayMessage("verification successful", binding.root)
+
+               delay(1_000)
+
+               Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                   .newAndClearTask()
+                   .navigate()
+           }
+
        }
 
        viewModel.registrationSuccessfulLiveData.observe(viewLifecycleOwner){
-           val dialog = SelectVerificationMethodBSDialog.getInstance()
+           val dialog:SelectVerificationMethodBSDialog =
+               SelectVerificationMethodBSDialog.getInstance()
+
            disposables +=
            dialog.getSubject()
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe {
+                     dialog.dismiss()
+
                      if(it == VerificationDetails.OTP) {
                          (requireActivity() as RegistrationActivity).navigator
-                             .hideCurrent()
                              .show(RegistrationOTP1Fragment.newInstance())
                              .navigate()
-                       return@subscribe
+
+
+                         return@subscribe
                      }
 
                     viewModel.verifyByEmail()
@@ -149,6 +167,8 @@ class RegistrationPatientFragment : Fragment() {
         }
 
         binding.btnSignUp.setOnClickListener {
+            requireActivity().closeKeyboard3()
+
             if(!check())
                 return@setOnClickListener
 

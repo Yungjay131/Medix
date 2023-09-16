@@ -100,7 +100,6 @@ class VerificationGeneral0Fragment : Fragment() {
                 VerificationDetails.EMAIL -> viewModel.verifyByEmail()
                 VerificationDetails.OTP -> {
                     (requireActivity() as VerificationActivity).navigator
-                        .hideCurrent()
                         .show(RegistrationOTP1Fragment.newInstance())
                         .navigate()
                 }

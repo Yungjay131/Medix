@@ -3,7 +3,7 @@
     package="app.slyworks.message_feature">
 
     <application
-        android:theme="@style/Theme.Medix">
+        >
 
         <activity android:name=".message.MessageActivity"
             android:exported="false"

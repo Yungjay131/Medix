@@ -20,10 +20,8 @@ class SplashActivityViewModel
     constructor(private val loginManager: LoginManager,
                 private val dataManager: DataManager): ViewModel() {
 
-        //region Vars
          private val _isSessionValid:MutableLiveData<Boolean> = MutableLiveData()
-         val isSessionValid:LiveData<Boolean>
-         get() = _isSessionValid
+         val isSessionValid:LiveData<Boolean> = _isSessionValid
 
          private val disposables:CompositeDisposable = CompositeDisposable()
         //endregion
@@ -39,16 +37,14 @@ class SplashActivityViewModel
          fun checkLoginSession(){
            disposables +=
            Observable.combineLatest(Observable.just(loginManager.getLoginStatus()),
-                                    Observable.just(
-                                        dataManager.getUserDetailsParam<String>("firebaseUID") != null
-                                    ),
-               { isLoggedIn, isUserDetailsAvailable ->
-                   if(isLoggedIn && isUserDetailsAvailable)
-                         return@combineLatest true
+                                    Observable.just(dataManager.getUserDetailsProperty<String>("firebaseUID") != null)
+           ) { isLoggedIn, isUserDetailsAvailable ->
+               if (isLoggedIn && isUserDetailsAvailable)
+                   return@combineLatest true
 
-                   return@combineLatest false
-                 })
-                 .subscribeOn(Schedulers.io())
+               return@combineLatest false
+           }
+               .subscribeOn(Schedulers.io())
                  .observeOn(Schedulers.io())
                  .subscribe(_isSessionValid::postValue)
          }

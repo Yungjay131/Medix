@@ -51,5 +51,7 @@ android {
 dependencies {
     implementation project(path: ':features:base-feature')
 
+    implementation impl_depends.agora_new_sdk
+
     kapt kapt_depends.dagger_kapt
 }

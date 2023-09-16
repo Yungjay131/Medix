@@ -29,7 +29,7 @@ data class VoiceCallData(
                     age = details.age,
                     firebaseUID = details.firebaseUID,
                     agoraUID = details.agoraUID,
-                    fcmRegistrationToken = details.FCMRegistrationToken,
+                    fcmRegistrationToken = details.fcm_registration_token,
                     imageUri = details.imageUri,
                     type = FCM_VOICE_CALL_REQUEST
                 )

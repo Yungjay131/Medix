@@ -16,10 +16,8 @@ import javax.inject.Inject
 class OnBoardingActivityViewModel
     @Inject
     constructor(private val networkRegister: NetworkRegister) : ViewModel() {
-    //region Vars
     private val l:MutableLiveData<Boolean> = MutableLiveData()
     private val disposables:CompositeDisposable = CompositeDisposable()
-    //endregion
 
     fun subscribeToNetwork(): LiveData<Boolean>{
         disposables +=

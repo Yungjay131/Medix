@@ -3,6 +3,7 @@ package app.slyworks.base_feature.broadcast_receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import app.slyworks.base_feature._di.VideoCallRequestBRComponent
 import app.slyworks.communication_lib.CallManager
 import app.slyworks.constants_lib.EXTRA_INCOMING_VIDEO_CALL_FROM_UID
 import app.slyworks.constants_lib.EXTRA_INCOMING_VIDEO_CALL_RESPONSE_TYPE
@@ -22,6 +23,11 @@ class VideoCallRequestBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var callManager: CallManager
     //endregion
+    init {
+        VideoCallRequestBRComponent.getInitialBuilder()
+            .build()
+            .inject(this)
+    }
 
     override fun onReceive(context: Context?, intent: Intent?) {
 

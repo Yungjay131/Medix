@@ -6,60 +6,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.base_feature.custom_views.HorizontalSpacingItemDecorator
-import app.slyworks.core_feature.main.MainActivity
+import app.slyworks.constants_lib.FBU_FIRST_NAME
+import app.slyworks.constants_lib.FBU_IMAGE_URI
+import app.slyworks.core_feature.main.HomeActivity
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RvHealthAreasAdapter
+import app.slyworks.core_feature.databinding.FragmentHomeDoctorBinding
 import app.slyworks.core_feature.main.activityComponent
-import app.slyworks.data_lib.models.AccountType
 import app.slyworks.utils_lib.utils.displayImage
-import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 import javax.inject.Inject
 
 class DoctorHomeFragment : Fragment() {
-    //region Vars
-    private lateinit var ivToggle: ImageView
-    private lateinit var ivProfile:CircleImageView
-    private lateinit var tvUserName:TextView
-    private lateinit var ivNotification:CircleImageView
-    private lateinit var layout_notification_count: ConstraintLayout
-    private lateinit var tvNotificationCount:TextView
-
-    private lateinit var searchView: androidx.appcompat.widget.SearchView
-
-    private lateinit var actionMessages: ConstraintLayout
-    private lateinit var actionConsultations: ConstraintLayout
-    private lateinit var actionHealthCareCenters: ConstraintLayout
-    private lateinit var actionReminder: ConstraintLayout
-    private lateinit var actionVoiceCalls: ConstraintLayout
-    private lateinit var actionVideoCalls: ConstraintLayout
-
-    private lateinit var rvHealthAreas:RecyclerView
-
-    private lateinit var tvUpcomingConsultation:TextView
-
-    private lateinit var cardSchedule: ConstraintLayout
-    private lateinit var ivProfile_cardSchedule:CircleImageView
-    private lateinit var tvName_cardSchedule:TextView
-    private lateinit var tvDetails_cardSchedule:TextView
-    private lateinit var tvDate_cardSchedule:TextView
-    private lateinit var tvTime_cardSchedule:TextView
-
-    private lateinit var type: AccountType
-
     private lateinit var adapterHealthAreas: RvHealthAreasAdapter
 
-    private lateinit var parentActivity: MainActivity
+    private lateinit var binding:FragmentHomeDoctorBinding
 
     @Inject
     lateinit var viewModel: HomeFragmentViewModel
-    //endregion
 
     companion object {
         @JvmStatic
@@ -68,7 +34,6 @@ class DoctorHomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        parentActivity = context as MainActivity
 
          context.activityComponent
              .fragmentComponentBuilder()
@@ -77,7 +42,8 @@ class DoctorHomeFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_home_doctor, container, false)
+        binding = FragmentHomeDoctorBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,63 +55,39 @@ class DoctorHomeFragment : Fragment() {
 
     private fun initData(){
         viewModel.imageUriLiveData.observe(viewLifecycleOwner){
-            ivProfile.displayImage(it)
+            binding.lCollapsingToolbar.ivProfileCollapsingToolbar.displayImage(it)
         }
 
         viewModel.observeUserProfilePic()
+
+        (requireActivity() as HomeActivity).verifyNotificationPermission()
     }
 
     private fun initViews(view:View){
-        ivToggle = view.findViewById(R.id.ivToggle_collapsing_toolbar)
-        ivNotification = view.findViewById(R.id.ivNotifications_collapsing_toolbar)
-        ivProfile = view.findViewById(R.id.ivProfile_collapsing_toolbar)
-        tvUserName = view.findViewById(R.id.tvUsername_collapsing_toolbar)
+        binding.layoutScheduleCard.tvNameLayoutScheduleFragHome.setText("Josh Sylvanus")
+        binding.layoutScheduleCard.tvProfileDetailsLayoutScheduleFragHome.setText("Abuja, Nigeria")
 
-        layout_notification_count = view.findViewById(R.id.layout_unread_message_count)
-        tvNotificationCount = view.findViewById(R.id.tvUnreadMessageCount)
+        binding.lCollapsingToolbar.tvUnreadMessageCount.setText(1.toString())
 
-        tvUpcomingConsultation = view.findViewById(R.id.tvSeeAll_upcomingCons_frag_home)
+        binding.lCollapsingToolbar.ivProfileCollapsingToolbar.displayImage(viewModel.getUserProperty<String>(FBU_IMAGE_URI))
 
-        searchView = view.findViewById(R.id.searchView_frag_home)
+        binding.layoutScheduleCard.ivProfileLayoutScheduleFragHome.displayImage(viewModel.getUserProperty<String>(FBU_IMAGE_URI))
 
-        actionMessages = view.findViewById(R.id.quick_action_message)
-        actionConsultations = view.findViewById(R.id.quick_action_consultations)
-        actionHealthCareCenters = view.findViewById(R.id.quick_action_healthcare_centers)
-        actionReminder = view.findViewById(R.id.quick_action_reminder)
-        actionVoiceCalls = view.findViewById(R.id.quick_action_voicecalls)
-        actionVideoCalls = view.findViewById(R.id.quick_action_videocalls)
+        binding.lCollapsingToolbar.ivToggleCollapsingToolbar.setOnClickListener{
+            (requireActivity() as HomeActivity).toggleDrawerState()
+        }
 
-        cardSchedule = view.findViewById(R.id.layout_schedule_card)
-        ivProfile_cardSchedule = view.findViewById(R.id.ivProfile_layout_schedule_frag_home)
-        tvName_cardSchedule = view.findViewById(R.id.tvName_layout_schedule_frag_home)
-        tvDetails_cardSchedule = view.findViewById(R.id.tvProfileDetails_layout_schedule_frag_home)
-        tvDate_cardSchedule = view.findViewById(R.id.tvDate_layout_schedule_frag_home)
-        tvTime_cardSchedule = view.findViewById(R.id.tvTime_layout_schedule_frag_home)
-
-        tvName_cardSchedule.setText("Josh Sylvanus")
-        tvDetails_cardSchedule.setText("Abuja, Nigeria")
-
-        tvNotificationCount.setText(1.toString())
-
-        ivProfile.displayImage(viewModel.getUser().imageUri)
-
-        ivProfile_cardSchedule.displayImage(viewModel.getUser().imageUri)
-
-        ivToggle.setOnClickListener{ parentActivity.toggleDrawerState() }
-
-        val name: String = "Dr. " + viewModel.getUser().firstName
+        val _name:String = viewModel.getUserProperty(FBU_FIRST_NAME)
+        val name: String = "Dr. " + _name
             .substring(0, 1)
             .uppercase(Locale.getDefault())
-            .plus(
-                viewModel.getUser().firstName
-                .substring(1, viewModel.getUser().firstName.length))
-        tvUserName.text = name
+            .plus(_name.substring(1, _name.length))
+        binding.lCollapsingToolbar.tvUsernameCollapsingToolbar.text = name
 
         adapterHealthAreas = RvHealthAreasAdapter()
-        rvHealthAreas = view.findViewById(R.id.rvHealthAreas_frag_home)
-        rvHealthAreas.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
-        rvHealthAreas.addItemDecoration(HorizontalSpacingItemDecorator())
-        rvHealthAreas.adapter = adapterHealthAreas
+        binding.rvHealthAreasFragHome.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
+        binding.rvHealthAreasFragHome.addItemDecoration(HorizontalSpacingItemDecorator())
+        binding.rvHealthAreasFragHome.adapter = adapterHealthAreas
     }
 
 

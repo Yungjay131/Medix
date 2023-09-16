@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import app.slyworks.base_feature.NotificationHelper
+import app.slyworks.base_feature._di.CloudMessageBRComponent
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.models.ConsultationResponse
+import app.slyworks.di_base_lib.AppComponent
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
@@ -24,7 +26,9 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
     lateinit var consultationRequestsManager: ConsultationRequestsManager
 
     init {
-
+       CloudMessageBRComponent.getInitialBuilder()
+           .build()
+           .inject(this)
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -45,7 +49,7 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
         val pendingResult: PendingResult = goAsync()
         Observable.just(
             ConsultationResponse(
-                fromUID = dataManager.getUserDetailsParam<String>("firebaseUID")!!,
+                fromUID = dataManager.getUserDetailsProperty<String>("firebaseUID")!!,
                 toUID = fromUID,
                 toFCMRegistrationToken = toFCMRegistrationToken,
                 status = responseType,
@@ -57,7 +61,7 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe{
-                NotificationHelper.cancelNotification(notificationID)
+                NotificationHelper.cancelNotification(notificationID, AppComponent.getContext())
                 pendingResult.finish()
             }
 

@@ -348,7 +348,7 @@
                     android:stateListAnimator="@xml/btn_state_list_animator"
                     android:text="Login"
                     android:textAllCaps="false"
-                    android:textColor="@color/appBlue"
+                    android:textColor="@color/app_pink"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toStartOf="@id/_guide_vertical_2"
                     app:layout_constraintStart_toEndOf="@id/_guide_vertical_1"

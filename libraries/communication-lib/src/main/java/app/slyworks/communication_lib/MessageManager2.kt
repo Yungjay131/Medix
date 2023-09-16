@@ -10,7 +10,7 @@ import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.data_lib.vmodels.PersonVModel
 import app.slyworks.firebase_commons_lib.MValueEventListener
 import com.google.firebase.database.*
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.onNextAndComplete
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable
@@ -45,7 +45,7 @@ class MessageManager2(
 
         firebaseDatabase
             .reference
-            .child("messages/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+            .child("messages/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
             .orderByChild("from_uid")
             .equalTo(firebaseUID)
             .removeEventListener(mUIDValueEventListener)
@@ -57,7 +57,7 @@ class MessageManager2(
 
             firebaseDatabase
                 .reference
-                .child("messages/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+                .child("messages/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
                 .orderByChild("fromUID")
                 .equalTo(firebaseUID)
                 .addValueEventListener(mUIDValueEventListener)
@@ -103,7 +103,7 @@ class MessageManager2(
 
         firebaseDatabase
             .reference
-            .child("messages/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+            .child("messages/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
             .removeEventListener(mUIDChildEventListener)
     }
 
@@ -113,7 +113,7 @@ class MessageManager2(
 
             firebaseDatabase
                 .reference
-                .child("messages/${dataManager.getUserDetailsParam<String>("firebaseUID")}")
+                .child("messages/${dataManager.getUserDetailsProperty<String>("firebaseUID")}")
                 .addValueEventListener(mUIDChildEventListener)
 
             dataManager

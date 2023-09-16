@@ -2,26 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.slyworks.auth_feature">
 
-    <application android:theme="@style/Theme.Medix">
+    <application>
         <activity
             android:name=".onboarding.OnBoardingActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash3">
+            android:theme="@style/AppTheme.default">
             <intent-filter>
                 <action android:name="app.slyworks.auth_feature.OnBoardingActivity.open" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".login.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash3"
+            android:theme="@style/AppTheme.default"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="app.slyworks.auth_feature.LoginActivity.open" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -29,11 +29,10 @@
             android:name=".registration.RegistrationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash3"
+            android:theme="@style/AppTheme.default"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="app.slyworks.auth_feature.RegistrationActivity.open" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -42,7 +41,7 @@
             android:name=".verification.VerificationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.splash3"
+            android:theme="@style/AppTheme.default"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="app.slyworks.auth_feature.VerificationActivity.open" />

@@ -22,29 +22,25 @@ import dev.joshuasylvanus.navigator.Navigator
 import javax.inject.Inject
 
 class OnBoardingActivity : BaseActivity() {
-    //region Vars
     private var networkStatusView: NetworkStatusView? = null
 
     private lateinit var binding:ActivityOnBoardingBinding
 
     @Inject
     lateinit var viewModel: OnBoardingActivityViewModel
-    //endregion
 
     override fun isValid(): Boolean = false
 
-    /*TODO:use to determine when to do animations*/
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(app.slyworks.base_feature.R.style.AppTheme_splash3)
-
         initDI()
 
         super.onCreate(savedInstanceState)
+
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -57,7 +53,6 @@ class OnBoardingActivity : BaseActivity() {
             initViews_landscape()
             initAnimations_landscape()
         }
-
     }
 
     private fun isInLandscape(): Boolean =

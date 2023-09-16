@@ -19,8 +19,7 @@ import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Observer
 import app.slyworks.controller_lib.Subscription
-import app.slyworks.core_feature.main.MainActivity
-import app.slyworks.core_feature.R
+import app.slyworks.core_feature.main.HomeActivity
 import app.slyworks.core_feature.databinding.FragmentChatBinding
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.MessageVModel
@@ -31,17 +30,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dev.joshuasylvanus.navigator.Navigator
 
 class ChatFragment : Fragment(), Observer {
-    //region Vars
-    private lateinit var layout_chat_empty:ConstraintLayout
-    private lateinit var rvChats:RecyclerView
-    private lateinit var fabStartChat: FloatingActionButton
-    private lateinit var rootView:CoordinatorLayout
-    private lateinit var progress:ProgressBar
-    private lateinit var layout_error:ConstraintLayout
-    private lateinit var tvRetry:TextView
-    private lateinit var btnRetry:Button
-    private lateinit var progress_retry:ProgressBar
-
     private lateinit var personToMessagesMap:Map<PersonVModel, MutableList<MessageVModel>>
     private lateinit var adapter2: RVChatAdapter2
 
@@ -51,7 +39,6 @@ class ChatFragment : Fragment(), Observer {
 
     private var subscriptionsList:MutableList<Subscription> = mutableListOf()
 
-    //endregion
     companion object {
         @JvmStatic
         fun newInstance(): ChatFragment {
@@ -101,9 +88,9 @@ class ChatFragment : Fragment(), Observer {
         }
 
         viewModel.progressStateLiveData.observe(viewLifecycleOwner){
-            binding.progress.progressLayout.isVisible = it
-            if(!it && progress_retry.isVisible)
-              progress_retry.visibility = View.GONE
+            binding.progressLayout.isVisible = it
+            if(!it && binding.contentChat.progrssRetry.isVisible)
+              binding.contentChat.progrssRetry.visibility = View.GONE
         }
 
         getData(2)
@@ -111,8 +98,8 @@ class ChatFragment : Fragment(), Observer {
 
     private fun getData(from:Int){
         when(from){
-            1 -> progress_retry.isVisible = true
-            2 -> binding.progress.progressLayout.isVisible = true
+            1 -> binding.contentChat.progrssRetry.isVisible = true
+            2 -> binding.progressLayout.isVisible = true
         }
 
         viewModel.getChats()
@@ -126,7 +113,7 @@ class ChatFragment : Fragment(), Observer {
             else
                 f = FRAGMENT_DOCTOR_HOME
 
-            (requireActivity() as MainActivity)
+            (requireActivity() as HomeActivity)
                 .inflateFragment(f)
         }
 

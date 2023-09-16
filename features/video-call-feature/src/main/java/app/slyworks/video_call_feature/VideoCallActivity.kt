@@ -26,12 +26,12 @@ import app.slyworks.video_call_feature._di.VideoCallFeatureComponent
 import app.slyworks.video_call_feature.databinding.ActivityVideoCallBinding
 import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 import dev.joshuasylvanus.navigator.Navigator.Companion.getParcelable
-//import com.google.common.util.concurrent.ListenableFuture
 import io.agora.rtc2.Constants
 import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration
+//import com.google.common.util.concurrent.ListenableFuture
 import javax.inject.Inject
 
 class VideoCallActivity : BaseActivity() {

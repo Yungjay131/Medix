@@ -63,7 +63,7 @@ class MessageActivityViewModel
     private val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
-    fun getUserDetailsUtils(): FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>("userDetails")!!
+    fun getUserDetailsUtils(): FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>("userDetails")!!
 
     fun getUserDetails(firebaseUID:String){
             disposables +=

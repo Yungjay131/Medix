@@ -79,7 +79,7 @@ class VerificationActivity : IRegViewModel, BaseActivity() {
     private fun initViews(){
         VerificationIntroDialog().show(supportFragmentManager, "")
 
-        binding.ivBack.setOnClickListener { this.onBackPressedDispatcher.onBackPressed() }
+        binding.ivBacker.setOnClickListener { this.onBackPressedDispatcher.onBackPressed() }
 
         navigator
             .into(binding.rootView.id)

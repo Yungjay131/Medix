@@ -3,6 +3,7 @@ package app.slyworks.base_feature.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import app.slyworks.base_feature._di.MessageWorkerComponent
 import app.slyworks.communication_lib.MessageManager
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.MessageVModel
@@ -22,10 +23,9 @@ class MessageWorker(private val context: Context,
     //endregion
 
     init{
-        /*(applicationContext as App).appComponent
-            .workerComponentBuilder()
-            .build()
-            .inject(this)*/
+       MessageWorkerComponent.getInitialBuilder()
+           .build()
+           .inject(this)
     }
 
     override suspend fun doWork(): Result {

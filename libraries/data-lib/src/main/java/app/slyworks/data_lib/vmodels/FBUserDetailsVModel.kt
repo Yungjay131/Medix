@@ -9,19 +9,19 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class FBUserDetailsVModel(
-     var accountType: String = "",
-     var firstName: String = "",
-     var lastName: String = "",
-     var fullName:String = "",
-     var email: String = "",
-     var sex:String = "",
-     var age:String = "",
-     var firebaseUID: String = "",
-     var agoraUID: String = "",
-     var FCMRegistrationToken:String = "",
-     var imageUri: String = "",
-     var history: MutableList<String>? = mutableListOf(),
-     var specialization: MutableList<String>? = mutableListOf() ): Parcelable {
+    var accountType: String = "",
+    var firstName: String = "",
+    var lastName: String = "",
+    var fullName:String = "",
+    var email: String = "",
+    var sex:String = "",
+    var age:String = "",
+    var firebaseUID: String = "",
+    var agoraUID: String = "",
+    var fcm_registration_token:String = "",
+    var imageUri: String = "",
+    var history: MutableList<String>? = mutableListOf(),
+    var specialization: MutableList<String>? = mutableListOf() ): Parcelable {
 
     constructor():
             this(accountType= "",
@@ -33,7 +33,7 @@ data class FBUserDetailsVModel(
                 age ="",
                 firebaseUID = "",
                 agoraUID = "",
-                FCMRegistrationToken = "",
+                fcm_registration_token = "",
                 imageUri = "",
                 history = mutableListOf(),
                 specialization = mutableListOf())

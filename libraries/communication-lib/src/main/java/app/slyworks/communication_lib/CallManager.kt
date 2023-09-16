@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase
 import app.slyworks.data_lib.FCMClientApi
 import app.slyworks.data_lib.FirebaseCloudMessage
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.data_lib.vmodels.VideoCallRequest
 import app.slyworks.data_lib.vmodels.VoiceCallData
 import app.slyworks.data_lib.vmodels.VoiceCallRequest
@@ -52,14 +52,14 @@ constructor(
                 })
         }
 
-        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsParam("firebaseUID")!!)
+        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsProperty("firebaseUID")!!)
             .addChildEventListener(videoCallRequestsChildEventListener!!)
 
         return videoCallObserver!!
     }
 
     fun detachVideoCallRequestsListener(){
-        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsParam<String>("firebaseUID")!!)
+        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsProperty<String>("firebaseUID")!!)
             .removeEventListener(videoCallRequestsChildEventListener!!)
 
         videoCallRequestsChildEventListener = null
@@ -89,14 +89,14 @@ constructor(
             when(type){
                 TYPE_REQUEST -> {
                     childNodeUpdate = hashMapOf(
-                        "/video_call_requests/$firebaseUID/from/${dataManager.getUserDetailsParam<String>("firebaseUID")}" to request!!,
-                        "/video_call_requests/${dataManager.getUserDetailsParam<String>("firebaseUID")}/to/$firebaseUID" to request
+                        "/video_call_requests/$firebaseUID/from/${dataManager.getUserDetailsProperty<String>("firebaseUID")}" to request!!,
+                        "/video_call_requests/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/to/$firebaseUID" to request
                     )
                 }
                 TYPE_RESPONSE ->{
                     childNodeUpdate = hashMapOf(
-                        "/video_call_requests/${dataManager.getUserDetailsParam<String>("firebaseUID")}/from/$firebaseUID/status" to status!!,
-                        "/video_call_requests/$firebaseUID/to/${dataManager.getUserDetailsParam<String>("firebaseUID")}/status" to status)
+                        "/video_call_requests/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/from/$firebaseUID/status" to status!!,
+                        "/video_call_requests/$firebaseUID/to/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/status" to status)
 
                 }
             }
@@ -132,14 +132,14 @@ constructor(
         }
 
 
-        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsParam<String>("firebaseUID")!!)
+        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsProperty<String>("firebaseUID")!!)
             .addChildEventListener(voiceCallRequestsChildEventListener!!)
 
         return voiceCallObserver!!
     }
 
     fun detachVoiceCallRequestsListener(){
-        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsParam<String>("firebaseUID")!!)
+        firebaseUtils.getVideoCallRequestsRef(dataManager.getUserDetailsProperty<String>("firebaseUID")!!)
             .removeEventListener(voiceCallRequestsChildEventListener!!)
 
         voiceCallRequestsChildEventListener = null
@@ -173,13 +173,13 @@ constructor(
             when(type){
                 TYPE_REQUEST ->{
                     childNodeUpdate = hashMapOf(
-                        "/voice_call_requests/$firebaseUID/from/${dataManager.getUserDetailsParam<String>("firebaseUID")}" to request!!,
-                        "/voice_call_requests/${dataManager.getUserDetailsParam<String>("firebaseUID")}/to/$firebaseUID" to request)
+                        "/voice_call_requests/$firebaseUID/from/${dataManager.getUserDetailsProperty<String>("firebaseUID")}" to request!!,
+                        "/voice_call_requests/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/to/$firebaseUID" to request)
                 }
                 TYPE_RESPONSE ->{
                     childNodeUpdate = hashMapOf(
-                        "/voice_call_requests/${dataManager.getUserDetailsParam<String>("firebaseUID")}/from/$firebaseUID/status" to status!!,
-                        "/voice_call_requests/$firebaseUID/to/${dataManager.getUserDetailsParam<String>("firebaseUID")}/status" to status)
+                        "/voice_call_requests/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/from/$firebaseUID/status" to status!!,
+                        "/voice_call_requests/$firebaseUID/to/${dataManager.getUserDetailsProperty<String>("firebaseUID")}/status" to status)
                 }
             }
 

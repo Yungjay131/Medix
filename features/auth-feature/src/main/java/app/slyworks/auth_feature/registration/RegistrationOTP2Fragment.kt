@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp2Binding
+import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
 
 import app.slyworks.utils_lib.utils.closeKeyboard3
@@ -18,6 +20,8 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class RegistrationOTP2Fragment : Fragment() {
     //region Vars
@@ -53,12 +57,25 @@ class RegistrationOTP2Fragment : Fragment() {
     private fun initData(){
         viewModel.progressLiveData.observe(viewLifecycleOwner){}
         viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+
+        viewModel.otpResentLiveData.observe(viewLifecycleOwner){
+            displayMessage("OTP resent", binding.root)
+            viewModel.initOTPTimeoutCountdown()
+        }
+
         viewModel.verificationFailureLiveData.observe(viewLifecycleOwner){}
 
         viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){
-            Navigator.intentFor(requireContext(), MAIN_ACTIVITY_INTENT_FILTER)
-                .newAndClearTask()
-                .navigate()
+            lifecycleScope.launch {
+                displayMessage("verification successful", binding.root)
+
+                delay(1_000)
+
+                Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                    .newAndClearTask()
+                    .navigate()
+            }
+
         }
 
         viewModel.otpCountDownLD.observe(viewLifecycleOwner){
@@ -143,7 +160,8 @@ class RegistrationOTP2Fragment : Fragment() {
 
             val otp:String =
             "${binding.etOTP1.text}${binding.etOTP2.text}" +
-            "${binding.etOTP3.text}${binding.etOTP4.text}"
+            "${binding.etOTP3.text}${binding.etOTP4.text}" +
+            "${binding.etOTP5.text}${binding.etOTP6.text}"
             viewModel.inputOTPSubject.onNext(otp)
         }
 

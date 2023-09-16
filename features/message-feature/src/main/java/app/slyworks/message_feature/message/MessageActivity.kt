@@ -22,7 +22,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class MessageActivity : BaseActivity() {
-    //region Vars
     private val disposables: CompositeDisposable = CompositeDisposable()
     private lateinit var userProfile: FBUserDetailsVModel
 
@@ -32,7 +31,6 @@ class MessageActivity : BaseActivity() {
 
     @Inject
     lateinit var viewModel: MessageActivityViewModel
-    //endregion
 
     override fun onDestroy() {
         super.onDestroy()
@@ -43,6 +41,7 @@ class MessageActivity : BaseActivity() {
         initDI()
 
         super.onCreate(savedInstanceState)
+
         binding = ActivityMessageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -123,7 +122,7 @@ class MessageActivity : BaseActivity() {
                 status = NOT_SENT,
                 senderImageUri = viewModel.getUserDetailsUtils().imageUri,
                 accountType = viewModel.getUserDetailsUtils().accountType,
-                FCMRegistrationToken = viewModel.getUserDetailsUtils().FCMRegistrationToken,
+                FCMRegistrationToken = viewModel.getUserDetailsUtils().fcm_registration_token,
                 receiverImageUri = userProfile.imageUri )
 
             viewModel.sendMessage(message)

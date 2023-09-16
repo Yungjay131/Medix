@@ -16,6 +16,7 @@ import app.slyworks.constants_lib.DOCTOR
 import app.slyworks.constants_lib.NOT_SET
 import app.slyworks.constants_lib.PATIENT
 import app.slyworks.data_lib.models.AccountType
+import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -98,6 +99,8 @@ class RegistrationGeneral0Fragment : Fragment() {
             .subscribe(binding.btnNext::setEnabled)
 
         binding.btnNext.setOnClickListener {
+            requireActivity().closeKeyboard3()
+
             (requireActivity() as RegistrationActivity)
                 .navigator
                 .hideCurrent()

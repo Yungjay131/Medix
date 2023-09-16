@@ -20,25 +20,15 @@ import javax.inject.Inject
 /**
  *Created by Joshua Sylvanus, 6:02 PM, 03/05/2022.
  */
-class LogoutDialog: BaseDialogFragment() {
+class LogoutDialog(private val logoutFunc:() -> Unit): BaseDialogFragment() {
     //region Vars
     private lateinit var tvCancel: TextView
     private lateinit var tvLogout: TextView
 
-    private lateinit var loginManager: LoginManager
     //endregion
 
-    companion object{
-        @JvmStatic
-        fun getInstance(): LogoutDialog = LogoutDialog()
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        /*requireContext().appComponent
-            .dialogFragmentComponentBuilder()
-            .build()
-            .inject(this)*/
-
         return MaterialAlertDialogBuilder(requireContext(), theme).apply {
             val dialogView = onCreateView(LayoutInflater.from(requireContext()),null, savedInstanceState)
             dialogView?.let {
@@ -60,7 +50,7 @@ class LogoutDialog: BaseDialogFragment() {
 
         tvCancel.setOnClickListener { dismiss() }
         tvLogout.setOnClickListener {
-            loginManager.logoutUser()
+            logoutFunc()
 
             Navigator.intentFor(requireContext(), ONBOARDING_ACTIVITY_INTENT_FILTER)
                 .newAndClearTask()

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
 import app.slyworks.core_feature.databinding.FragmentProfileHostBinding
-import app.slyworks.core_feature.main.MainActivity
+import app.slyworks.core_feature.main.HomeActivity
 import app.slyworks.core_feature.main.activityComponent
 
 import app.slyworks.utils_lib.utils.displayMessage
@@ -65,7 +65,7 @@ class ProfileHostFragment : Fragment() {
                 })
 
         viewModel.progressLD.observe(viewLifecycleOwner){
-            (requireActivity() as MainActivity).toggleProgressVisibility()
+            (requireActivity() as HomeActivity).toggleProgressVisibility()
         }
 
         viewModel.messageLD.observe(viewLifecycleOwner){

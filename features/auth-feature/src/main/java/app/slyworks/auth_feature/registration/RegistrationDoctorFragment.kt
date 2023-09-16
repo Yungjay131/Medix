@@ -19,11 +19,13 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.FragmentRegistrationDoctorBinding
 import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
+import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
 import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
 
 import app.slyworks.utils_lib.utils.displayMessage
@@ -33,11 +35,12 @@ import dev.joshuasylvanus.navigator.Navigator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import app.slyworks.base_feature.R as Base_R
 
 class RegistrationDoctorFragment : Fragment() {
-    //region Vars
     private lateinit var binding: FragmentRegistrationDoctorBinding
     private lateinit var viewModel: RegistrationActivityViewModel
 
@@ -47,7 +50,6 @@ class RegistrationDoctorFragment : Fragment() {
     private var isThereCreatedLayout:Boolean = false
 
     private val disposables = CompositeDisposable()
-    //endregion
 
     companion object {
         @JvmStatic
@@ -77,14 +79,25 @@ class RegistrationDoctorFragment : Fragment() {
             (requireActivity() as IRegViewModel).toggleProgressView(it)
         }
         viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+
         viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){ _ ->
-            Navigator.intentFor(requireContext(), MAIN_ACTIVITY_INTENT_FILTER)
-                .newAndClearTask()
-                .navigate()
+
+            lifecycleScope.launch {
+                displayMessage("verification successful", binding.root)
+
+                delay(1_000)
+
+                Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                    .newAndClearTask()
+                    .navigate()
+            }
+
         }
 
         viewModel.registrationSuccessfulLiveData.observe(viewLifecycleOwner){
-            val dialog = SelectVerificationMethodBSDialog.getInstance()
+            val dialog:SelectVerificationMethodBSDialog =
+                SelectVerificationMethodBSDialog.getInstance()
+
             disposables +=
                 dialog.getSubject()
                     .subscribeOn(Schedulers.io())
@@ -94,7 +107,6 @@ class RegistrationDoctorFragment : Fragment() {
 
                         if(it == VerificationDetails.OTP) {
                             (requireActivity() as RegistrationActivity).navigator
-                                .hideCurrent()
                                 .show(RegistrationOTP1Fragment.newInstance())
                                 .navigate()
                             return@subscribe

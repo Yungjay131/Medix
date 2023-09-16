@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvDetails_dialog_exit"
         android:layout_marginTop="16dp"
         android:text="cancel"
-        android:textColor="@color/appPink"
+        android:textColor="@color/app_pink_light"
         android:background="@drawable/btn_selector_cancel"/>
 
 

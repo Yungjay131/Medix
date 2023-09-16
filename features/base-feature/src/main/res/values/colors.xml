@@ -12,8 +12,8 @@
     <color name="Grey">#c3c3c3 </color>
 
     <!--real work colors-->
-    <color name="appBlue">#FE2172</color>
-    <color name="appBlue_light">#EF538C</color>
+    <color name="app_pink">#FE2172</color>
+    <color name="app_pink_semi_light">#EF538C</color>
 
     <!--for Network Notifier-->
     <color name="appBackground">#323030</color>
@@ -21,7 +21,7 @@
 
     <color name="appWhite">#FFF</color>
     <color name="appBlack">#000</color>
-    <color name="appPink">#E891E3</color>
+    <color name="app_pink_light">#E891E3</color>
     <color name="appTextColor">#232E65</color>
     <color name="appTextColor2">#B3B5E7</color>
     <color name="appCardBlue">#3A4D7F</color>

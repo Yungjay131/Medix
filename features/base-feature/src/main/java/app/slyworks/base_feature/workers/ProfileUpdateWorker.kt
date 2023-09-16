@@ -42,7 +42,7 @@ class ProfileUpdateWorker(private val context: Context,
         var r:Result = Result.retry()
 
         val details: FBUserDetailsVModel =
-            dataManager.getUserDetailsParam<FBUserDetailsVModel>("userDetails")
+            dataManager.getUserDetailsProperty<FBUserDetailsVModel>("userDetails")
             ?: return Result.success()
 
         /*TODO:there should be a try-catch-finally here*/

@@ -2,16 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.slyworks.requests_feature">
 
-    <application
-        android:theme="@style/Theme.Medix">
+    <application>
 
         <activity
             android:name=".RequestsActivity"
             android:exported="false"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.main">
 
             <intent-filter>
                 <action android:name="app.slyworks.requests_feature.RequestsActivity.open" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ViewRequestActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.main">
+
+            <intent-filter>
+                <action android:name="app.slyworks.requests_feature.main.ViewRequestsActivity.open" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -30,7 +30,7 @@ interface PersonDao {
     fun observePerson(firebaseUID: String):Flowable<Person>
 
     @Query("SELECT * FROM Person where firebase_uid == :firebaseUID LIMIT 1")
-    fun getPersonByID(firebaseUID:String): Person
+    fun getPersonByID(firebaseUID:String): Person?
 
     @Query("SELECT COUNT(*) FROM Message")
     fun getPersonCount():Long

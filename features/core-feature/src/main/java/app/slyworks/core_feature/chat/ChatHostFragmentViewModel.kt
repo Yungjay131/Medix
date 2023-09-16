@@ -10,7 +10,7 @@ import app.slyworks.data_lib.vmodels.CallHistoryVModel
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.data_lib.vmodels.PersonVModel
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.utils.plusAssign
@@ -68,9 +68,9 @@ class ChatHostFragmentViewModel
     //endregion
 
     fun getUserDetailsUser(): FBUserDetailsVModel =
-        dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
+        dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
-    fun getUserAccountType():String = dataManager.getUserDetailsParam<String>("accountType")!!
+    fun getUserAccountType():String = dataManager.getUserDetailsProperty<String>("accountType")!!
 
     fun getChats() {
         disposables +=

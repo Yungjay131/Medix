@@ -58,6 +58,7 @@ dependencies {
     api project(path: ':libraries:room-lib')
     api project(path: ':libraries:firebase-commons-lib')
     api project(path: ':libraries:network-lib')
+    api project(path: ':libraries:location-lib')
     api project(path: ':libraries:utils-lib')
     api project(path: ':libraries:controller-lib')
     api project(path: ':libraries:constants-lib')
@@ -65,7 +66,7 @@ dependencies {
 
     api impl_depends.core_ktx
     api impl_depends.appcompat
-    api impl_depends.legacy_support
+    //api impl_depends.legacy_support
     api impl_depends.lifecycle_viewmodel
     api impl_depends.lifecycle_runtime
     api impl_depends.lifecycle_livedata
@@ -86,8 +87,6 @@ dependencies {
     api impl_depends.rxjava
     api impl_depends.rxbinding
     api impl_depends.timber
-
-    api impl_depends.agora_new_sdk
 
     api impl_depends.dagger
     kapt kapt_depends.dagger_kapt

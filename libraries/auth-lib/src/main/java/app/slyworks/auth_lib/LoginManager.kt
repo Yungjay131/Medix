@@ -8,7 +8,7 @@ import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.PreferenceManager
 import app.slyworks.utils_lib.TimeHelper
 import com.google.firebase.auth.FirebaseAuth
@@ -26,16 +26,14 @@ class LoginManager(
     private val dataManager: DataManager,
     private val authStateListener: MAuthStateListener) {
 
-    //region Vars
     private var loggedInStatus:Boolean = false
-    //endregion
 
     init {
         firebaseAuth.addAuthStateListener(authStateListener)
     }
 
-    fun handleForgotPassword(email: String): Single<Boolean> {
-        return Single.create<Boolean> { emitter ->
+    fun handleForgotPassword(email: String): Single<Boolean> =
+        Single.create<Boolean> { emitter ->
             firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener {
                     val r:Boolean
@@ -51,33 +49,22 @@ class LoginManager(
                     emitter.onSuccess(r)
                 }
         }
-    }
 
-    fun getLoginStatus():Boolean = loggedInStatus
 
-    fun getLoginStatus2():Boolean {
-        return preferenceManager.get(KEY_LOGGED_IN_STATUS, false)!!  &&
-                with(preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())){
+    fun getLoginStatus():Boolean = authStateListener.getLoggedInStatus()
+
+    fun getLoginStatus2():Boolean =
+        preferenceManager.get(KEY_LOGGED_IN_STATUS, false)!!  &&
+        with(preferenceManager.get(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())){
                     timeHelper.isWithin3DayPeriod(this!!)
                 }
-    }
 
     fun loginUser(email:String, password:String): Single<Outcome> {
         firebaseAuth.signOut()
 
-       return cryptoHelper.initialize()
-            .concatMap {
-                if (it.first)
-                    cryptoHelper.hashAsync(password)
-                else
-                    Single.just(Outcome.FAILURE("retrieving config details failed", it.second as String))
-            }
-            .concatMap {
-                if (it is String)
-                    signInUser(email, it)
-                else
-                    Single.just(it as Outcome)
-            }
+        authStateListener.setEmailAndPassword(email,password)
+
+        return signInUser(email, password)
             .concatMap {
                 if (it.isSuccess)
                     checkVerificationStatus()
@@ -102,11 +89,9 @@ class LoginManager(
                     it.isSuccess -> retrieveUserDetails()
                     it.isFailure -> Single.just(it)
                     it.isError ->
-                        uploadFCMRegistrationToken()
-                            .concatMap { it2: Outcome ->
-                                /* kind of including the second error and the first */
-                                Single.just(Outcome.ERROR(it2.getAdditionalInfo(), it.getAdditionalInfo()))
-                            }
+                     /* kind of including the second error and the first and even the previous error */
+                     Single.just(Outcome.ERROR(it.getTypedValue<String>(), it.getAdditionalInfo()))
+
                     else -> throw IllegalArgumentException("don't know the Outcome type")
                 }
             }
@@ -128,7 +113,6 @@ class LoginManager(
                            preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
                            emitter.onSuccess(Outcome.SUCCESS("user is verified"))
                        }else{
-                           preferenceManager.set(KEY_LAST_SIGN_IN_TIME, System.currentTimeMillis())
                            /* using Outcome.ERROR as special case */
                            emitter.onSuccess(Outcome.ERROR("please verify your account before you can login", "please verify your account before you can login"))
                        }
@@ -155,7 +139,11 @@ class LoginManager(
            if(!isThereNewToken)
                emitter.onSuccess(Outcome.SUCCESS(value = "no token to upload"))
 
-           val fcmToken:String? = preferenceManager.get(KEY_FCM_REGISTRATION)!!
+           val fcmToken:String? = preferenceManager.get(KEY_FCM_REGISTRATION)
+           if(fcmToken == null) {
+               Timber.e("synchronisation issues getting token")
+               emitter.onSuccess(Outcome.SUCCESS(value = "synchronisation issues getting token,no token to upload"))
+           }
 
             firebaseUtils.getUserDataRef(firebaseAuth.currentUser!!.uid)
                 .setValue(fcmToken)
@@ -177,6 +165,8 @@ class LoginManager(
                        val user = it.result!!.getValue(FBUserDetailsVModel::class.java)
 
                        dataManager.saveUserToDataStore(user!!).subscribe()
+
+                       loggedInStatus = true
 
                        val r: Outcome = Outcome.SUCCESS(value = "login successful")
                        emitter.onSuccess(r)

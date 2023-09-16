@@ -4,13 +4,14 @@ import app.slyworks.data_lib.CryptoHelper
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.firebase_commons_lib.FirebaseUtils
 import app.slyworks.data_lib.models.AccountType
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.data_lib.models.TempUserDetails
 import app.slyworks.utils_lib.CompressImageCallable
 import app.slyworks.utils_lib.IDHelper
 import app.slyworks.utils_lib.TaskManager
 import com.google.firebase.auth.*
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.StorageReference
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import timber.log.Timber
@@ -22,26 +23,18 @@ class RegistrationManager(
     private val firebaseUtils: FirebaseUtils,
     private val taskManager: TaskManager,
     private val cryptoHelper: CryptoHelper,
-    private val authStateListener: MAuthStateListener) {
+    private val authStateListener: MAuthStateListener ) {
 
-    //region Vars
     private lateinit var user: TempUserDetails
     private var currentFirebaseUserResult: AuthResult? = null
 
     private val disposables:CompositeDisposable = CompositeDisposable()
-    //endregion
 
     fun unbind():Unit = disposables.clear()
 
     fun register(userDetails: TempUserDetails): Single<Outcome> {
         user = userDetails
-        return cryptoHelper.initialize()
-            .concatMap {
-                when{
-                    it.first -> createFirebaseUser()
-                    else -> Single.just(Outcome.FAILURE<String>(value = "retrieving config details failed", reason = it.second as String))
-                }
-            }
+        return createFirebaseUser()
             .concatMap {
                 when {
                     it.isSuccess -> uploadUserProfileImage()
@@ -67,22 +60,23 @@ class RegistrationManager(
                     it.isSuccess -> uploadUserDetailsToFirebaseDB()
                     else -> deleteUserDetailsFromDB().concatMap { _ -> Single.just(it) }
                 }
-            }.concatMap {
-                when{
+            }/*.concatMap {
+                when {
                     it.isSuccess -> signOutCreatedUser()
                     else -> Single.just(it)
                 }
-            }
+            }*/
 
     }
 
-    private fun createFirebaseUser(): Single<Outcome> =
-        cryptoHelper.hashAsync(user.password!!)
-            .concatMap { signupOnFB(user.email!!, it) }
+    private fun createFirebaseUser(): Single<Outcome> {
+        authStateListener.setEmailAndPassword(user.email!!, user.password!!)
+        return signupOnFB(user.email!!, user.password!!)
+    }
 
-    private fun signupOnFB(email:String, hashedPassword:String):Single<Outcome> =
+    private fun signupOnFB(email:String, password:String):Single<Outcome> =
         Single.create { emitter ->
-            firebaseAuth.createUserWithEmailAndPassword(email, hashedPassword)
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     val r: Outcome
 
@@ -109,12 +103,12 @@ class RegistrationManager(
             Outcome.SUCCESS(value = "created user logged out successfully")
         }
 
-    private fun uploadUserProfileImage(): Single<Outcome> {
-        return Single.create { emitter ->
+    private fun uploadUserProfileImage(): Single<Outcome> =
+        Single.create { emitter ->
             try {
                 val imageByteArray: ByteArray = taskManager.runOnThreadPool(CompressImageCallable(user.image_uri_init!!))
 
-                val storageReference = firebaseUtils.getUserProfileImageStorageRef(currentFirebaseUserResult!!.user!!.uid)
+                val storageReference:StorageReference = firebaseUtils.getUserProfileImageStorageRef(currentFirebaseUserResult!!.user!!.uid)
 
                 storageReference
                     .putBytes(imageByteArray)
@@ -141,7 +135,6 @@ class RegistrationManager(
                 emitter.onSuccess(r)
             }
         }
-    }
 
     private fun downloadImageUrl():Single<Outcome> =
         Single.create { emitter ->
@@ -183,7 +176,7 @@ class RegistrationManager(
 
                         r = Outcome.SUCCESS(value = "getting user FCM registration token", additionalInfo = it.result)
                     } else {
-                        Timber.e("getFCMRegistrationToken: getting user FCM Registration token completed but failed")
+                        Timber.e(it.exception, "getFCMRegistrationToken: getting user FCM Registration token completed but failed")
                         //AppController.notifyObservers(EVENT_USER_REGISTRATION, false)
 
                         r = Outcome.FAILURE(

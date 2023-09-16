@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import app.slyworks.constants_lib.DI_FRAGMENT_VIEWMODEL_KEY
-import app.slyworks.core_feature.MViewModelFactory
 import app.slyworks.core_feature.calls_history.CallsHistoryFragmentViewModel
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
@@ -36,7 +35,7 @@ object FragmentViewModelModule {
     @ViewModelKey(CallsHistoryFragmentViewModel::class)
     @FragmentScope
     fun provideCallsHistoryViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                     activity: AppCompatActivity)
     : CallsHistoryFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(CallsHistoryFragmentViewModel::class.java)
@@ -46,7 +45,7 @@ object FragmentViewModelModule {
     @ViewModelKey(ChatHostFragmentViewModel::class)
     @FragmentScope
     fun provideChatHostFragmentViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                         activity: AppCompatActivity)
     : ChatHostFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(ChatHostFragmentViewModel::class.java)
@@ -56,7 +55,7 @@ object FragmentViewModelModule {
     @ViewModelKey(ChatFragmentViewModel::class)
     @FragmentScope
     fun provideChatFragmentViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                     activity: AppCompatActivity)
     : ChatFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(ChatFragmentViewModel::class.java)
@@ -66,7 +65,7 @@ object FragmentViewModelModule {
     @ViewModelKey(HomeFragmentViewModel::class)
     @FragmentScope
     fun provideHomeFragmentViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                     activity: AppCompatActivity)
     : HomeFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(HomeFragmentViewModel::class.java)
@@ -76,7 +75,7 @@ object FragmentViewModelModule {
     @ViewModelKey(ViewProfileFragmentViewModel::class)
     @FragmentScope
     fun provideViewProfileFragmentViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
+                                            activity: AppCompatActivity)
     : ViewProfileFragmentViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
         .get(ViewProfileFragmentViewModel::class.java)

@@ -1,5 +1,6 @@
 package app.slyworks.data_lib
 
+import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.*
 import app.slyworks.room_lib.daos.CallHistoryDao
 import app.slyworks.room_lib.daos.ConsultationRequestDao
@@ -28,23 +29,23 @@ class DataManager(private val messageDao: MessageDao,
         userDetailsUtils.user = userDetails.reverseMap()
     }
 
-    fun <T> getUserDetailsParam(paramKey:String = "userDetails"):T?{
-        return when(paramKey){
-            "userDetails" -> userDetailsUtils.user?.transform() as? T?
-            "accountType" -> userDetailsUtils.user?.accountType as? T?
-            "firstName" -> userDetailsUtils.user?.firstName as? T?
-            "lastName" -> userDetailsUtils.user?.lastName as? T?
-            "fullName" -> userDetailsUtils.user?.fullName as? T?
-            "email" -> userDetailsUtils.user?.email as? T?
-            "sex" -> userDetailsUtils.user?.sex as? T?
-            "age" -> userDetailsUtils.user?.age as? T?
-            "firebaseUID" -> userDetailsUtils.user?.firebaseUID as? T?
-            "agoraUID" -> userDetailsUtils.user?.agoraUID as? T?
-            "FCMRegistrationToken" -> userDetailsUtils.user?.FCMRegistrationToken as? T?
-            "imageUri" -> userDetailsUtils.user?.imageUri as? T?
-            "history" -> userDetailsUtils.user?.history as? T?
-            "specialization" -> userDetailsUtils.user?.specialization as? T?
-            else -> throw IllegalArgumentException("invalid paramKey")
+    fun <T> getUserDetailsProperty(propertyKey:String = FBU_USER_DETAILS):T?{
+        return when(propertyKey){
+            FBU_USER_DETAILS -> userDetailsUtils.user?.transform() as? T?
+            FBU_ACCOUNT_TYPE -> userDetailsUtils.user?.accountType as? T?
+            FBU_FIRST_NAME -> userDetailsUtils.user?.firstName as? T?
+            FBU_LAST_NAME -> userDetailsUtils.user?.lastName as? T?
+            FBU_FULL_NAME -> userDetailsUtils.user?.fullName as? T?
+            FBU_EMAIL -> userDetailsUtils.user?.email as? T?
+            FBU_SEX -> userDetailsUtils.user?.sex as? T?
+            FBU_AGE -> userDetailsUtils.user?.age as? T?
+            FBU_FIREBASE_UID -> userDetailsUtils.user?.firebaseUID as? T?
+            FBU_AGORA_UID -> userDetailsUtils.user?.agoraUID as? T?
+            FBU_FCM_REGISTRATION_TOKEN -> userDetailsUtils.user?.FCMRegistrationToken as? T?
+            FBU_IMAGE_URI -> userDetailsUtils.user?.imageUri as? T?
+            FBU_HISTORY -> userDetailsUtils.user?.history as? T?
+            FBU_SPECIALIZATION -> userDetailsUtils.user?.specialization as? T?
+            else -> throw IllegalArgumentException("invalid propertyKey")
         }
     }
 
@@ -134,8 +135,8 @@ class DataManager(private val messageDao: MessageDao,
     fun observePerson(firebaseUID: String):Flowable<PersonVModel> =
         personDao.observePerson(firebaseUID).map(::mapPerson)
 
-    fun getPersonByID(firebaseUID: String): PersonVModel =
-        personDao.getPersonByID(firebaseUID).transform()
+    fun getPersonByID(firebaseUID: String): PersonVModel? =
+        personDao.getPersonByID(firebaseUID)?.transform()
 
     fun getPersonCount():Long = personDao.getPersonCount()
 

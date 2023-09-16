@@ -50,7 +50,6 @@ class RegistrationOTP1Fragment : Fragment() {
         viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
         viewModel.beginOTPVerificationLiveData.observe(viewLifecycleOwner){_ ->
             (requireActivity() as IRegViewModel).navigator
-                .hideCurrent()
                 .show(RegistrationOTP2Fragment.newInstance())
                 .navigate()
         }

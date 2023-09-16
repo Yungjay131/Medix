@@ -39,8 +39,6 @@ class ViewProfileFragment : Fragment() {
 
     private lateinit var group_toolbar:Group
 
-    private lateinit var appBarLayout: AppBarLayout
-
     private lateinit var rootView_inner:ConstraintLayout
 
     private var ANCHOR:Int = R.id.tv_specialization
@@ -179,7 +177,8 @@ class ViewProfileFragment : Fragment() {
             }
         }
 
-       appBarLayout.addOnOffsetChangedListener(object: AppBarStateChangeListener(){
+       binding.toolbar.appBarLayoutFragViewProfile.addOnOffsetChangedListener(
+           object: AppBarStateChangeListener(){
            override fun onStateChanged(appBarLayout: AppBarLayout, state: AppBarState) {
                when(state){
                    AppBarState.IDLE ->{}
@@ -213,7 +212,7 @@ class ViewProfileFragment : Fragment() {
         }
 
         binding.toolbar.fabSendRequest.setOnLongClickListener{
-            val message:String = "Hi i'm ${viewModel.getUserDetailsUser().fullName}. Please i would like a consultation with you"
+            val message:String = "Hi i'm ${viewModel.getUserDetailsUser().fullName}, and i would like a consultation with you"
             val request: ConsultationRequestVModel = ConsultationRequestVModel(userProfile!!.firebaseUID,  System.currentTimeMillis().toString(), viewModel.getUserDetailsUser(), REQUEST_PENDING)
             viewModel.sendConsultationRequest(request, mode = MessageMode.CLOUD_MESSAGE)
 
@@ -249,7 +248,9 @@ class ViewProfileFragment : Fragment() {
 
 
     private fun inflateSpecializationViews(list:MutableList<String>){
-       for(i in 0 until list.size)
+       binding.tvSpecialization.setText(list[0])
+
+       for(i in 1 until list.size)
            addTextView(list[i])
     }
 
@@ -265,7 +266,7 @@ class ViewProfileFragment : Fragment() {
         val constraintSet:ConstraintSet = ConstraintSet()
         constraintSet.clone(rootView_inner)
 
-        binding.lSpecialization.addView(layout)
+        binding.rootViewInner.addView(layout)
 
         constraintSet.constrainWidth(layout.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.constrainHeight(layout.id, ConstraintSet.WRAP_CONTENT)

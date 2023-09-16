@@ -6,11 +6,10 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_lib.OTPVerificationStage
 import app.slyworks.auth_lib.RegistrationManager
 import app.slyworks.auth_lib.VerificationHelper
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.data_lib.models.TempUserDetails
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
@@ -45,6 +44,7 @@ class RegistrationActivityViewModel
     val messageLiveData:MutableLiveData<String> = MutableLiveData()
     val registrationSuccessfulLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val beginOTPVerificationLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val otpResentLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val verificationSuccessfulLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val verificationFailureLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val otpCountDownLD:MutableLiveData<Int> = MutableLiveData(90)
@@ -156,9 +156,15 @@ class RegistrationActivityViewModel
                         when (it.getTypedValue<OTPVerificationStage>()) {
                             OTPVerificationStage.ENTER_OTP ->
                                 beginOTPVerificationLiveData.postValue(true)
+
                             OTPVerificationStage.PROCESSING -> {}
+
+                            OTPVerificationStage.OTP_RESENT ->
+                                otpResentLiveData.postValue(true)
+
                             OTPVerificationStage.VERIFICATION_SUCCESS ->
                                 verificationSuccessfulLiveData.postValue(true)
+
                             OTPVerificationStage.VERIFICATION_FAILURE -> {
                                 messageLiveData.postValue(it.getAdditionalInfo())
                                 verificationFailureLiveData.postValue(false)
@@ -166,7 +172,6 @@ class RegistrationActivityViewModel
                         }
                     }
 
-                    it.isFailure -> {}
                     }
                 },{
                     Timber.e("error occurred: ${it.message}")

@@ -13,7 +13,7 @@
     <item>
         <shape android:shape="rectangle">
             <stroke
-                android:color="@color/appPink"
+                android:color="@color/app_pink_light"
                 android:width="2dp"/>
             <solid  android:color="@android:color/transparent"/>
             <corners android:radius="@dimen/btn_radius"/>

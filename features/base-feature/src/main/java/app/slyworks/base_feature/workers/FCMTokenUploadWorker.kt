@@ -3,11 +3,10 @@ package app.slyworks.base_feature.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.slyworks.auth_lib.UsersManager
+import app.slyworks.base_feature._di.FCMTUWorkerComponent
 import app.slyworks.constants_lib.KEY_FCM_UPLOAD_TOKEN
 import app.slyworks.data_lib.DataManager
 import app.slyworks.firebase_commons_lib.FirebaseUtils
-import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -18,26 +17,26 @@ import kotlin.coroutines.suspendCoroutine
  */
 class FCMTokenUploadWorker(private val context: Context,
                            params:WorkerParameters) : CoroutineWorker(context, params) {
-    //region Vars
     @Inject
     lateinit var firebaseUtils: FirebaseUtils
+
     @Inject
     lateinit var dataManager: DataManager
-    //endregion
 
     init{
-        /*(applicationContext as App).appComponent
-            .workerComponentBuilder()
-            .build()
-            .inject(this)*/
+       FCMTUWorkerComponent.getInitialBuilder()
+           .build()
+           .inject(this)
     }
 
 
     override suspend fun doWork(): Result {
-        /*ensure there is a signed in use first*/
+        /*ensure there is a signed in user first*/
         val token:String = inputData.getString(KEY_FCM_UPLOAD_TOKEN) ?: return Result.failure()
-        //val UID:String = _job.await() ?: return Result.failure()
-        val UID:String = dataManager.getUserDetailsParam<String>("firebaseUID") ?: return Result.success()
+
+        val UID:String? = dataManager.getUserDetailsProperty<String>("firebaseUID")
+        if(UID.isNullOrEmpty())
+            return Result.success()
 
         return suspendCoroutine<Result> { continuation ->
             firebaseUtils.getUserDataRefForWorkManager(UID)

@@ -24,7 +24,7 @@ class VideoCallViewModel
 
     fun vibrate(type:Int) = vibrationManager.vibrate(type)
 
-    fun getUserDetailsUtils(): FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>("userDetails")!!
+    fun getUserDetailsUtils(): FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>("userDetails")!!
 
    fun processVideoCall(type:String, firebaseUID:String, request: VideoCallRequest? = null, status:String? = null){
        callManager.processVideoCall(

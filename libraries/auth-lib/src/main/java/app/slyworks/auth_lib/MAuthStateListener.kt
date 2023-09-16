@@ -9,9 +9,30 @@ import com.google.firebase.auth.FirebaseUser
  *Created by Joshua Sylvanus, 12:11 PM, 12/10/2021.
  */
 class MAuthStateListener(private val preferenceManager: PreferenceManager): FirebaseAuth.AuthStateListener {
-    var loggedInStatus:Boolean = false
-    var currentUser: FirebaseUser? = null
+    private var email:String? = null
+    private var password:String? = null
+    private var loggedInStatus:Boolean = false
+    private var currentUser: FirebaseUser? = null
 
+    fun setEmailAndPassword(email:String, password:String){
+        this.email = email
+        this.password = password
+    }
+
+    fun getEmailAndPassword():Pair<String?,String?> =
+        (email to password)
+
+    fun setLoggedInStatus(status:Boolean){
+        loggedInStatus = status
+        if(!status){
+            email = null
+            password = null
+        }
+    }
+
+    fun getLoggedInStatus():Boolean = loggedInStatus
+
+    fun getCurrentUser():FirebaseUser? = currentUser
 
     override fun onAuthStateChanged(p0: FirebaseAuth) {
         currentUser = p0.currentUser

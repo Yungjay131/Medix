@@ -104,6 +104,7 @@ class LoginActivity : BaseActivity() {
             .addCallback(this, MOnBackPressedCallback(this))
 
         val destinationIntentFilter:String = intent.getExtra<String>(EXTRA_LOGIN_DESTINATION, MAIN_ACTIVITY_INTENT_FILTER)!!
+        val originalBundle:Bundle? = intent.getExtra<Bundle>(EXTRA_INITIAL_EXTRA)
 
         viewModel.subscribeToNetwork().observe(this) {
             networkStatusView.setVisibilityStatus(it)
@@ -121,7 +122,9 @@ class LoginActivity : BaseActivity() {
         viewModel.loginSuccessLiveData.observe(this){
             setMediaPlayerStatus()
 
-            Navigator.intentFor(this, destinationIntentFilter)
+            Navigator.intentFor(this, destinationIntentFilter).also {
+                   originalBundle?.let { it2 -> it.addExtra(EXTRA_ACTIVITY, originalBundle) }
+                }
                 .newAndClearTask()
                 .navigate()
         }
@@ -170,7 +173,7 @@ class LoginActivity : BaseActivity() {
         btnLogin = findViewById(R.id.btnLoginLogin)
         progress = findViewById(R.id.progress)
         networkStatusView = findViewById(R.id.network_status_view)
-        ivBack = findViewById(R.id.iv_back)
+        ivBack = findViewById(R.id.iv_backer)
 
         ivBack.setOnClickListener{ onBackPressedDispatcher.onBackPressed() }
 

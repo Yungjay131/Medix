@@ -26,7 +26,6 @@ class SplashActivity : AppCompatActivity() {
 
     private fun initDI(){
        ApplicationComponent.getInitialBuilder()
-           .appCompatActivity(this)
            .build()
            .inject(this)
     }
@@ -54,12 +53,12 @@ class SplashActivity : AppCompatActivity() {
     private fun navigateToAppropriateActivity(){
         viewModel.isSessionValid
                  .observe(this){ status:Boolean ->
-                            (if(status)
-                                Navigator.intentFor(this@SplashActivity, MAIN_ACTIVITY_INTENT_FILTER)
-                            else
-                                Navigator.intentFor(this@SplashActivity, ONBOARDING_ACTIVITY_INTENT_FILTER))
-                                .finishCaller()
-                                .navigate()
+                     (if (status)
+                         Navigator.intentFor(this@SplashActivity, MAIN_ACTIVITY_INTENT_FILTER)
+                     else
+                         Navigator.intentFor(this@SplashActivity, ONBOARDING_ACTIVITY_INTENT_FILTER))
+                         .finishCaller()
+                         .navigate()
                 }
 
         viewModel.checkLoginSession()

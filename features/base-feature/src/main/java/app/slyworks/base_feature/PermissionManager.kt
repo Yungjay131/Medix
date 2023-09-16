@@ -4,8 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -14,14 +17,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import app.slyworks.base_feature.ui.PermissionsRationaleDialog
-import app.slyworks.data_lib.models.Outcome
-import app.slyworks.utils_lib.utils.onNextAndComplete
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.flow.flow
 
 
 /**
@@ -31,14 +32,21 @@ enum class CurrentStatus { ACCEPTED, DECLINED, PERMANENTLY_DECLINED }
 data class PermissionStatus(val permission:String, val status:CurrentStatus, var text:String)
 
 class PermissionManager {
-    //region Vars
     private var activity: Activity? = null
     private var fragment: Fragment? = null
+    private val fragmentManager:FragmentManager by lazy {
+        if(activity != null)
+            (activity as AppCompatActivity).supportFragmentManager
+        else
+            fragment!!.parentFragmentManager
+    }
+
     private lateinit var permissionsLauncher:ActivityResultLauncher<String>
+
     private val subject:PublishSubject<Outcome> = PublishSubject.create()
     private val internalSubject:PublishSubject<PermissionStatus> = PublishSubject.create()
     val disposables:CompositeDisposable = CompositeDisposable()
-    //endregion
+
 
     companion object{
         private var currentPermissionIndex:Int = -1
@@ -137,9 +145,6 @@ class PermissionManager {
             }
     }
 
-    private fun unbind(){
-        disposables.clear()
-    }
     fun getPermissionsObservable():Observable<Outcome> = subject.hide()
 
     private fun isPermissionGranted(permission:String):Boolean{
@@ -165,41 +170,36 @@ class PermissionManager {
     }
 
     @SuppressLint("NewApi")
+    private fun shouldShowPermissionRationale(permission:String):Boolean{
+        return (if(activity != null)
+            activity!!.shouldShowRequestPermissionRationale(permission)
+        else
+            fragment!!.shouldShowRequestPermissionRationale(permission))
+    }
+
+    private fun processPermission(permission:String){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            permissionsLauncher.launch(permission)
+        else if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if(shouldShowPermissionRationale(permission)){
+                PermissionsRationaleDialog(permissionsLauncher, permission, internalSubject)
+                    .show(fragmentManager, "")
+            }else {
+                permissionsLauncher.launch(permission)
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
     fun requestPermissions(){
         currentPermissionIndex = -1
 
-        val fragmentManager:FragmentManager =
-            if(activity != null)
-                (activity as AppCompatActivity).supportFragmentManager
-            else
-                fragment!!.parentFragmentManager
-
-        val shouldShowPermissionRationale:(String) -> Boolean = {
-            (if(activity != null)
-                activity!!.shouldShowRequestPermissionRationale(it)
-            else
-                fragment!!.shouldShowRequestPermissionRationale(it))
-        }
-
-        val processPermission: (String) -> Unit = {
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                permissionsLauncher.launch(it)
-            else if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if(shouldShowPermissionRationale(it)){
-                    PermissionsRationaleDialog(permissionsLauncher, it, internalSubject)
-                        .show(fragmentManager, "")
-                }else {
-                    permissionsLauncher.launch(it)
-                }
-            }
-        }
-
         /* mutating outside state, not good */
-       /* this poorly structured code is keeping a list of failed permissions */
+        /* this poorly structured code is keeping a list of failed permissions */
         val result:MutableList<PermissionStatus> = mutableListOf()
 
         disposables +=
-        internalSubject
+            internalSubject
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { it: PermissionStatus ->
@@ -207,13 +207,13 @@ class PermissionManager {
                         result.add(it)
 
                     if(currentPermissionIndex == permissions.size-1){
-                      var r: Outcome = Outcome.SUCCESS<Unit>()
-                      if(result.isNotEmpty())
-                          r = Outcome.FAILURE<List<PermissionStatus>>(value = result)
+                        var r:Outcome = Outcome.SUCCESS<Unit>()
+                        if(result.isNotEmpty())
+                            r = Outcome.FAILURE<List<PermissionStatus>>(value = result)
 
-                       subject.onNext(r)
-                       disposables.clear()
-                       return@subscribe
+                        subject.onNext(r)
+                        disposables.clear()
+                        return@subscribe
                     }
 
                     processPermission(permissions[++currentPermissionIndex])
@@ -223,6 +223,16 @@ class PermissionManager {
         processPermission(permissions[++currentPermissionIndex])
     }
 
+    fun openAppSettings(){
+        val packageName:String =
+            (activity?.packageName ?: fragment?.requireActivity()!!.packageName)
+
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${packageName}"))
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        (activity ?: fragment?.requireActivity())!!.startActivity(intent)
+    }
 }
 
 

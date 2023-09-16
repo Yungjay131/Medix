@@ -23,33 +23,30 @@ import app.slyworks.data_lib.vmodels.MessageVModel
 
 
 /**
- *Created by Joshua Sylvanus, 11:45 PM, 1/11/2022.
+ *Created by Joshua Sylvanus, 11:45 PM, 11/1/2022.
  */
 class NotificationHelper(private val context:Context){
     //region Vars
     private val channelID1:String = context.getString(R.string.notification_channel_1_id)
     private val channelID2:String = context.getString(R.string.notification_channel_2_id)
-    private val color:Int = ContextCompat.getColor(context, R.color.appBlue)
+    private val color:Int = ContextCompat.getColor(context, R.color.app_pink)
+    private val notificationManager:NotificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
     //endregion
 
     companion object{
-        //region Vars
-        @SuppressLint("StaticFieldLeak")
-        private lateinit var _context:Context
-        //endregion
-
-        private val notificationManager:NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
-            _context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        fun cancelNotification(notificationID: Int,context:Context){
+            val notificationManager:NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(notificationID)
         }
 
-        fun cancelNotification(notificationID: Int):Unit = notificationManager.cancel(notificationID)
+        fun createAppServiceNotification(context:Context): Notification {
+            val channelID1:String = context.getString(R.string.notification_channel_1_id)
+            val channelID2:String = context.getString(R.string.notification_channel_2_id)
+            val color:Int = ContextCompat.getColor(context, R.color.app_pink)
 
-        fun createAppServiceNotification(): Notification {
-            val channelID1:String = _context.getString(R.string.notification_channel_1_id)
-            val channelID2:String = _context.getString(R.string.notification_channel_2_id)
-            val color:Int = ContextCompat.getColor(_context, R.color.appBlue)
-
-            val builder:NotificationCompat.Builder = NotificationCompat.Builder(_context, channelID1)
+            val builder:NotificationCompat.Builder = NotificationCompat.Builder(context, channelID1)
 
             builder.setSmallIcon(R.drawable.splash_image_2)
                 .setChannelId(channelID1)
@@ -62,8 +59,6 @@ class NotificationHelper(private val context:Context){
             return builder.build()
         }
     }
-
-    init { _context = context }
 
     fun createConsultationResponseNotification(fromUID:String,
                                                toUID:String,
@@ -116,15 +111,15 @@ class NotificationHelper(private val context:Context){
                 putString(EXTRA_CLOUD_MESSAGE_STATUS, REQUEST_PENDING)
                 putString(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
                 putString(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN, toFCMRegistrationToken)
-            }
-            putExtra(EXTRA_ACTIVITY, b)
-            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+               }
+              putExtra(EXTRA_ACTIVITY, b)
 
-            notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST)
+              notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST)
         }
 
 
-        val intentAccept = Intent(context, CloudMessageBroadcastReceiver::class.java).apply {
+        val intentAccept = Intent(context, CloudMessageBroadcastReceiver::class.java)
+            .apply {
             putExtra(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
             putExtra(EXTRA_CLOUD_MESSAGE_TYPE_ACCEPT, REQUEST_ACCEPTED)
             putExtra(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
@@ -136,7 +131,8 @@ class NotificationHelper(private val context:Context){
             notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST)
         }
 
-        val intentDecline = Intent(context, CloudMessageBroadcastReceiver::class.java).apply {
+        val intentDecline = Intent(context, CloudMessageBroadcastReceiver::class.java)
+            .apply {
             putExtra(EXTRA_CLOUD_MESSAGE_FROM_UID, fromUID)
             putExtra(EXTRA_CLOUD_MESSAGE_TYPE_DECLINE, REQUEST_DECLINED)
             putExtra(EXTRA_CLOUD_MESSAGE_FULLNAME, fullName)
@@ -165,8 +161,8 @@ class NotificationHelper(private val context:Context){
                .setWhen(System.currentTimeMillis())
                .setVisibility(VISIBILITY_PUBLIC)
                .setContentIntent(pendingIntent)
-               .addAction(R.drawable.ic_check2,"Accept Request",pendingIntentAccept)
-               .addAction(R.drawable.ic_close2,"Decline Request",pendingIntentDecline)
+               .addAction(R.drawable.ic_check2,"Accept Request", pendingIntentAccept)
+               .addAction(R.drawable.ic_close2,"Decline Request", pendingIntentDecline)
 
 
         val notification = builder.build()

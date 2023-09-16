@@ -14,7 +14,7 @@ import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.models.MessageMode
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.network_lib.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -54,7 +54,7 @@ class ProfileHostFragmentViewModel
     }
     fun getNetworkStatus():Boolean = networkRegister.getNetworkStatus()
 
-    fun getUserDetailsUser():FBUserDetailsVModel = dataManager.getUserDetailsParam<FBUserDetailsVModel>()!!
+    fun getUserDetailsUser():FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun observeConsultationRequestStatus(userUID:String){
         this.userUID = userUID

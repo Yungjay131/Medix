@@ -20,7 +20,7 @@ import app.slyworks.base_feature.PermissionStatus
 import app.slyworks.base_feature.ui.ChangePhotoDialog
 import app.slyworks.data_lib.models.AccountType
 import app.slyworks.data_lib.models.Gender
-import app.slyworks.data_lib.models.Outcome
+import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.ContentResolverStore
 import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign

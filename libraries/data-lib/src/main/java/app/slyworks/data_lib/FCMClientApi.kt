@@ -9,11 +9,10 @@ import retrofit2.http.POST
 
 
 interface FCMClientApi {
-    /*TODO:make BuildConfig.SERVER_KEY available for RELEASE as well*/
     @POST("send")
     @Headers("Content-type:application/json")
     fun sendCloudMessage(@Body
                          message: FirebaseCloudMessage,
                          @Header("Authorization")
-                         key:String = ""/*"key=${BuildConfig.SERVER_KEY}"*/): Call<ResponseBody>
+                         key:String = "key=${BuildConfig.SERVER_KEY}"): Call<ResponseBody>
 }

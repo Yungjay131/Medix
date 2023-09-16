@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/appBlue"
+    android:background="@color/app_pink"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
@@ -11,7 +11,7 @@
     android:id="@+id/rootView">
 
     <ImageView
-        android:id="@+id/iv_back"
+        android:id="@+id/iv_backer"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"

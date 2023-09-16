@@ -4,8 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
-import app.slyworks.core_feature.MViewModelFactory
-import app.slyworks.core_feature.main.MainActivityViewModel
+import app.slyworks.core_feature.main.HomeActivityViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -27,10 +26,10 @@ object ActivityViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(MainActivityViewModel::class)
+    @ViewModelKey(HomeActivityViewModel::class)
     fun provideMainActivityViewModel(viewModelFactory: MViewModelFactory,
-                                       activity: AppCompatActivity)
-    : MainActivityViewModel
+                                     activity: AppCompatActivity)
+    : HomeActivityViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
-        .get(MainActivityViewModel::class.java)
+        .get(HomeActivityViewModel::class.java)
 }

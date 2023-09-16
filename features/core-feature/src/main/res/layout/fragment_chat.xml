@@ -9,13 +9,22 @@
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     android:id="@+id/rootView">
 
-    <include
+   <!-- <include
         android:id="@+id/progress"
+        layout="@layout/layout_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/layout_progressbar"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone"/>-->
+
+    <ProgressBar
+        android:id="@+id/progress_layout"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:indeterminateTint="#5F6298"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <include
         android:id="@+id/content_chat"
