@@ -11,10 +11,9 @@ import app.slyworks.communication_lib.ConnectionStatusManager
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.communication_lib._di.CommunicationModule
 import app.slyworks.data_lib._di.DataModule
-import app.slyworks.di_base_lib.BaseFeatureScope
 import app.slyworks.firebase_commons_lib._di.FirebaseCommonsModule
 import app.slyworks.location_lib._di.LocationModule
-import app.slyworks.network_lib._di.NetworkModule
+import app.slyworks.base_feature.network_register._di.NetworkModule
 import app.slyworks.room_lib._di.RoomModule
 import app.slyworks.utils_lib._di.UtilsModule
 import dagger.Module

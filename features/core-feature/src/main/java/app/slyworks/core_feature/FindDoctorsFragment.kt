@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.slyworks.constants_lib.EVENT_GET_DOCTOR_USERS
-import app.slyworks.constants_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
+import app.slyworks.utils_lib.EVENT_GET_DOCTOR_USERS
+import app.slyworks.utils_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.core_feature.databinding.FragmentFindDoctorsBinding

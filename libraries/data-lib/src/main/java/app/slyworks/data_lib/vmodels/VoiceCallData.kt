@@ -1,7 +1,7 @@
 package app.slyworks.data_lib.vmodels
 
-import app.slyworks.constants_lib.FCM_VOICE_CALL_REQUEST
-import app.slyworks.data_lib.models.Data
+import app.slyworks.utils_lib.FCM_VOICE_CALL_REQUEST
+import app.slyworks.data_lib.model.Data
 
 
 data class VoiceCallData(
@@ -16,7 +16,8 @@ data class VoiceCallData(
     val agoraUID:String,
     val fcmRegistrationToken:String,
     val imageUri:String,
-    override var type: String = FCM_VOICE_CALL_REQUEST): Data {
+    override var type: String = FCM_VOICE_CALL_REQUEST
+): Data {
         companion object{
             fun from(details: FBUserDetailsVModel): VoiceCallData {
                 return VoiceCallData(

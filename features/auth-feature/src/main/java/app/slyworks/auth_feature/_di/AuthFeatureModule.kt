@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import app.slyworks.auth_feature.login.LoginActivityViewModel
 import app.slyworks.auth_feature.onboarding.OnBoardingActivityViewModel
 import app.slyworks.auth_feature.registration.RegistrationActivityViewModel
-import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
+import app.slyworks.utils_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap

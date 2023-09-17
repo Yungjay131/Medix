@@ -1,7 +1,7 @@
 package app.slyworks.data_lib.vmodels
 
 import android.os.Parcelable
-import app.slyworks.constants_lib.REQUEST_PENDING
+import app.slyworks.utils_lib.REQUEST_PENDING
 import kotlinx.parcelize.Parcelize
 
 
@@ -11,7 +11,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class VideoCallRequest(
     var details: FBUserDetailsVModel = FBUserDetailsVModel(),
-    var status: String = REQUEST_PENDING): Parcelable {
+    var status: String = REQUEST_PENDING
+): Parcelable {
     constructor():this(
         details = FBUserDetailsVModel(),
         status = "")

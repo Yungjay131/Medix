@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import app.slyworks.constants_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
+import app.slyworks.utils_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
 import app.slyworks.controller_lib.AppController
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.utils_lib.utils.displayImage

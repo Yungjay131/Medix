@@ -1,7 +1,7 @@
 package app.slyworks.data_lib.vmodels
 
 import android.os.Parcelable
-import app.slyworks.constants_lib.NOT_SENT
+import app.slyworks.utils_lib.NOT_SENT
 import kotlinx.parcelize.Parcelize
 
 

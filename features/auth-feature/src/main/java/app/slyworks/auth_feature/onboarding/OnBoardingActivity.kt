@@ -3,21 +3,16 @@ package app.slyworks.auth_feature.onboarding
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.animation.AnimationUtils
-import android.widget.Button
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.NestedScrollView
-import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.auth_feature.databinding.ActivityOnBoardingBinding
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.constants_lib.EXTRA_IS_ACTIVITY_RECREATED
-import app.slyworks.constants_lib.GENERAL
+import app.slyworks.utils_lib.EXTRA_IS_ACTIVITY_RECREATED
+import app.slyworks.utils_lib.GENERAL
 import app.slyworks.base_feature.custom_views.NetworkStatusView
 import app.slyworks.base_feature.custom_views.setStatus
-import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.constants_lib.REGISTRATION_ACTIVITY_INTENT_FILTER
-import com.google.android.material.imageview.ShapeableImageView
+import app.slyworks.utils_lib.LOGIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.REGISTRATION_ACTIVITY_INTENT_FILTER
 import dev.joshuasylvanus.navigator.Navigator
 import javax.inject.Inject
 

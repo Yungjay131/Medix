@@ -25,8 +25,7 @@ import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.FragmentRegistrationDoctorBinding
 import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
-import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.LOGIN_ACTIVITY_INTENT_FILTER
 
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign

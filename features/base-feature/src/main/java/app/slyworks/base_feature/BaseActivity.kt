@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.slyworks.base_feature._di.BaseFeatureComponent
-import app.slyworks.constants_lib.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
+import app.slyworks.utils_lib.GOOGLE_API_SERVICES_ERROR_DIALOG_REQUEST_CODE
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.coroutines.CoroutineScope

@@ -16,10 +16,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import app.slyworks.base_feature.BaseActivity
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.CallHistoryVModel
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.VideoCallRequest
+import app.slyworks.utils_lib.*
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.video_call_feature._di.VideoCallFeatureComponent
@@ -169,7 +169,8 @@ class VideoCallActivity : BaseActivity() {
             viewModel.processVideoCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
-                status = REQUEST_ACCEPTED)
+                status = REQUEST_ACCEPTED
+            )
 
             joinChannel()
         }
@@ -178,7 +179,8 @@ class VideoCallActivity : BaseActivity() {
             viewModel.processVideoCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
-                status = REQUEST_DECLINED)
+                status = REQUEST_DECLINED
+            )
 
             onBackPressedDispatcher.onBackPressed()
         }
@@ -189,7 +191,8 @@ class VideoCallActivity : BaseActivity() {
             viewModel.processVideoCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
-                status = REQUEST_DECLINED)
+                status = REQUEST_DECLINED
+            )
 
           onBackPressedDispatcher.onBackPressed()
         }

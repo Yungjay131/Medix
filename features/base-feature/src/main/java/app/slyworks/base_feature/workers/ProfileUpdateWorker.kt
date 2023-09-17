@@ -3,10 +3,10 @@ package app.slyworks.base_feature.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.slyworks.constants_lib.KEY_UPLOAD_USER_PROFILE
+import app.slyworks.utils_lib.KEY_UPLOAD_USER_PROFILE
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.firebase_commons_lib.FirebaseUtils
+import app.slyworks.data_lib.firebase.FirebaseUtils
 import app.slyworks.utils_lib.PreferenceManager
 import javax.inject.Inject
 import kotlin.coroutines.resume

@@ -10,8 +10,7 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp2Binding
-import app.slyworks.constants_lib.LOGIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.LOGIN_ACTIVITY_INTENT_FILTER
 
 import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign

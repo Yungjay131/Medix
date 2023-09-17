@@ -2,10 +2,9 @@ package app.slyworks.medix.ui.fragments.chatFragment
 
 import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.verify
-import app.slyworks.communication_lib.MessageManager2
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import com.slyworks.models.room_models.Person
-import app.slyworks.network_lib.NetworkRegister
+import app.slyworks.base_feature.network_register.NetworkRegister
 import com.slyworks.userdetails.UserDetailsUtils
 import org.junit.Assert.*
 import org.junit.BeforeClass
@@ -21,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class ChatFragmentViewModelTest{
     @Mock
-    private lateinit var networkRegister: app.slyworks.network_lib.NetworkRegister
+    private lateinit var networkRegister: NetworkRegister
     @Mock
     private lateinit var userDetailsUtils:UserDetailsUtils
     @Mock

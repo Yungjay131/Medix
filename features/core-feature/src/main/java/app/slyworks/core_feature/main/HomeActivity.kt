@@ -17,7 +17,6 @@ import app.slyworks.base_feature.PermissionManager
 import app.slyworks.base_feature.custom_views.setStatus
 import app.slyworks.base_feature.ui.ExitDialog
 import app.slyworks.base_feature.ui.LogoutDialog
-import app.slyworks.constants_lib.*
 import app.slyworks.core_feature.ProfileHostFragment
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.chat.ChatHostFragment
@@ -25,6 +24,7 @@ import app.slyworks.core_feature._di.ActivityComponent
 import app.slyworks.core_feature.databinding.ActivityHomeBinding
 import app.slyworks.core_feature.home.DoctorHomeFragment
 import app.slyworks.core_feature.home.PatientHomeFragment
+import app.slyworks.utils_lib.*
 import app.slyworks.utils_lib.utils.plusAssign
 
 import app.slyworks.utils_lib.utils.px
@@ -34,10 +34,8 @@ import dev.joshuasylvanus.navigator.Navigator
 import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import java.util.function.Supplier
 
 import javax.inject.Inject
-import kotlin.reflect.KFunction
 
 val Context.activityComponent: ActivityComponent
 get() = (this as HomeActivity)._activityComponent

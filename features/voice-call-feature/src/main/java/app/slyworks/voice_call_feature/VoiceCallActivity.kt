@@ -6,8 +6,8 @@ import android.os.Looper
 import android.text.TextUtils
 import android.widget.TextView
 import app.slyworks.base_feature.BaseActivity
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.plusAssign
@@ -215,7 +215,8 @@ class VoiceCallActivity : BaseActivity() {
             viewModel.processVoiceCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
-                status = REQUEST_DECLINED)
+                status = REQUEST_DECLINED
+            )
 
             this.onBackPressedDispatcher.onBackPressed()
         }
@@ -226,7 +227,8 @@ class VoiceCallActivity : BaseActivity() {
             viewModel.processVoiceCall(
                 type = TYPE_RESPONSE,
                 firebaseUID = userDetails.firebaseUID,
-                status = REQUEST_DECLINED)
+                status = REQUEST_DECLINED
+            )
 
             this.onBackPressedDispatcher.onBackPressed()
         }

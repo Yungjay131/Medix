@@ -3,7 +3,7 @@ package app.slyworks.message_feature._di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
+import app.slyworks.utils_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import app.slyworks.message_feature.MViewModelFactory
 import app.slyworks.message_feature.message.MessageActivityViewModel
 import dagger.Module

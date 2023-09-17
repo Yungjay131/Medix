@@ -1,21 +1,14 @@
 package app.slyworks.auth_feature.registration
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.view.animation.LinearInterpolator
 import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral0Binding
-import app.slyworks.constants_lib.ACCOUNT_TYPE_NOT_SET
-import app.slyworks.constants_lib.DOCTOR
-import app.slyworks.constants_lib.NOT_SET
-import app.slyworks.constants_lib.PATIENT
-import app.slyworks.data_lib.models.AccountType
+import app.slyworks.data_lib.model.AccountType
 import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers

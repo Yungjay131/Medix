@@ -8,7 +8,7 @@ import app.slyworks.auth_feature.databinding.ActivityRegistrationBinding
 import app.slyworks.auth_feature._di.AuthFeatureComponent
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.constants_lib.*
+import app.slyworks.utils_lib.*
 import dev.joshuasylvanus.navigator.Navigator
 import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
 import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful

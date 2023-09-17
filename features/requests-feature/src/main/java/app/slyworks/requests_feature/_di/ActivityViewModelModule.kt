@@ -3,7 +3,7 @@ package app.slyworks.requests_feature._di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
+import app.slyworks.utils_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import app.slyworks.requests_feature.ViewRequestViewModel
 import dagger.Module
 import dagger.Provides

@@ -5,12 +5,12 @@ import android.view.View
 import androidx.core.view.isVisible
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.models.ConsultationResponse
+import app.slyworks.data_lib.model.ConsultationResponse
 import app.slyworks.requests_feature._di.ActivityComponent
 
 import app.slyworks.requests_feature.databinding.ActivityViewRequestBinding
+import app.slyworks.utils_lib.*
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.setChildViewsStatus

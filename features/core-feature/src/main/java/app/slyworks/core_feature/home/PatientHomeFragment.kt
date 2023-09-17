@@ -6,22 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.widget.SearchView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.base_feature.custom_views.HorizontalSpacingItemDecorator
-import app.slyworks.constants_lib.FBU_FIRST_NAME
-import app.slyworks.constants_lib.FBU_IMAGE_URI
+import app.slyworks.utils_lib.FBU_FIRST_NAME
+import app.slyworks.utils_lib.FBU_IMAGE_URI
 import app.slyworks.core_feature.main.HomeActivity
-import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RvHealthAreasAdapter
 import app.slyworks.core_feature.databinding.FragmentHomePatientBinding
 import app.slyworks.core_feature.main.activityComponent
 import app.slyworks.utils_lib.utils.displayImage
-import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 import javax.inject.Inject
 

@@ -1,6 +1,7 @@
 package app.slyworks.data_lib
 
 import app.slyworks.constants_lib.*
+import app.slyworks.data_lib.helpers.crypto.FirebaseCryptoDelegate
 import app.slyworks.data_lib.vmodels.*
 import app.slyworks.room_lib.daos.CallHistoryDao
 import app.slyworks.room_lib.daos.ConsultationRequestDao
@@ -22,32 +23,14 @@ class DataManager(private val messageDao: MessageDao,
                   private val callHistoryDao: CallHistoryDao,
                   private val consultationRequestDao: ConsultationRequestDao,
                   private val userDetailsUtils: UserDetailsUtils,
-                  private val cryptoHelper: CryptoHelper
+                  private val cryptoHelper: FirebaseCryptoDelegate
 ) {
 
     fun setUserDetails(userDetails: FBUserDetailsVModel) {
         userDetailsUtils.user = userDetails.reverseMap()
     }
 
-    fun <T> getUserDetailsProperty(propertyKey:String = FBU_USER_DETAILS):T?{
-        return when(propertyKey){
-            FBU_USER_DETAILS -> userDetailsUtils.user?.transform() as? T?
-            FBU_ACCOUNT_TYPE -> userDetailsUtils.user?.accountType as? T?
-            FBU_FIRST_NAME -> userDetailsUtils.user?.firstName as? T?
-            FBU_LAST_NAME -> userDetailsUtils.user?.lastName as? T?
-            FBU_FULL_NAME -> userDetailsUtils.user?.fullName as? T?
-            FBU_EMAIL -> userDetailsUtils.user?.email as? T?
-            FBU_SEX -> userDetailsUtils.user?.sex as? T?
-            FBU_AGE -> userDetailsUtils.user?.age as? T?
-            FBU_FIREBASE_UID -> userDetailsUtils.user?.firebaseUID as? T?
-            FBU_AGORA_UID -> userDetailsUtils.user?.agoraUID as? T?
-            FBU_FCM_REGISTRATION_TOKEN -> userDetailsUtils.user?.FCMRegistrationToken as? T?
-            FBU_IMAGE_URI -> userDetailsUtils.user?.imageUri as? T?
-            FBU_HISTORY -> userDetailsUtils.user?.history as? T?
-            FBU_SPECIALIZATION -> userDetailsUtils.user?.specialization as? T?
-            else -> throw IllegalArgumentException("invalid propertyKey")
-        }
-    }
+
 
     fun observeUserDetailsFromDataStore(): Flowable<FBUserDetailsVModel> =
         Flowable.create(

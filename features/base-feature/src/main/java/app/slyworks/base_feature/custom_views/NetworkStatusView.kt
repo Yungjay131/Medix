@@ -20,10 +20,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import app.slyworks.base_feature.R
-import app.slyworks.constants_lib.COORDINATOR
-import app.slyworks.constants_lib.GENERAL
-import app.slyworks.constants_lib.MAIN
-import app.slyworks.utils_lib.utils.displayImage
+import app.slyworks.utils_lib.COORDINATOR
+import app.slyworks.utils_lib.GENERAL
+import app.slyworks.utils_lib.MAIN
 import app.slyworks.utils_lib.utils.px
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*

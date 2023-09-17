@@ -2,7 +2,7 @@ package app.slyworks.payment_lib
 
 import android.app.Activity
 import android.content.Context
-import app.slyworks.constants_lib.KEY_FAILED_TRANSACTIONS
+import app.slyworks.utils_lib.KEY_FAILED_TRANSACTIONS
 import app.slyworks.utils_lib.Outcome
 import app.slyworks.utils_lib.PreferenceManager
 import co.paystack.android.Paystack

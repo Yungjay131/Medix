@@ -23,7 +23,8 @@ import app.slyworks.core_feature.R
 import app.slyworks.core_feature.databinding.FragmentViewProfileBinding
 import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.models.MessageMode
+import app.slyworks.data_lib.model.MessageMode
+import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.utils.displayImage
 import app.slyworks.utils_lib.utils.displayMessage
@@ -205,7 +206,8 @@ class ViewProfileFragment : Fragment() {
                     userProfile!!.firebaseUID,
                     System.currentTimeMillis().toString(),
                     viewModel.getUserDetailsUser(),
-                    REQUEST_PENDING)
+                    REQUEST_PENDING
+                )
            viewModel.sendConsultationRequest(request2)
 
             Timber.e("initViews: FirebaseCloudMessage sent to ${userProfile!!.fullName}")

@@ -6,15 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Observer
@@ -24,9 +18,9 @@ import app.slyworks.core_feature.databinding.FragmentChatBinding
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.data_lib.vmodels.PersonVModel
+import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.utils.addMultiple
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dev.joshuasylvanus.navigator.Navigator
 
 class ChatFragment : Fragment(), Observer {

@@ -7,14 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import app.slyworks.auth_lib.LoginManager
 import app.slyworks.base_feature.BaseDialogFragment
 import app.slyworks.base_feature.R
-import app.slyworks.constants_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
 import dev.joshuasylvanus.navigator.Navigator
-
-
-import javax.inject.Inject
 
 
 /**

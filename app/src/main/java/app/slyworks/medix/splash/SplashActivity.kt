@@ -3,8 +3,8 @@ package app.slyworks.medix.splash
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import app.slyworks.constants_lib.MAIN_ACTIVITY_INTENT_FILTER
-import app.slyworks.constants_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.MAIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.ONBOARDING_ACTIVITY_INTENT_FILTER
 import app.slyworks.medix._di.ApplicationComponent
 import dev.joshuasylvanus.navigator.Navigator
 
@@ -33,7 +33,8 @@ class SplashActivity : AppCompatActivity() {
     /*private fun initViews(){
         val iv:ImageView = findViewById(R.id.ivLogo_splash)
 
-        val animationLogo = AnimationUtils.loadAnimation(this, app.slyworks.ui_commons_feature.R.anim.splash_logo_anim)
+        val animationLogo = AnimationUtils.loadAnimation(this,
+         app.slyworks.ui_commons_feature.R.anim.splash_logo_anim)
         iv.startAnimation(animationLogo)
     }*/
 
@@ -51,17 +52,23 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun navigateToAppropriateActivity(){
-        viewModel.isSessionValid
-                 .observe(this){ status:Boolean ->
-                     (if (status)
-                         Navigator.intentFor(this@SplashActivity, MAIN_ACTIVITY_INTENT_FILTER)
-                     else
-                         Navigator.intentFor(this@SplashActivity, ONBOARDING_ACTIVITY_INTENT_FILTER))
-                         .finishCaller()
-                         .navigate()
+        viewModel.uiStateLD.observe(this){ state: SplashActivityUIState ->
+            when(state){
+                is SplashActivityUIState.SessionInvalid -> {
+                    Navigator.intentFor(this@SplashActivity, MAIN_ACTIVITY_INTENT_FILTER)
+                        .newAndClearTask()
+                        .navigate()
                 }
 
-        viewModel.checkLoginSession()
+                is SplashActivityUIState.SessionValid -> {
+                    Navigator.intentFor(this@SplashActivity, ONBOARDING_ACTIVITY_INTENT_FILTER)
+                        .newAndClearTask()
+                        .navigate()
+                }
+            }
+        }
+
+        viewModel.checkUserLoggedInStatus()
     }
 
     override fun onBackPressed() {}

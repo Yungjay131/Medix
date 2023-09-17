@@ -7,7 +7,7 @@ import app.slyworks.base_feature.ActivityUtils
 import app.slyworks.base_feature.ListenerManager
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.WorkInitializer
-import app.slyworks.constants_lib.APP_SERVICE_ID
+import app.slyworks.utils_lib.APP_SERVICE_ID
 import javax.inject.Inject
 
 

@@ -1,6 +1,8 @@
 package app.slyworks.data_lib
 
 import android.util.Base64
+import app.slyworks.data_lib.helpers.crypto.CryptoConfig
+import app.slyworks.data_lib.helpers.crypto.FirebaseCryptoDelegate
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +21,7 @@ import javax.crypto.spec.SecretKeySpec
 class CryptoHelperTest{
     private val textToEncrypt:String = "Joshua"
     private val passwordToHash:String = "Apassword@321"
-    private lateinit var cryptoHelper: CryptoHelper
+    private lateinit var cryptoHelper: FirebaseCryptoDelegate
 
     @Before
     fun setUp(){
@@ -36,7 +38,7 @@ class CryptoHelperTest{
           override val hashLength: Int = 128
       }
 
-      cryptoHelper = CryptoHelper(conf)
+      cryptoHelper = FirebaseCryptoDelegate(conf)
     }
 
     @Test

@@ -6,7 +6,7 @@ import app.slyworks.base_feature.workers.FCMTokenUploadWorker
 import app.slyworks.base_feature.workers.MessageWorker
 import app.slyworks.base_feature.workers.ProfileUpdateWorker
 import app.slyworks.base_feature.workers.StartServiceWorker
-import app.slyworks.constants_lib.KEY_FCM_UPLOAD_TOKEN
+import app.slyworks.utils_lib.KEY_FCM_UPLOAD_TOKEN
 
 
 /**

@@ -1,7 +1,7 @@
 package app.slyworks.data_lib.vmodels
 
 import android.os.Parcelable
-import app.slyworks.constants_lib.REQUEST_PENDING
+import app.slyworks.utils_lib.REQUEST_PENDING
 import kotlinx.parcelize.Parcelize
 
 

@@ -6,10 +6,8 @@ import android.os.CombinedVibration
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import app.slyworks.constants_lib.INCOMING_CALL_NOTIFICATION
-import app.slyworks.constants_lib.INPUT_ERROR
-import javax.inject.Inject
-import javax.inject.Named
+import app.slyworks.utils_lib.INCOMING_CALL_NOTIFICATION
+import app.slyworks.utils_lib.INPUT_ERROR
 
 
 /**

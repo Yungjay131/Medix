@@ -12,8 +12,8 @@ import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.MessageVModel
-import app.slyworks.network_lib.NetworkRegister
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.base_feature.network_register.NetworkRegister
+import app.slyworks.utils_lib.*
 import com.bumptech.glide.Glide
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

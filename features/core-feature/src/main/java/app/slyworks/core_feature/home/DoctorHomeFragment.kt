@@ -8,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.slyworks.base_feature.custom_views.HorizontalSpacingItemDecorator
-import app.slyworks.constants_lib.FBU_FIRST_NAME
-import app.slyworks.constants_lib.FBU_IMAGE_URI
+import app.slyworks.utils_lib.FBU_FIRST_NAME
+import app.slyworks.utils_lib.FBU_IMAGE_URI
 import app.slyworks.core_feature.main.HomeActivity
-import app.slyworks.core_feature.R
 import app.slyworks.core_feature.RvHealthAreasAdapter
 import app.slyworks.core_feature.databinding.FragmentHomeDoctorBinding
 import app.slyworks.core_feature.main.activityComponent

@@ -7,18 +7,14 @@ import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.PermissionManager
 import app.slyworks.base_feature.VibrationManager
 import app.slyworks.communication_lib.*
-import app.slyworks.data_lib.CryptoHelper
+import app.slyworks.data_lib.helpers.crypto.FirebaseCryptoDelegate
 import app.slyworks.data_lib.DataManager
-import app.slyworks.di_base_lib.BaseFeatureScope
 import app.slyworks.data_lib.FCMClientApi
 import app.slyworks.di_base_lib.AppComponent
-import app.slyworks.firebase_commons_lib.FirebaseUtils
+import app.slyworks.data_lib.firebase.FirebaseUtils
 import app.slyworks.location_lib.LocationTracker
-import app.slyworks.network_lib.NetworkRegister
-import app.slyworks.room_lib.daos.CallHistoryDao
-import app.slyworks.room_lib.daos.ConsultationRequestDao
-import app.slyworks.room_lib.daos.MessageDao
-import app.slyworks.room_lib.daos.PersonDao
+import app.slyworks.base_feature.network_register.NetworkRegister
+import app.slyworks.data_lib.helpers.auth.MAuthStateListener
 import app.slyworks.utils_lib.PreferenceManager
 import app.slyworks.utils_lib.TimeHelper
 import dagger.BindsInstance
@@ -75,11 +71,11 @@ interface BaseFeatureComponent {
 
     fun getNetworkRegister(): NetworkRegister
 
-    fun getCryptoHelper(): CryptoHelper
+    fun getCryptoHelper(): FirebaseCryptoDelegate
 
     fun getFCMApiClient(): FCMClientApi
 
-    fun getFirebaseUtils():FirebaseUtils
+    fun getFirebaseUtils(): FirebaseUtils
 
     fun getLocationTracker(): LocationTracker
 

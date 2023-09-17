@@ -6,12 +6,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
 import app.slyworks.data_lib.vmodels.MessageVModel
 import app.slyworks.message_feature._di.MessageFeatureComponent
 import app.slyworks.message_feature.custom_views.SpacingItemDecorator
 import app.slyworks.message_feature.databinding.ActivityMessageBinding
+import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewMessageID
 import app.slyworks.utils_lib.utils.*

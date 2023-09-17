@@ -8,8 +8,9 @@ import app.slyworks.base_feature._di.CloudMessageBRComponent
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.models.ConsultationResponse
+import app.slyworks.data_lib.model.ConsultationResponse
 import app.slyworks.di_base_lib.AppComponent
+import app.slyworks.utils_lib.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject

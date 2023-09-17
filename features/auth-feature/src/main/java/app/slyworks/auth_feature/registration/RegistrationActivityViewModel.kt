@@ -10,8 +10,8 @@ import app.slyworks.auth_lib.OTPVerificationStage
 import app.slyworks.auth_lib.RegistrationManager
 import app.slyworks.auth_lib.VerificationHelper
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.data_lib.models.TempUserDetails
-import app.slyworks.network_lib.NetworkRegister
+import app.slyworks.data_lib.model.TempUserDetails
+import app.slyworks.base_feature.network_register.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable

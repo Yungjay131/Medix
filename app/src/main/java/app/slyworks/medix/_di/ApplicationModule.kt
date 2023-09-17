@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import app.slyworks.auth_feature._di.MViewModelFactory
-import app.slyworks.constants_lib.DI_ACTIVITY_VIEWMODEL_KEY
+import app.slyworks.utils_lib.DI_ACTIVITY_VIEWMODEL_KEY
 import app.slyworks.medix.splash.SplashActivityViewModel
 import dagger.Module
 import dagger.Provides

@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import app.slyworks.base_feature._di.VideoCallRequestBRComponent
 import app.slyworks.communication_lib.CallManager
-import app.slyworks.constants_lib.EXTRA_INCOMING_VIDEO_CALL_FROM_UID
-import app.slyworks.constants_lib.EXTRA_INCOMING_VIDEO_CALL_RESPONSE_TYPE
-import app.slyworks.constants_lib.TYPE_RESPONSE
+import app.slyworks.utils_lib.EXTRA_INCOMING_VIDEO_CALL_FROM_UID
+import app.slyworks.utils_lib.EXTRA_INCOMING_VIDEO_CALL_RESPONSE_TYPE
+import app.slyworks.utils_lib.TYPE_RESPONSE
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
