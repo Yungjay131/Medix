@@ -42,9 +42,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ":libraries:di-base-lib")
-    implementation project(path: ":libraries:constants-lib")
-
     api platform(impl_depends.firebase_bom)
     api impl_depends.firebase_analytics
     api impl_depends.firebase_auth

@@ -45,7 +45,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':libraries:di-base-lib')
 
     implementation impl_depends.appcompat
     implementation impl_depends.material

@@ -41,13 +41,8 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':libraries:di-base-lib')
-    implementation project(path: ':libraries:constants-lib')
-    implementation project(path: ':libraries:utils-lib')
-    implementation project(path: ':libraries:firebase-commons-lib')
-
     implementation project(path: ':libraries:data-lib')
-    implementation project(path: ':libraries:controller-lib')
+
 
     implementation impl_depends.coroutines_android
     implementation impl_depends.timber

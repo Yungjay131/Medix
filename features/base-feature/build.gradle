@@ -52,17 +52,10 @@ android.buildTypes.each { type ->
 }
 
 dependencies {
-    api project(path: ':libraries:auth-lib')
-    api project(path: ':libraries:communication-lib')
     api project(path: ':libraries:data-lib')
     api project(path: ':libraries:room-lib')
-    api project(path: ':libraries:firebase-commons-lib')
-    api project(path: ':libraries:network-lib')
     api project(path: ':libraries:location-lib')
     api project(path: ':libraries:utils-lib')
-    api project(path: ':libraries:controller-lib')
-    api project(path: ':libraries:constants-lib')
-    api project(path: ':libraries:di-base-lib')
 
     api impl_depends.core_ktx
     api impl_depends.appcompat

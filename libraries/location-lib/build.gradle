@@ -52,7 +52,6 @@ secrets {
 
 dependencies {
     implementation project(path: ':libraries:utils-lib')
-    implementation project(path: ':libraries:di-base-lib')
 
     //implementation impl_depends.location
     implementation impl_depends.places

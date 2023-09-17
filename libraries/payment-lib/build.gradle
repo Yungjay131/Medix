@@ -42,7 +42,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ":libraries:constants-lib")
     implementation project(path: ":libraries:utils-lib")
 
     implementation impl_depends.core_ktx

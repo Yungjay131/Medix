@@ -53,9 +53,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':libraries:di-base-lib')
-    implementation project(path: ':libraries:constants-lib')
-
     implementation impl_depends.core_ktx
 
     implementation impl_depends.room

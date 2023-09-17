@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':libraries:di-base-lib')
 
     implementation impl_depends.core_ktx
     implementation impl_depends.rxjava
