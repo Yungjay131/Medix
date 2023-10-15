@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.communication_lib.CallHistoryManager
-import app.slyworks.data_lib.vmodels.CallHistoryVModel
+import app.slyworks.data_lib.model.view_entities.CallHistoryVModel
 import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable

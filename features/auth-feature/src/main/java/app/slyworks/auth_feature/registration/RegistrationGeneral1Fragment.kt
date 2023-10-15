@@ -1,47 +1,31 @@
 package app.slyworks.auth_feature.registration
 
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral1Binding
-import app.slyworks.utils_lib.utils.plusAssign
-import app.slyworks.utils_lib.utils.closeKeyboard3
+import app.slyworks.utils_lib.utils.closeKeyboard
 import app.slyworks.utils_lib.utils.displayMessage
-import com.jakewharton.rxbinding4.widget.textChanges
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import app.slyworks.utils_lib.utils.properText
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import java.lang.reflect.Modifier
 
 class RegistrationGeneral1Fragment : Fragment() {
     //region Vars
-    private lateinit var binding: FragmentRegistrationGeneral1Binding
+    private lateinit var navigator: FragmentContinuationStateful
     private lateinit var viewModel: RegistrationActivityViewModel
 
-    private val disposables:CompositeDisposable = CompositeDisposable()
+    private lateinit var binding: FragmentRegistrationGeneral1Binding
     //endregion
 
     companion object {
         @JvmStatic
         fun newInstance(): RegistrationGeneral1Fragment =
             RegistrationGeneral1Fragment()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.clear()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        viewModel = (context as RegistrationActivity).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,36 +41,41 @@ class RegistrationGeneral1Fragment : Fragment() {
     }
 
     private fun initData(){
-       viewModel.progressLiveData.observe(viewLifecycleOwner){
-           (requireActivity() as IRegViewModel).toggleProgressView(it)
-       }
+       navigator = (requireActivity() as RegistrationActivity).navigator
+       viewModel = (requireActivity() as RegistrationActivity).viewModel
     }
 
     private fun initViews(){
-        disposables +=
-        Observable.combineLatest(
-            binding.etEmail.textChanges(),
-            binding.etPassword.textChanges(),
-            binding.etConfirmPassword.textChanges(),
-            { email, password, confirmPassword ->
-               email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()
-            })
-            .subscribe(binding.btnNext::setEnabled)
+        binding.etConfirmPassword.setOnEditorActionListener { textView, i, keyEvent ->
+            requireActivity().closeKeyboard()
 
-        binding.etConfirmPassword.setOnEditorActionListener(
-            TextView.OnEditorActionListener { p0, p1, p2 ->
-                if(p0!!.id == binding.etConfirmPassword.id){
-                    requireActivity().closeKeyboard3()
-                    processUserDetails()
-                    return@OnEditorActionListener true
-                }
+            val email:String = binding.etEmail.properText
+            val password:String = binding.etPassword.properText
+            val confirmPassword:String = binding.etConfirmPassword.properText
+            if(!check(email,password,confirmPassword))
+                return@setOnEditorActionListener true
 
-                return@OnEditorActionListener false
-            })
+            viewModel.setEmailAndPassword(email, password)
+
+            navigator.show(RegistrationGeneral2Fragment.newInstance())
+                .navigate()
+
+            return@setOnEditorActionListener true
+        }
 
         binding.btnNext.setOnClickListener {
-            requireActivity().closeKeyboard3()
-            processUserDetails()
+            requireActivity().closeKeyboard()
+
+            val email:String = binding.etEmail.properText
+            val password:String = binding.etPassword.properText
+            val confirmPassword:String = binding.etConfirmPassword.properText
+            if(!check(email,password,confirmPassword))
+                return@setOnClickListener
+
+            viewModel.setEmailAndPassword(email, password)
+
+            navigator.show(RegistrationGeneral2Fragment.newInstance())
+                .navigate()
         }
     }
 
@@ -124,21 +113,5 @@ class RegistrationGeneral1Fragment : Fragment() {
         }
 
         return result
-    }
-
-    private fun processUserDetails(){
-        val email:String = binding.etEmail.text.toString().trim()
-        val password:String = binding.etPassword.text.toString().trim()
-        val confirmPassword:String = binding.etConfirmPassword.text.toString().trim()
-        if(!check(email,password,confirmPassword))
-            return
-
-        viewModel.registrationDetails.email = email
-        viewModel.registrationDetails.password = password
-
-        (requireActivity() as RegistrationActivity).navigator
-            .hideCurrent()
-            .show(RegistrationGeneral2Fragment.newInstance())
-            .navigate()
     }
 }

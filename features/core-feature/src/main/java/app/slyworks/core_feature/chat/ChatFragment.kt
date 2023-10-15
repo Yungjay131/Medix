@@ -15,9 +15,9 @@ import app.slyworks.controller_lib.Observer
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.core_feature.main.HomeActivity
 import app.slyworks.core_feature.databinding.FragmentChatBinding
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.MessageVModel
-import app.slyworks.data_lib.vmodels.PersonVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
+import app.slyworks.data_lib.model.view_entities.PersonVModel
 import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.utils.addMultiple

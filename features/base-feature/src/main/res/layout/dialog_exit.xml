@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvDetails_dialog_exit"
         android:layout_marginTop="16dp"
         android:text="exit"
-        android:textColor="@color/appWhite"
+        android:textColor="@color/app_white"
         android:background="@drawable/btn_selector_exit"/>
 
     <androidx.appcompat.widget.AppCompatButton

@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import app.slyworks.base_feature.R
 
 /**
- *Created by Joshua Sylvanus, 5:26 AM, 12/10/2022.
+ * Created by Joshua Sylvanus, 5:26 AM, 12/10/2022.
  */
 class CustomButton
 @JvmOverloads

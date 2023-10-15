@@ -5,8 +5,8 @@ import android.view.View
 import androidx.core.view.isVisible
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.model.ConsultationResponse
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.models.ConsultationResponse
 import app.slyworks.requests_feature._di.ActivityComponent
 
 import app.slyworks.requests_feature.databinding.ActivityViewRequestBinding

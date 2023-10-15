@@ -46,19 +46,14 @@ class VerificationHelper(
     private val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
-    fun unbind(){
-        disposables.clear()
-        otpActivity = null
-    }
-
      private fun signInTemporarily(email:String, password: String): Single<Outcome> =
         Single.create { emitter ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if(it.isSuccessful)
-                        emitter.onSuccess(Outcome.SUCCESS("temporary sign in successful"))
+                        emitter.onSuccess(Outcome.SUCCESS(Unit))
                     else
-                        emitter.onSuccess(Outcome.FAILURE("temporary sign in failed", it.exception?.message))
+                        emitter.onSuccess(Outcome.FAILURE(Unit, it.exception?.message))
                 }
         }
 
@@ -66,20 +61,18 @@ class VerificationHelper(
     /* temporarily sign in before calling this method */
     fun verifyBySendingEmail():Single<Outcome> =
         Single.create{ emitter:SingleEmitter<Outcome> ->
-            authStateListener.getCurrentUser()!!.sendEmailVerification()
+            authStateListener.getCurrentUser()!!
+                .sendEmailVerification()
                 .addOnCompleteListener {
-                    val r: Outcome
-
+                    val o: Outcome
                     if (it.isSuccessful)
-                        r = Outcome.SUCCESS(value = "user verification email sent successfully")
+                        o = Outcome.SUCCESS(Unit)
                     else {
-                        Timber.e("_sendVerificationEmail: sending email verification completed but failed")
-                        r = Outcome.FAILURE(
-                            value = "user verification email was not sent",
-                            reason = it.exception?.message ?: "verification email not sent")
+                        Timber.e(it.exception)
+                        o = Outcome.FAILURE(Unit, it.exception?.message ?: "verification email not sent")
                     }
 
-                    emitter.onSuccess(r)
+                    emitter.onSuccess(o)
                 }
         }
 
@@ -120,7 +113,7 @@ class VerificationHelper(
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
-                var message = "something went wrong verifying OTP"
+                var message:String = "something went wrong verifying OTP"
                 when (p0) {
                     is FirebaseAuthInvalidCredentialsException ->
                         message = "invalid OTP, please check and try again"

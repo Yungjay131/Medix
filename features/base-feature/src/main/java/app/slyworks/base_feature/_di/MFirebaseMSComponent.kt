@@ -1,10 +1,7 @@
 package app.slyworks.base_feature._di
 
-import android.content.Context
 import app.slyworks.base_feature.services.MFirebaseMessagingService
-import app.slyworks.di_base_lib.AppComponent
-import app.slyworks.di_base_lib.MFirebaseMSScope
-import dagger.BindsInstance
+import app.slyworks.base_feature._di.scopes.MFirebaseMSScope
 import dagger.Component
 
 

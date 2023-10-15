@@ -89,7 +89,7 @@ class ChangePhotoDialog(): BaseDialogFragment() {
 
     companion object{
         @JvmStatic
-        fun getInstance(): ChangePhotoDialog = ChangePhotoDialog()
+        fun newInstance(): ChangePhotoDialog = ChangePhotoDialog()
 
     }
 
@@ -124,24 +124,36 @@ class ChangePhotoDialog(): BaseDialogFragment() {
     }
 
     private fun takePhoto():Unit{
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val intent:Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if(intent.resolveActivity(requireActivity().packageManager) == null){
             Timber.e("snapPhoto: no app installed able to handle camera request" )
             requireContext().showToast("no camera app installed, please install one and try again")
             return
         }
 
-        var photoFile:File? = null
+        var imageFile:File? = null
         try {
-            photoFile = createImageFile()
+            //creating an image file name
+            val timeStamp = SimpleDateFormat("yyyyMMdd_Hhmmss", Locale.getDefault()).format(Date())
+            val imageFileName = "JPEG_${timeStamp}_"
+
+            val storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            imageFile = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+            )
+
+            currentPhotoPath = imageFile.absolutePath
+
         }catch (ioe:IOException){
             Timber.e("takePhoto: ${ioe.message}" )
             dismiss()
         }
 
         //continue only if file was successfully created
-        if(photoFile == null){
-            Timber.e("takePhoto: photoFile wasn't created" )
+        if(imageFile == null){
+            Timber.e("photoFile wasn't created" )
             requireContext().showToast("photoFile wasn't created")
             return
         }
@@ -150,27 +162,10 @@ class ChangePhotoDialog(): BaseDialogFragment() {
             FileProvider.getUriForFile(
             requireActivity(),
             BuildConfig.APP_ID + ".provider",
-            photoFile )
+            imageFile )
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
         takePhotoResultLauncher.launch(intent)
-    }
-
-    @Throws(IOException::class)
-    private fun createImageFile():File?{
-        //creating an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_Hhmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "JPEG_${timeStamp}_"
-
-        val storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val image = File.createTempFile(
-            imageFileName,
-            ".jpg",
-            storageDir
-        )
-
-        currentPhotoPath = image.absolutePath
-        return image
     }
 
     fun getObservable(): Observable<Uri> = o.hide()

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="180dp"
     app:cardCornerRadius="16dp"
-    app:cardBackgroundColor="@color/appCardBlue"
+    app:cardBackgroundColor="@color/app_blue_card"
     app:cardElevation="4dp">
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="You've been invited to join a live"
-        android:textColor="@color/appTextColor2"
+        android:textColor="@color/app_blue_text_color2"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_4"
         app:layout_constraintStart_toEndOf="@id/ivProfile_invite"
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/stream_with"
-        android:textColor="@color/appTextColor2"
+        android:textColor="@color/app_blue_text_color2"
         android:textSize="16sp"
        app:layout_constraintStart_toEndOf="@id/ivProfile_invite"
         app:layout_constraintEnd_toStartOf="@id/guide_vertical_4"

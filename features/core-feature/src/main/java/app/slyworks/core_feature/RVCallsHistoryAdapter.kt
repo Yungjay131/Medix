@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import app.slyworks.data_lib.vmodels.CallHistoryVModel
+import app.slyworks.data_lib.model.view_entities.CallHistoryVModel
 import app.slyworks.utils_lib.*
 import app.slyworks.utils_lib.utils.displayImage
 import de.hdodenhof.circleimageview.CircleImageView

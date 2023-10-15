@@ -8,8 +8,8 @@ import app.slyworks.auth_lib.UsersManager
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.utils_lib.NO_INTERNET_CONNECTION_MESSAGE
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.model.ConsultationResponse
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.models.ConsultationResponse
 import app.slyworks.base_feature.network_register.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -23,7 +23,7 @@ import javax.inject.Inject
 sealed class ViewRequestUIState {
     object LoadingStarted : ViewRequestUIState()
     object LoadingStopped : ViewRequestUIState()
-    data class UserDetailsRetrieved(val details:FBUserDetailsVModel) : ViewRequestUIState()
+    data class UserDetailsRetrieved(val details: FBUserDetailsVModel) : ViewRequestUIState()
     data class UserDetailsNotRetrieved(val error: String) : ViewRequestUIState()
     object SendResponseSuccess : ViewRequestUIState()
     data class SendResponseFailure(val error: String) : ViewRequestUIState()
@@ -43,7 +43,7 @@ class ViewRequestViewModel
 
     private val disposables:CompositeDisposable = CompositeDisposable()
 
-    fun getUserDetailsUtils():FBUserDetailsVModel =
+    fun getUserDetailsUtils(): FBUserDetailsVModel =
         dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun getLoginStatus():Boolean = loginManager.getLoginStatus()

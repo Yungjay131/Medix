@@ -1,7 +1,7 @@
 package app.slyworks.base_feature._di
 
 import app.slyworks.base_feature.workers.MessageWorker
-import app.slyworks.di_base_lib.WorkerScope
+import app.slyworks.base_feature._di.scopes.WorkerScope
 import dagger.Component
 
 

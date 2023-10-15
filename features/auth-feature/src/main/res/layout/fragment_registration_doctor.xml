@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.slyworks.auth_feature.registration.RegistrationDoctorFragment">
+    tools:context="app.slyworks.auth_feature.registration.RegistrationDoctorFragment"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="30dp">
-
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="30dp"
+        >
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvHeader"
@@ -23,9 +23,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="24dp"
-            android:text="@string/reg_header_doctor"
             android:gravity="center"
-            android:textSize="18sp"/>
+            android:text="@string/reg_header_doctor"
+            android:textSize="18sp"
+            />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
@@ -33,7 +34,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvHeader">
+            app:layout_constraintTop_toBottomOf="@id/tvHeader"
+            >
 
             <View
                 android:id="@+id/view"
@@ -43,7 +45,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="16dp"
-                android:background="@color/appDarkGrey" />
+                android:background="@color/app_grey_dark"
+                />
 
             <CheckBox
                 android:id="@+id/cbGeneralHealth"
@@ -53,9 +56,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view"
                 android:layout_marginTop="4dp"
-                android:text="General Health"
                 android:checked="true"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:text="General Health"
+                />
 
             <View
                 android:id="@+id/view_4"
@@ -65,7 +69,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cbGeneralHealth"
                 android:layout_marginTop="4dp"
-                android:background="@color/appDarkGrey"/>
+                android:background="@color/app_grey_dark"
+                />
 
             <View
                 android:id="@+id/_view_horizontal_1"
@@ -75,28 +80,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_4"
                 android:layout_marginTop="@dimen/divider_top_margin"
-                android:visibility="invisible"/>
+                android:visibility="invisible"
+                />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/_barrier_horizontal_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:barrierDirection="bottom" />
-
+                app:barrierDirection="bottom"
+                />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAddSpecialization"
                 android:layout_width="160dp"
                 android:layout_height="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/_view_horizontal_1"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/btn_login_selector"
                 android:text="add"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/_view_horizontal_1"
-                android:stateListAnimator="@xml/btn_state_list_animator" />
+                android:textColor="@color/app_white"
+                android:stateListAnimator="@xml/btn_state_list_animator"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -119,7 +126,8 @@
             app:layout_constraintTop_toTopOf="@id/cbTandC"
             app:layout_constraintBottom_toBottomOf="@id/cbTandC"
             android:textSize="16sp"
-            tools:text="I have read and agree to the Terms and Conditions"/>
+            tools:text="I have read and agree to the Terms and Conditions"
+            />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUp"
@@ -130,12 +138,13 @@
             app:layout_constraintTop_toBottomOf="@id/cbTandC"
             android:layout_marginTop="32dp"
             android:enabled="false"
-            android:text="sign up"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/app_white"
             android:textSize="20sp"
+            android:text="sign up"
             android:background="@drawable/btn_login_selector"
-            android:stateListAnimator="@xml/btn_state_list_animator" />
+            android:stateListAnimator="@xml/btn_state_list_animator"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

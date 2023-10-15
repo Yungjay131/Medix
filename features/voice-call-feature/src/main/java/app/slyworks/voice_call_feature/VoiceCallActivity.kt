@@ -6,7 +6,7 @@ import android.os.Looper
 import android.text.TextUtils
 import android.widget.TextView
 import app.slyworks.base_feature.BaseActivity
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID

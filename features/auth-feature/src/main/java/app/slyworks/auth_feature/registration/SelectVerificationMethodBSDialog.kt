@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.slyworks.auth_feature.databinding.BottomsheetSelectVerificationMethodBinding
-import app.slyworks.auth_lib.VerificationDetails
+import app.slyworks.base_feature.BaseBottomSheetDialogFragment
+import app.slyworks.data_lib.model.models.VerificationDetails
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -16,16 +17,21 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 /**
  * Created by Joshua Sylvanus, 9:27 PM, 11/11/2022.
  */
-class SelectVerificationMethodBSDialog : app.slyworks.base_feature.BaseBottomSheetDialogFragment() {
+class SelectVerificationMethodBSDialog : BaseBottomSheetDialogFragment() {
     //region Vars
-    private lateinit var binding: BottomsheetSelectVerificationMethodBinding
-    private val disposables:CompositeDisposable = CompositeDisposable()
     private var subject:PublishSubject<VerificationDetails> = PublishSubject.create()
+    private val disposables:CompositeDisposable = CompositeDisposable()
+    private lateinit var binding: BottomsheetSelectVerificationMethodBinding
     //endregion
 
     companion object{
         @JvmStatic
-        fun getInstance(): SelectVerificationMethodBSDialog = SelectVerificationMethodBSDialog()
+        fun newInstance(): SelectVerificationMethodBSDialog = SelectVerificationMethodBSDialog()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -61,14 +67,14 @@ class SelectVerificationMethodBSDialog : app.slyworks.base_feature.BaseBottomShe
             }
 
         disposables +=
-            Observable.combineLatest(binding.sivEmail.observeChanges(),
-                                     binding.sivOtp.observeChanges(),
-                { isEmail:Boolean, isOTP:Boolean ->
-                    return@combineLatest isEmail || isOTP
-                })
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(binding.btnProceed::setEnabled)
+        Observable.combineLatest(binding.sivEmail.observeChanges(),
+                                 binding.sivOtp.observeChanges(),
+            { isEmail:Boolean, isOTP:Boolean ->
+                return@combineLatest isEmail || isOTP
+            })
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(binding.btnProceed::setEnabled)
 
         binding.btnProceed.setOnClickListener {
             subject.onNext(selected)

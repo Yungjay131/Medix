@@ -8,7 +8,6 @@ apply from: "${rootProject.projectDir}/dependencies.gradle"
 
 android {
     namespace "app.slyworks.base_feature"
-
     compileSdk sdk_details.compileSDK
 
     defaultConfig {
@@ -55,14 +54,20 @@ dependencies {
     api project(path: ':libraries:data-lib')
     api project(path: ':libraries:room-lib')
     api project(path: ':libraries:location-lib')
+    api project(path: ':libraries:ui-base-lib')
     api project(path: ':libraries:utils-lib')
+    api project(path: ':libraries:context-provider-lib')
+
+    implementation impl_depends.play_services
 
     api impl_depends.core_ktx
     api impl_depends.appcompat
     //api impl_depends.legacy_support
+
     api impl_depends.lifecycle_viewmodel
     api impl_depends.lifecycle_runtime
     api impl_depends.lifecycle_livedata
+
     api impl_depends.work_runtime
     api impl_depends.coroutines_android
 

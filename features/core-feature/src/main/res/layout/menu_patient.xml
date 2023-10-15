@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         app:menu="@menu/main_bnv_menu_patient"
         app:itemActiveIndicatorStyle="@style/AppTheme.Main.BNV"
-        app:itemBackground="@color/appGrey"
+        app:itemBackground="@color/app_grey2"
         app:itemTextColor="@color/app_pink"
         app:itemIconTint="@color/app_pink"
         app:itemRippleColor="@color/appRed"

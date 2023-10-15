@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvDetails_dialog_switch_to_video_call"
         android:layout_marginTop="16dp"
         android:text="Switch"
-        android:textColor="@color/appWhite"
+        android:textColor="@color/app_white"
         android:background="@drawable/btn_bg5"/>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvDetails_dialog_switch_to_video_call"
         android:layout_marginTop="16dp"
         android:text="cancel"
-        android:textColor="@color/appBlack"
+        android:textColor="@color/app_black"
         android:background="@drawable/btn_selector3"/>
 
 

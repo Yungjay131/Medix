@@ -5,9 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.slyworks.auth_feature.registration.RegistrationOTP2Fragment"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingHorizontal="16dp"
+    >
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvHeading"
@@ -17,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="64dp"
-        android:text="Enter OTP" />
+        android:text="Enter OTP"
+        />
 
     <EditText
         android:id="@+id/etOTP1"
@@ -28,12 +28,13 @@
         app:layout_constraintEnd_toStartOf="@+id/etOTP2"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:layout_marginTop="32dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
+        android:background="@drawable/et_selector"
+        />
 
     <EditText
         android:id="@+id/etOTP2"
@@ -44,12 +45,13 @@
         app:layout_constraintBottom_toBottomOf="@id/etOTP1"
         app:layout_constraintEnd_toStartOf="@+id/etOTP3"
         android:layout_marginStart="8dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
+        android:background="@drawable/et_selector"
+       />
 
     <EditText
         android:id="@+id/etOTP3"
@@ -60,12 +62,13 @@
         app:layout_constraintBottom_toBottomOf="@id/etOTP1"
         app:layout_constraintEnd_toStartOf="@+id/etOTP4"
         android:layout_marginStart="8dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
+        android:background="@drawable/et_selector"
+       />
 
     <EditText
         android:id="@+id/etOTP4"
@@ -76,12 +79,13 @@
         app:layout_constraintBottom_toBottomOf="@id/etOTP1"
         app:layout_constraintEnd_toStartOf="@id/etOTP5"
         android:layout_marginStart="8dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
+        android:background="@drawable/et_selector"
+        />
 
     <EditText
         android:id="@+id/etOTP5"
@@ -92,12 +96,13 @@
         app:layout_constraintBottom_toBottomOf="@id/etOTP1"
         app:layout_constraintEnd_toStartOf="@id/etOTP6"
         android:layout_marginStart="8dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
+        android:background="@drawable/et_selector"
+        />
 
     <EditText
         android:id="@+id/etOTP6"
@@ -108,24 +113,25 @@
         app:layout_constraintBottom_toBottomOf="@id/etOTP1"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="8dp"
-        android:background="@drawable/et_selector"
+        android:gravity="center"
+        android:maxLength="1"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:textSize="22sp"
-        android:gravity="center"
-        android:maxLength="1"/>
-
+        android:background="@drawable/et_selector"
+        />
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvCounterHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvCounter"
+        app:layout_constraintTop_toBottomOf="@id/etOTP4"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="1.0"
         android:layout_marginTop="24dp"
         android:text="Resend OTP in:"
-        app:layout_constraintEnd_toStartOf="@+id/tvCounter"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etOTP4" />
+        />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvCounter"
@@ -135,7 +141,8 @@
         app:layout_constraintEnd_toStartOf="@id/tvCounterSuffix"
         app:layout_constraintTop_toTopOf="@id/tvCounterHeader"
         android:layout_marginStart="4dp"
-        android:text="90" />
+        android:text="90"
+        />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvCounterSuffix"
@@ -145,7 +152,8 @@
         app:layout_constraintEnd_toEndOf="@id/etOTP4"
         app:layout_constraintTop_toTopOf="@id/tvCounterHeader"
         android:layout_marginStart="2dp"
-        android:text="seconds" />
+        android:text="seconds"
+        />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_resend_otp"
@@ -154,9 +162,9 @@
         app:layout_constraintTop_toBottomOf="@id/tvCounterSuffix"
         app:layout_constraintEnd_toEndOf="@id/tvCounterSuffix"
         android:layout_marginTop="16dp"
-        android:enabled="false"
         android:text="@string/resend_otp_text"
-        android:textColor="@color/appBlue2"/>
+        android:textColor="@color/app_blue"
+        />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnNext"
@@ -169,10 +177,11 @@
         android:layout_marginTop="80dp"
         android:text="continue"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/app_white"
         android:textSize="20sp"
         android:background="@drawable/btn_login_selector"
         android:stateListAnimator="@xml/btn_state_list_animator"
-        android:enabled="false"/>
+        android:enabled="false"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

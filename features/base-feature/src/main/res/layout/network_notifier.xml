@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="25dp"
     android:padding="4dp"
-    android:background="@color/appBackground">
+    android:background="@color/app_grey_bg">
 
      <de.hdodenhof.circleimageview.CircleImageView
          android:id="@+id/ivNetworkNotifier"
@@ -18,7 +18,7 @@
          app:layout_constraintStart_toStartOf="parent"
          app:layout_constraintEnd_toStartOf="@id/tvStatus_network_status"
          app:layout_constraintHorizontal_chainStyle="packed"
-         android:src="@color/appRed" />
+         android:src="@color/app_red" />
 
      <com.google.android.material.textview.MaterialTextView
          android:id="@+id/tvStatus_network_status"

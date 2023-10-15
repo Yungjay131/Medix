@@ -1,308 +1,230 @@
 package app.slyworks.auth_feature.login
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
-import android.view.KeyEvent
-import android.view.View
-import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import app.slyworks.auth_feature.*
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature._di.AuthFeatureComponent
+import app.slyworks.auth_feature.databinding.ActivityLoginBinding
 import app.slyworks.base_feature.BaseActivity
+import app.slyworks.base_feature.BaseViewModel
 import app.slyworks.base_feature.MOnBackPressedCallback
 
-import app.slyworks.base_feature.custom_views.NetworkStatusView
-import app.slyworks.base_feature.custom_views.ProgressOverlayView
 import app.slyworks.utils_lib.*
-import app.slyworks.utils_lib.utils.plusAssign
-import app.slyworks.utils_lib.utils.closeKeyboard3
-import com.google.android.material.progressindicator.CircularProgressIndicator
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textview.MaterialTextView
-import com.jakewharton.rxbinding4.widget.textChanges
+import app.slyworks.utils_lib.utils.*
 import dev.joshuasylvanus.navigator.Navigator
 import dev.joshuasylvanus.navigator.Navigator.Companion.getExtra
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.disposables.Disposable
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class LoginActivity : BaseActivity() {
     //region Vars
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: TextInputEditText
-
-    private lateinit var tvRegister:MaterialTextView
-    private lateinit var tvForgotPassword:MaterialTextView
-
-    private lateinit var ivBack:ImageView
-
-    private lateinit var btnLogin: Button
-    private lateinit var progress:ProgressOverlayView
-    private lateinit var rootView:ConstraintLayout
-
-    private lateinit var networkStatusView: NetworkStatusView
-
-    private var etEmailTextWatcher: TextWatcherImpl? = null
-    private var etPasswordTextWatcher: TextWatcherImpl? = null
-
-    private val disposables:CompositeDisposable = CompositeDisposable()
-
-    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var forgotPasswordBSDialog: ForgotPasswordBSDialog? = null
 
+    private lateinit var binding: ActivityLoginBinding
+
     @Inject
-    lateinit var viewModel: LoginActivityViewModel
+    override lateinit var viewModel: LoginActivityViewModel
     //endregion
 
-    override fun isValid(): Boolean = false
+    override fun cancelOngoingOperation() {
+        showPromptDialogFromBaseActivity(CANCEL_OPERATION_PROMPT)
+        {
+            (viewModel as BaseViewModel).cancelOngoingOperation()
+            toggleProgressOverlayDialog(false)
+        }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(KEY_LOGIN_EMAIL, binding.etLoginEmail.properText)
+        outState.putString(KEY_LOGIN_PASSWORD, binding.etLoginPassword.properText)
         outState.putBoolean(EXTRA_IS_ACTIVITY_RECREATED, true)
         super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
+        mediaPlayer.release()
+    }
 
-        etEmail.removeTextChangedListener(etEmailTextWatcher)
-        etEmailTextWatcher = null
-
-        etPassword.removeTextChangedListener(etPasswordTextWatcher)
-        etPasswordTextWatcher = null
+    override fun onResume() {
+        super.onResume()
+        closeKeyboard()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initData()
-        initViews()
-        initMediaPlayer()
-
-        if(savedInstanceState != null)
-            initViews2()
+        initViews(savedInstanceState)
     }
 
     private fun initDI(){
-        AuthFeatureComponent.getInitialBuilder()
+       /* AuthFeatureComponent.getInitialBuilder()
             .build()
             .inject(this)
+    */
     }
 
+    @SuppressLint("CheckResult")
     private fun initData(){
         this.onBackPressedDispatcher
             .addCallback(this, MOnBackPressedCallback(this))
 
-        val destinationIntentFilter:String = intent.getExtra<String>(EXTRA_LOGIN_DESTINATION, MAIN_ACTIVITY_INTENT_FILTER)!!
+        val destinationIntentFilter:String =
+            intent.getExtra<String>(EXTRA_LOGIN_DESTINATION, MAIN_ACTIVITY_INTENT_FILTER)!!
         val originalBundle:Bundle? = intent.getExtra<Bundle>(EXTRA_INITIAL_EXTRA)
 
-        viewModel.subscribeToNetwork().observe(this) {
-            networkStatusView.setVisibilityStatus(it)
-        }
-
-        viewModel.passwordResetLiveData.observe(this){
-            if(it)
-                displayMessage("a password reset email has been sent, please check your inbox")
-            else
-                displayMessage("oh oh something went  wrong on our end, please try again later")
-        }
-
-        viewModel.progressStateLiveData.observe(this, ::toggleLoadingStatus)
-
-        viewModel.loginSuccessLiveData.observe(this){
-            setMediaPlayerStatus()
-
-            Navigator.intentFor(this, destinationIntentFilter).also {
-                   originalBundle?.let { it2 -> it.addExtra(EXTRA_ACTIVITY, originalBundle) }
-                }
-                .newAndClearTask()
-                .navigate()
-        }
-
-        viewModel.accountNotVerifiedLD.observe(this){ _ ->
-           Navigator.intentFor(this, VERIFICATION_ACTIVITY_INTENT_FILTER)
-               .addExtra(KEY_EMAIL, etEmail.text.toString().trim())
-               .addExtra(KEY_PASS, etPassword.text.toString().trim())
-               .navigate()
-        }
-
-        viewModel.messageLiveData.observe(this){
-            displayMessage(it)
-        }
-
-        viewModel.forgotPasswordLoadingLD.observe(this){ status ->
-            forgotPasswordBSDialog?.view
-                ?.findViewById<Button>(R.id.btnBSFPResend)
-                ?.isVisible = !status
-
-            forgotPasswordBSDialog?.view
-                ?.findViewById<CircularProgressIndicator>(R.id.progress_BSFP)
-                ?.isVisible = status
-        }
-
-    }
-
-    private fun initMediaPlayer(){
-        if(mediaPlayer != null)
-            return;
-
         mediaPlayer = MediaPlayer.create(this, app.slyworks.base_feature.R.raw.positive_button_sound)
+
+        viewModel.uiStateLD.observe(this){
+            when(it){
+                is LoginUIState.LoadingStarted ->
+                    toggleProgressOverlayDialog(true)
+
+
+                is LoginUIState.LoadingStopped ->
+                    toggleProgressOverlayDialog(false)
+
+                is LoginUIState.LoadingForgotPasswordStarted ->
+                    toggleProgressOverlayDialog(true,  "sending password reset email")
+
+                is LoginUIState.LoadingForgotPasswordStopped ->
+                    toggleProgressOverlayDialog(false)
+
+                is LoginUIState.ResetPasswordEmailSuccess ->
+                    displayMessage("a password reset email has been sent, please check your inbox", binding.root)
+
+                is LoginUIState.ResetPasswordEmailFailure ->
+                    displayMessage("oh oh something went  wrong on our end, please try again later", binding.root)
+
+                is LoginUIState.LoginSuccess -> {
+                    mediaPlayer.start()
+                    mediaPlayer.setLooping(false)
+
+                    Completable.timer(2_000, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            mediaPlayer.stop()
+                            mediaPlayer.release()
+
+                            Navigator.intentFor(this, destinationIntentFilter)
+                                .also { it2 ->
+                                    if(originalBundle != null){
+                                        it2.addExtra(EXTRA_ACTIVITY, originalBundle)
+                                    }
+                                }
+                                .newAndClearTask()
+                                .navigate()
+                        },
+                        {
+                            Timber.e(it)
+
+                            Navigator.intentFor(this, destinationIntentFilter)
+                                .also { it2 ->
+                                    if(originalBundle != null){
+                                        it2.addExtra(EXTRA_ACTIVITY, originalBundle)
+                                    }
+                                }
+                                .newAndClearTask()
+                                .navigate()
+                        })
+                }
+
+                is LoginUIState.AccountNotVerified ->
+                    Navigator.intentFor(this, VERIFICATION_ACTIVITY_INTENT_FILTER)
+                        .addExtra(KEY_EMAIL, binding.etLoginEmail.properText)
+                        .addExtra(KEY_PASS, binding.etLoginPassword.properText)
+                        .navigate()
+
+                is LoginUIState.Message ->
+                    displayMessage(it.message, binding.root)
+            }
+        }
+
     }
 
-    override fun onResume() {
-        super.onResume()
-        closeKeyboard3()
-    }
+    private fun initViews(savedInstanceState: Bundle?){
+        if(savedInstanceState != null){
+            val email:String  = savedInstanceState.getString(KEY_LOGIN_EMAIL)!!
+            val password:String = savedInstanceState.getString(KEY_LOGIN_PASSWORD)!!
 
-    private fun initViews(){
-        rootView = findViewById(R.id.rootView)
-        etEmail = findViewById(R.id.etLoginEmail)
-        etPassword = findViewById(R.id.etLoginPassword)
-        tvRegister = findViewById(R.id.tvLoginRegister_2)
-        tvForgotPassword = findViewById(R.id.tvLoginForgotPassword)
-        btnLogin = findViewById(R.id.btnLoginLogin)
-        progress = findViewById(R.id.progress)
-        networkStatusView = findViewById(R.id.network_status_view)
-        ivBack = findViewById(R.id.iv_backer)
+            binding.etLoginEmail.setText(email)
+            binding.etLoginPassword.setText(password)
+        }
 
-        ivBack.setOnClickListener{ onBackPressedDispatcher.onBackPressed() }
+        binding.etLoginPassword.setOnEditorActionListener { v, actionId, event ->
+            closeKeyboard()
 
-        tvRegister.setOnClickListener {
+            val email:String = binding.etLoginEmail.properText
+            val password:String = binding.etLoginPassword.properText
+            if(!check(email, password))
+                return@setOnEditorActionListener false
+
+            viewModel.login(email,password)
+            return@setOnEditorActionListener true
+        }
+
+        binding.lAppBar.ivBacker.setOnClickListener{
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.tvLoginRegister2.setOnClickListener {
             Navigator.intentFor(this@LoginActivity, REGISTRATION_ACTIVITY_INTENT_FILTER)
                 .navigate()
         }
 
-        tvForgotPassword.setOnClickListener { initBottomSheetForgotPassword() }
-
-        btnLogin.setOnClickListener {
-            closeKeyboard3()
-
-            login(etEmail.text.toString().trim(),
-                etPassword.text.toString().trim())
-        }
-
-        etEmailTextWatcher = TextWatcherImpl {
-            viewModel.emailVal = it
-        }
-
-        etPasswordTextWatcher = TextWatcherImpl {
-            viewModel.passwordVal = it
-        }
-
-        etEmail.addTextChangedListener(etEmailTextWatcher!!)
-        etPassword.addTextChangedListener(etPasswordTextWatcher!!)
-
-        etPassword.setOnEditorActionListener(
-            object: TextView.OnEditorActionListener{
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if(v!!.id == etPassword.id){
-                     closeKeyboard3()
-                     login(etEmail.text.toString().trim(),
-                           etPassword.text.toString().trim())
-                    return true
-                }
-
-                return false
-            }
-        })
-
-        disposables +=
-            Observable.combineLatest(
-                etEmail.textChanges(),
-                etPassword.textChanges())
-                { email: CharSequence, password: CharSequence ->
-                    email.isNotEmpty() && password.isNotEmpty() }
-                .subscribe(btnLogin::setEnabled)
-    }
-
-    private fun initViews2(){
-        etEmail.setText(viewModel.emailVal)
-        etPassword.setText(viewModel.passwordVal)
-    }
-
-    private fun initBottomSheetForgotPassword(){
-       forgotPasswordBSDialog = ForgotPasswordBSDialog.getInstance(::_initBottomSheetForgotPassword)
-
-        forgotPasswordBSDialog!!.show(supportFragmentManager, "")
-    }
-
-    private fun _initBottomSheetForgotPassword(view:View?){
-        view ?: return
-        val etEmailBSFP:EditText = view.findViewById(R.id.etBSFPEmail)
-        val btnResendBSFP:Button = view.findViewById(R.id.btnBSFPResend)
-        val ivCancel: ImageView = view.findViewById(R.id.ivcancelBSFP)
-        val progressBSFP:CircularProgressIndicator = view.findViewById(R.id.progress_BSFP)
-
-        ivCancel.setOnClickListener {
-            forgotPasswordBSDialog?.dismiss()
-            forgotPasswordBSDialog = null
-        }
-
-        btnResendBSFP.setOnClickListener {
-            val email = etEmailBSFP.text.toString().trim()
-            if(TextUtils.isEmpty(email)){
-                /* display CustomSnackbar that stays at the top */
-               Snackbar.make(view, "please enter your email", Snackbar.LENGTH_SHORT).show()
-               return@setOnClickListener
-            }else if(!email.contains("@")){
-               Snackbar.make(view, "please enter a valid email address", Snackbar.LENGTH_SHORT).show()
-               return@setOnClickListener
+        binding.tvLoginForgotPassword.setOnClickListener {
+            val onCancelFunc:() -> Unit = {
+                forgotPasswordBSDialog?.dismiss()
+                forgotPasswordBSDialog = null
             }
 
-            viewModel.handleForgotPassword(email)
-        }
-    }
-
-    private fun  setMediaPlayerStatus(){
-        if (mediaPlayer == null)
-            initMediaPlayer()
-
-        mediaPlayer?.let {
-            it.start()
-            it.setLooping(false)
+            forgotPasswordBSDialog = ForgotPasswordBSDialog.newInstance(
+                onCancelFunc = onCancelFunc,
+                onSubmitFunc = viewModel::handleForgotPassword
+            )
+            forgotPasswordBSDialog!!.show(supportFragmentManager, "")
         }
 
-        lifecycleScope.launch {
-            delay(2_000)
-            mediaPlayer!!.stop()
-            mediaPlayer!!.release()
+        binding.btnLoginLogin.setOnClickListener {
+            closeKeyboard()
+
+            val email:String = binding.etLoginEmail.properText
+            val password:String = binding.etLoginPassword.properText
+            if(!check(email, password))
+                return@setOnClickListener
+
+            viewModel.login(email,password)
         }
-    }
 
-    private fun login(email:String, password:String){
-        closeKeyboard3()
-
-        if(!check(email, password))
-            return
-
-        viewModel.login(email,password)
     }
 
     private fun check(email:String, password:String):Boolean{
         var status = true
 
-        if(!viewModel.getNetworkStatus()){
-            displayMessage("Please check your connection and try again")
-            status = false
-        }else if(TextUtils.isEmpty(email)){
-            displayMessage("please enter your email")
+        if(TextUtils.isEmpty(email)){
+            displayMessage("please enter your email", binding.root)
             status = false
         } else if(TextUtils.isEmpty(password)){
-            displayMessage("please enter your password")
+            displayMessage("please enter your password", binding.root)
             status = false
         } else if(!email.contains("@")){
-            displayMessage("please enter a valid email address")
+            displayMessage("please enter a valid email address", binding.root)
             status = false
         }
 
@@ -310,17 +232,5 @@ class LoginActivity : BaseActivity() {
             viewModel.vibrate(INPUT_ERROR)
 
         return status
-    }
-
-    private fun toggleLoadingStatus(status: Boolean){
-        progress.isVisible = status
-    }
-
-    private fun displayMessage(message:String){
-        Snackbar.make(findViewById(R.id.rootView), message, Snackbar.LENGTH_LONG).apply {
-            if(networkStatusView != null)
-               anchorView = networkStatusView
-        }
-        .show();
     }
 }

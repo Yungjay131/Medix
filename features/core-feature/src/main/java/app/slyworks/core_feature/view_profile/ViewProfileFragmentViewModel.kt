@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.slyworks.communication_lib.ConsultationRequestsManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.model.MessageMode
+import app.slyworks.data_lib.model.view_entities.ConsultationRequestVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -31,7 +30,7 @@ class ViewProfileFragmentViewModel
     private lateinit var userUID:String
     //endregion
 
-    fun getUserDetailsUser():FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
+    fun getUserDetailsUser(): FBUserDetailsVModel = dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun observeConsultationRequestStatus(userUID:String){
         this.userUID = userUID
@@ -44,7 +43,7 @@ class ViewProfileFragmentViewModel
             }
     }
 
-    fun sendConsultationRequest(request:ConsultationRequestVModel, mode: MessageMode = MessageMode.DB_MESSAGE)
+    fun sendConsultationRequest(request: ConsultationRequestVModel, mode: MessageMode = MessageMode.DB_MESSAGE)
         = consultationRequestsManager.sendConsultationRequest(request, mode)
 
     override fun onCleared() {

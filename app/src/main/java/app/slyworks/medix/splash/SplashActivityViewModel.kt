@@ -3,7 +3,7 @@ package app.slyworks.medix.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import app.slyworks.data_lib.repositories.ISplashRepository
+import app.slyworks.data_lib.repositories.splash.ISplashRepository
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 

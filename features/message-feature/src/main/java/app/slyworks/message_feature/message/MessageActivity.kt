@@ -6,8 +6,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.slyworks.base_feature.BaseActivity
 import app.slyworks.base_feature.MOnBackPressedCallback
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
 import app.slyworks.message_feature._di.MessageFeatureComponent
 import app.slyworks.message_feature.custom_views.SpacingItemDecorator
 import app.slyworks.message_feature.databinding.ActivityMessageBinding
@@ -159,13 +159,13 @@ class MessageActivity : BaseActivity() {
         binding.root.setChildViewsStatus(status)
     }
 
-    private fun handleStartCallDetailsUpdate(status:Boolean, details:FBUserDetailsVModel?){
+    private fun handleStartCallDetailsUpdate(status:Boolean, details: FBUserDetailsVModel?){
         if(status){
             userProfile = details!!
             startCall()
         }
     }
-    private fun handleUserDetailsUpdate(details:FBUserDetailsVModel){}
+    private fun handleUserDetailsUpdate(details: FBUserDetailsVModel){}
     private fun handleMessageListUpdate(status:Boolean, list:List<MessageVModel>?){
       if(status)
         adapter.submitList(list)
@@ -177,7 +177,7 @@ class MessageActivity : BaseActivity() {
                 ContextCompat.getColor(this, app.slyworks.base_feature.R.color.appGrey_li_message_from))
         else
             binding.tvConnectionStatusFragMessage.setTextColor(
-                ContextCompat.getColor(this, app.slyworks.base_feature.R.color.appGreen_text))
+                ContextCompat.getColor(this, app.slyworks.base_feature.R.color.app_green_text))
 
         binding.tvConnectionStatusFragMessage.setText(status)
     }

@@ -14,8 +14,10 @@ import app.slyworks.utils_lib.EVENT_OPEN_VIEW_PROFILE_FRAGMENT
 import app.slyworks.controller_lib.AppController
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.core_feature.databinding.FragmentFindDoctorsBinding
+import app.slyworks.core_feature.profile.ProfileHostFragment
+import app.slyworks.core_feature.profile.ProfileHostFragmentViewModel
 import app.slyworks.core_feature.view_profile.ViewProfileFragment
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.utils_lib.utils.addMultiple
 import app.slyworks.utils_lib.utils.displayMessage
 

@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import app.slyworks.base_feature.VibrationManager
 import app.slyworks.communication_lib.CallHistoryManager
 import app.slyworks.communication_lib.CallManager
-import app.slyworks.data_lib.vmodels.CallHistoryVModel
+import app.slyworks.data_lib.model.view_entities.CallHistoryVModel
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.VideoCallRequest
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.models.VideoCallRequest
 import javax.inject.Inject
 
 

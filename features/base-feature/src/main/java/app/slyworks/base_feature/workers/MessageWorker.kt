@@ -4,23 +4,23 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.slyworks.base_feature._di.MessageWorkerComponent
-import app.slyworks.communication_lib.MessageManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
 import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 11:10 AM, 16/05/2022.
+ * Created by Joshua Sylvanus, 11:10 AM, 16/05/2022.
  */
 class MessageWorker(private val context: Context,
                     params:WorkerParameters) : CoroutineWorker(context, params) {
     //region Vars
     @Inject
     lateinit var dataManager: DataManager
-    @Inject
+
+   /* @Inject
     lateinit var messageManager: MessageManager
-    //endregion
+   */ //endregion
 
     init{
        MessageWorkerComponent.getInitialBuilder()
@@ -31,10 +31,9 @@ class MessageWorker(private val context: Context,
     override suspend fun doWork(): Result {
         val l:List<MessageVModel> = dataManager.getUnsentMessages()
 
-        l.forEach {
-          messageManager.sendMessage(it)
-                        .subscribe()
-        }
+        /*l.forEach {
+          messageManager.sendMessage(it).subscribe()
+        }*/
 
          return Result.success()
     }

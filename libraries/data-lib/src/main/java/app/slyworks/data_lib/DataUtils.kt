@@ -1,7 +1,7 @@
 package app.slyworks.data_lib
 
-import app.slyworks.data_lib.vmodels.*
-import app.slyworks.data_lib.model.MessageCloudMessage
+import app.slyworks.data_lib.model.models.MessageCloudMessage
+import app.slyworks.data_lib.model.view_entities.*
 import app.slyworks.room_lib.room_models.*
 
 

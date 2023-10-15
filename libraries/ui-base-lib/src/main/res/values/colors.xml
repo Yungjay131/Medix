@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="Grey">#c3c3c3 </color>
+
+    <!--real work colors-->
+    <color name="app_pink">#FE2172</color>
+
+    <!--for Network Notifier-->
+    <color name="app_grey_bg">#323030</color>
+    <color name="app_red">#FF1744</color>
+
+    <color name="app_white">#FFF</color>
+    <color name="app_black">#000</color>
+    <color name="app_pink_light">#E891E3</color>
+    <color name="app_blue_text_color">#232E65</color>
+
+    <color name="app_black_semi">#31131313</color>
+    <color name="app_black_semi2">#11131313</color>
+    <color name="app_green_text">#00E676</color>
+
+    <color name="app_red">#E53935</color>
+
+    <color name="app_pink_text">#FF1E65</color>
+    <color name="app_pink_dark">#DD1961</color>
+    <color name="app_pink">#FF1E65</color>
+    <color name="app_pink_semi_light">#FED9E4</color>
+    <color name="app_pink_light">#FFF1F6</color>
+
+    <color name="app_grey_semi_transparent">#9F6D6A6A</color>
+    <color name="app_grey_bg">#EFEFEF</color>
+    <color name="app_grey_bg2">#E5E5E5</color>
+    <color name="app_grey_dark">#5A5959</color>
+    <color name="app_grey_lighter">#C5C1C1</color>
+    <color name="app_grey_lightest">#F0F0F0</color>
+    <color name="app_grey_light">#8AFFFFFF</color>
+    <color name="app_grey_light_35">#52FFFFFF</color>
+    <color name="app_grey_bg_onboarding">#F4DBE2</color>
+    <color name="app_grey_disabled">#DDEBFF</color>
+    <color name="app_grey_disabled_text">#7999C6</color>
+    <color name="app_grey">#8A494747</color>
+    <color name="app_grey_light_variant">#515253</color>
+    <color name="app_grey_delivery_card">#A1D9D9D9</color>
+    <color name="app_grey_icon_dark_color">#656567</color>
+    <color name="app_grey_btn">#A4A4A4</color>
+    <color name="app_grey_stroke">#74BAB2B2</color>
+    <color name="app_grey_stroke_2">#8B8B8F</color>
+    <color name="app_grey_iv_tint">#80716F6F</color>
+
+    <color name="app_black">#FF000000</color>
+    <color name="app_black_text">#FF000000</color>
+    <color name="app_black_dark_background">#0F0E11</color>
+    <color name="app_black_background">#0E0F11</color>
+    <color name="app_black_light_variant">#292629</color>
+
+    <color name="app_white">#FFFFFFFF</color>
+    <color name="app_white_semi_transparent">#17FFFFFF</color>
+
+    <color name="app_theme_background">#FFFFFF</color>
+
+    <color name="app_blue">#0152C7</color>
+    <color name="app_blue_selected_bg">#831B70EA</color>
+    <color name="app_blue_bg">#DDEBFF</color>
+    <color name="app_blue_text2">#2267CA</color>
+    <color name="app_blue_text">#0152C7</color>
+    <color name="app_blue_lighter">#EDF4FF</color>
+    <color name="app_blue_light">#D6E7FE</color>
+
+    <color name="app_white_text">#F0F0F0</color>
+    <color name="app_white_text2">#82000000</color>
+
+    <color name="app_orange">#E99A00</color>
+
+    <color name="app_green">#43A047</color>
+    <color name="app_green_light">#00C11F</color>
+
+    <!-- UI/UX people recommended color for text -->
+    <color name="app_eigengrau">#16161D</color>
+
+    <color name="app_gold">#FFA216</color>
+
+    <color name="app_grey_semi_transparent_progress">#CB222121</color>
+    <color name="app_blue_dark">#042A60</color>
+
+</resources>

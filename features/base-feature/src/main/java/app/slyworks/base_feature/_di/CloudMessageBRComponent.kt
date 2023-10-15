@@ -1,8 +1,7 @@
 package app.slyworks.base_feature._di
 
 import app.slyworks.base_feature.broadcast_receivers.CloudMessageBroadcastReceiver
-import app.slyworks.di_base_lib.BroadcastReceiverScope
-import app.slyworks.di_base_lib.WorkerScope
+import app.slyworks.base_feature._di.scopes.BroadcastReceiverScope
 import dagger.Component
 
 

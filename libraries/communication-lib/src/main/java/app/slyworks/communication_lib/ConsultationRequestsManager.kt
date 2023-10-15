@@ -38,20 +38,29 @@ class ConsultationRequestsManager(
     private lateinit var consultationRequestsValueEventListener:ValueEventListener
     private lateinit var consultationRequestChildEventListener:ChildEventListener
 
-    fun getAllConsultationRequests():Observable<Outcome>
-    = Observable.just(dataManager.getConsultationRequests())
-                .concatMap {
-                    if(it.isNotEmpty())
-                        return@concatMap dataManager.observeConsultationRequests()
-                                            .toObservable()
-                                            .concatMap { it2:List<ConsultationRequestVModel> -> Observable.just(Outcome.SUCCESS(value = it2)) }
-
-                    else
-                        return@concatMap  dataManager.observeConsultationRequests()
-                                            .toObservable()
-                                            .concatMap { it3:List<ConsultationRequestVModel> -> Observable.just(Outcome.SUCCESS(value = it3)) }
-                                            .startWithItem(Outcome.FAILURE(value = Unit, reason = "you currently have no consultation requests"))
-                }
+    fun getAllConsultationRequests(): Observable<Outcome> =
+       Observable.just(dataManager.getConsultationRequests())
+        .concatMap {
+            if (it.isNotEmpty()) {
+                return@concatMap
+                dataManager.observeConsultationRequests()
+                    .toObservable()
+                    .concatMap { it2: List<ConsultationRequestVModel> ->
+                        Observable.just(Outcome.SUCCESS(value = it2))
+                    }
+            } else {
+                return@concatMap dataManager.observeConsultationRequests()
+                    .toObservable()
+                    .concatMap { it3: List<ConsultationRequestVModel> ->
+                        Observable.just(Outcome.SUCCESS(value = it3))
+                    }
+                    .startWithItem(
+                        Outcome.FAILURE(
+                            value = Unit,
+                            reason = "you currently have no consultation requests")
+                    )
+            }
+        }
 
 
     /*TODO:there is a function that observes the consultation request for a SPECIFIC user,
@@ -282,7 +291,7 @@ class ConsultationRequestsManager(
             ConsultationRequestData(message = message,
                                     fromUID = request.details.firebaseUID,
                                     fullName = request.details.fullName,
-                                     toFCMRegistrationToken = request.details.fcm_registration_token,
+                                    toFCMRegistrationToken = request.details.fcm_registration_token,
                                     type = FCM_REQUEST)
         return FirebaseCloudMessage(request.details.fcm_registration_token, data)
     }

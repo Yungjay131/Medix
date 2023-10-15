@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 
 /**
- * Created by Joshua Sylvanus, 2:48 PM, 12/16/2021.
+ * Created by Joshua Sylvanus, 2:48 PM, 16/12/2021.
  */
 enum class CurrentStatus { ACCEPTED, DECLINED, PERMANENTLY_DECLINED }
 data class PermissionStatus(val permission:String, val status:CurrentStatus, var text:String)

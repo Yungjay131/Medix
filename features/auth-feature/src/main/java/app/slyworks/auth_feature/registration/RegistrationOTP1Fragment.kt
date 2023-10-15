@@ -7,30 +7,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp1Binding
-import app.slyworks.utils_lib.utils.closeKeyboard3
+import app.slyworks.utils_lib.utils.closeKeyboard
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign
+import app.slyworks.utils_lib.utils.properText
 import com.jakewharton.rxbinding4.widget.textChanges
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class RegistrationOTP1Fragment : Fragment() {
     //region Vars
-    private lateinit var binding: FragmentRegistrationOtp1Binding
-    private lateinit var viewModel: RegistrationActivityViewModel
     private val disposables:CompositeDisposable = CompositeDisposable()
+
+    private lateinit var navigator:FragmentContinuationStateful
+    private lateinit var viewModel: RegistrationActivityViewModel
+
+    private lateinit var binding: FragmentRegistrationOtp1Binding
     //endregion
 
     companion object {
         @JvmStatic
         fun newInstance(): RegistrationOTP1Fragment = RegistrationOTP1Fragment()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        viewModel = (context as IRegViewModel).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,13 +44,21 @@ class RegistrationOTP1Fragment : Fragment() {
     }
 
     private fun initData(){
-        viewModel.progressLiveData.observe(viewLifecycleOwner){}
-        viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
-        viewModel.beginOTPVerificationLiveData.observe(viewLifecycleOwner){_ ->
-            (requireActivity() as IRegViewModel).navigator
-                .show(RegistrationOTP2Fragment.newInstance())
-                .navigate()
+        navigator = (requireActivity() as RegistrationActivity).navigator
+        viewModel = (requireActivity() as RegistrationActivity).viewModel
+
+        viewModel.uiStateLD.observe(viewLifecycleOwner){
+          when(it){
+              is RegistrationUIState.OTPVerificationStarted ->
+                  navigator.show(RegistrationOTP2Fragment.newInstance())
+                      .navigate()
+
+              is RegistrationUIState.Message ->
+                  displayMessage(it.message, requireContext())
+          }
+
         }
+
     }
 
     private fun initViews(){
@@ -61,23 +67,21 @@ class RegistrationOTP1Fragment : Fragment() {
             .map{ it.length == 14 }
             .subscribe(binding.btnNext::setEnabled)
 
-        val nextFunc:() -> Unit = {
-            requireActivity().closeKeyboard3()
+        binding.etPhoneNumber.setOnEditorActionListener { textView, i, keyEvent ->
+            requireActivity().closeKeyboard()
 
-            val phoneNumber:String = binding.etPhoneNumber.text.toString().trim()
+            val phoneNumber: String = binding.etPhoneNumber.properText
             viewModel.verifyViaOTP(phoneNumber, requireActivity())
+
+            return@setOnEditorActionListener true
         }
 
-        binding.etPhoneNumber.setOnEditorActionListener(
-            TextView.OnEditorActionListener{ p0, _, _ ->
-                if(p0!!.id == binding.etPhoneNumber.id){
-                    nextFunc()
-                    return@OnEditorActionListener true
-                }
+        binding.btnNext.setOnClickListener{
+            requireActivity().closeKeyboard()
 
-                return@OnEditorActionListener false
-            })
+            val phoneNumber:String = binding.etPhoneNumber.properText
+            viewModel.verifyViaOTP(phoneNumber, requireActivity())
 
-        binding.btnNext.setOnClickListener{ nextFunc() }
+        }
     }
 }

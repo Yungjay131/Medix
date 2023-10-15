@@ -1,8 +1,7 @@
 package app.slyworks.utils_lib._di
 
 import android.content.Context
-import app.slyworks.di_base_lib.UtilsLibScope
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.utils_lib.PreferenceHelper
 import app.slyworks.utils_lib.TaskManager
 import app.slyworks.utils_lib.TimeHelper
 import dagger.Module
@@ -18,8 +17,8 @@ import javax.inject.Singleton
 object UtilsModule {
     @Provides
     @Singleton
-    fun providePreferenceManager(context:Context): PreferenceManager =
-        PreferenceManager(context)
+    fun providePreferenceManager(context:Context): PreferenceHelper =
+        PreferenceHelper(context)
 
     @Provides
     fun provideTimeHelper(): TimeHelper = TimeHelper()

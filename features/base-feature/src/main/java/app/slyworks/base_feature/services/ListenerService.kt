@@ -3,7 +3,7 @@ package app.slyworks.base_feature.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import app.slyworks.base_feature.ActivityUtils
+import app.slyworks.base_feature.ActivityHelper
 import app.slyworks.base_feature.ListenerManager
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.WorkInitializer
@@ -12,12 +12,13 @@ import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 12:03 PM, 21/1/2022.
+ * Created by Joshua Sylvanus, 12:03 PM, 21/1/2022.
  */
 
 class ListenerService : Service() {
     //region Vars
     private var shouldWorkerBeReInitialized:Boolean = false
+
     @Inject
     @JvmField
     var listenerManager: ListenerManager? = null
@@ -37,7 +38,7 @@ class ListenerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if(ActivityUtils.isAppInForeground()){
+        if(ActivityHelper.isAppInForeground()){
             stopSelf()
             shouldWorkerBeReInitialized = false
             return START_NOT_STICKY

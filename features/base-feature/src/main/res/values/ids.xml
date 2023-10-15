@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="progress_overlay" type="id" />
+    <item name="l_app_bar" type="id" />
+    <item name="l_network_status" type="id" />
+</resources>

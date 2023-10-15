@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import app.slyworks.base_feature.BaseActivity
-import app.slyworks.data_lib.vmodels.CallHistoryVModel
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.VideoCallRequest
+import app.slyworks.data_lib.model.view_entities.CallHistoryVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.models.VideoCallRequest
 import app.slyworks.utils_lib.*
 import app.slyworks.utils_lib.IDHelper.Companion.generateNewVideoCallUserID
 import app.slyworks.utils_lib.utils.displayImage
@@ -342,7 +342,7 @@ class VideoCallActivity : BaseActivity() {
         if(status){
             binding.fabToggleMute.isSelected = true
             binding.fabToggleMute.setBackgroundTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(this, app.slyworks.base_feature.R.color.appBlack_semi)))
+                ColorStateList.valueOf(ContextCompat.getColor(this, app.slyworks.base_feature.R.color.app_black_semi)))
         }else{
             binding.fabToggleMute.isSelected = false
             binding.fabToggleMute.setBackgroundTintList(
@@ -363,7 +363,7 @@ class VideoCallActivity : BaseActivity() {
         if(status){
             binding.fabSwitchVideo.isSelected = true
             binding.fabSwitchVideo.setBackgroundTintList(
-                ColorStateList.valueOf(ContextCompat.getColor(this, app.slyworks.base_feature.R.color.appBlack_semi)))
+                ColorStateList.valueOf(ContextCompat.getColor(this, app.slyworks.base_feature.R.color.app_black_semi)))
         }else{
             binding.fabSwitchVideo.isSelected = false
             binding.fabSwitchVideo.setBackgroundTintList(

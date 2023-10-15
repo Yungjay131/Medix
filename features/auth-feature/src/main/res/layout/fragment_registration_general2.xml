@@ -5,16 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.slyworks.auth_feature.registration.RegistrationGeneral2Fragment">
+    tools:context="app.slyworks.auth_feature.registration.RegistrationGeneral2Fragment"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="32dp"
-        android:paddingBottom="30dp">
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="32dp"
+        >
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvProfilePic"
@@ -23,7 +22,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Profile Picture"/>
+            android:text="Profile Picture"
+            />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivProfile"
@@ -33,7 +33,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvProfilePic"
             android:layout_marginTop="8dp"
-            android:src="@drawable/avatar" />
+            android:src="@drawable/avatar"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvFirstName"
@@ -42,7 +43,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivProfile"
             android:layout_marginTop="24dp"
-            android:text="First Name" />
+            android:text="First Name"
+            />
 
         <EditText
             android:id="@+id/etFirstName"
@@ -52,11 +54,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvFirstName"
             android:layout_marginTop="8dp"
-            android:background="@drawable/et_selector"
+            android:paddingHorizontal="@dimen/et_padding"
             android:imeOptions="actionNext"
             android:inputType="textPersonName"
-            android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding" />
+            android:background="@drawable/et_selector"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvLastName"
@@ -65,7 +67,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etFirstName"
             android:layout_marginTop="24dp"
-            android:text="Last Name" />
+            android:text="Last Name"
+            />
 
         <EditText
             android:id="@+id/etLastName"
@@ -78,8 +81,8 @@
             android:background="@drawable/et_selector"
             android:imeOptions="actionNext"
             android:inputType="textPersonName"
-            android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding" />
+            android:paddingHorizontal="@dimen/et_padding"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvDateOfBirth"
@@ -88,7 +91,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/etLastName"
             android:layout_marginTop="24dp"
-            android:text="Date of Birth" />
+            android:text="Date of Birth"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/date_picker"
@@ -97,15 +101,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDateOfBirth"
-            android:background="@drawable/et_selector"
-            android:imeOptions="actionNext"
-            android:gravity="center_vertical|start"
-            android:textSize="18sp"
-            android:textColor="@color/black"
             android:layout_marginTop="8dp"
-            android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding"/>
-
+            android:paddingHorizontal="@dimen/et_padding"
+            android:gravity="center_vertical|start"
+            android:imeOptions="actionNext"
+            android:textSize="18sp"
+            android:textColor="@color/app_black"
+            android:background="@drawable/et_selector"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvGender"
@@ -114,7 +117,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/date_picker"
             android:layout_marginTop="24dp"
-            android:text="Gender"/>
+            android:text="Gender"
+            />
 
         <!-- android:prompt="Gender" -->
         <Spinner
@@ -125,9 +129,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvGender"
             android:layout_marginTop="8dp"
+            android:paddingHorizontal="@dimen/et_padding"
             android:background="@drawable/et_selector"
-            android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding"
             />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -141,9 +144,10 @@
             android:text="next"
             android:textSize="20sp"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/app_white"
             android:background="@drawable/btn_login_selector"
-            android:stateListAnimator="@xml/btn_state_list_animator"/>
+            android:stateListAnimator="@xml/btn_state_list_animator"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

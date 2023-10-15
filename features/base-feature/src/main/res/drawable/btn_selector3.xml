@@ -12,7 +12,7 @@
     <item>
         <shape android:shape="rectangle">
             <stroke
-                android:color="@color/appBlack"
+                android:color="@color/app_black"
                 android:width="1dp"/>
             <corners android:radius="@dimen/btn_radius"/>
         </shape>

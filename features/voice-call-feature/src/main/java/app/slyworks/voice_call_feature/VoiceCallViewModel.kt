@@ -6,8 +6,8 @@ import app.slyworks.base_feature.VibrationManager
 import app.slyworks.communication_lib.CallManager
 import app.slyworks.utils_lib.REQUEST_PENDING
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.VoiceCallRequest
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.models.VoiceCallRequest
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -37,7 +37,7 @@ class VoiceCallViewModel
 
     fun stopVibration() = vibrationManager.stopVibration()
 
-    fun getUserDetailsUtils():FBUserDetailsVModel =
+    fun getUserDetailsUtils(): FBUserDetailsVModel =
         dataManager.getUserDetailsProperty<FBUserDetailsVModel>()!!
 
     fun sendVoiceCallRequestViaFCM(userDetails: FBUserDetailsVModel){

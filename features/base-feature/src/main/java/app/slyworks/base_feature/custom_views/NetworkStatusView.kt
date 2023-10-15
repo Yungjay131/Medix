@@ -2,7 +2,6 @@ package app.slyworks.base_feature.custom_views
 
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.*
@@ -13,7 +12,6 @@ import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -32,25 +30,10 @@ import kotlinx.coroutines.*
  *Created by Joshua Sylvanus, 8:38 AM, 26/04/2022.
  */
 
-fun animateIn(view:View){
-    with(ObjectAnimator.ofFloat(view, "translationY", -0.25f, 1f)){
-        duration = 1_000
-        start()
-        addListener(onEnd = {} )
-    }
-}
-
-fun animateOut(view:View){
-    with(ObjectAnimator.ofFloat(view, "translationY", 1f, -0.25f)){
-        duration = 1_000
-        start()
-    }
-}
-
 fun NetworkStatusView.setStatus(status:Boolean){
     if(!status){
         this@setStatus.findViewById<CircleImageView>(R.id.ivNetworkNotifier)
-            .setImageResource(R.color.appRed)
+            .setImageResource(app.slyworks.ui_base_lib.R.color.app_red)
         this@setStatus.findViewById<TextView>(R.id.tvStatus_network_status)
             .setText("offline")
 
@@ -69,7 +52,7 @@ fun NetworkStatusView.setStatus(status:Boolean){
 
         CoroutineScope(Dispatchers.Main).launch {
              this@setStatus.findViewById<CircleImageView>(R.id.ivNetworkNotifier)
-                 .setImageResource(R.color.appGreen)
+                 .setImageResource(app.slyworks.ui_base_lib.R.color.app_green)
              this@setStatus.findViewById<TextView>(R.id.tvStatus_network_status)
                  .setText("online")
 
@@ -105,12 +88,12 @@ constructor(
     private var ivStatus:CircleImageView
     private var tvStatus: TextView
 
-    private val mColorOfflineIV_id:Int = R.color.appRed
-    private val mColorOnlineIV_id:Int = R.color.appGreen
-    private val mColorOffline:Int = ContextCompat.getColor(context, R.color.appBackground)
-    private val mColorOfflineIV:Int = ContextCompat.getColor(context, R.color.appRed)
-    private val mColorOnlineIV:Int = ContextCompat.getColor(context, R.color.appGreen)
-    private val mColorOnline:Int = ContextCompat.getColor(context, R.color.appCardBlue)
+    private val mColorOfflineIV_id:Int = app.slyworks.ui_base_lib.R.color.app_red
+    private val mColorOnlineIV_id:Int = app.slyworks.ui_base_lib.R.color.app_green
+    private val mColorOffline:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_pink)
+    private val mColorOfflineIV:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_red)
+    private val mColorOnlineIV:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_green)
+    private val mColorOnline:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_blue)
 
     private var mHasBeenInitialized:Boolean = false
     //endregion

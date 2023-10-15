@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_radius">16dp</dimen>
+    <dimen name="card_item_radius">16dp</dimen>
+    <dimen name="btn_pink_selector_radius">32dp</dimen>
+    <dimen name="iv_selector_radius">32dp</dimen>
+    <dimen name="curved_top_radius">24dp</dimen>
+    <dimen name="btn_action_radius">32dp</dimen>
+    <dimen name="llc_selector_radius">32dp</dimen>
+    <dimen name="header_font_size">16sp</dimen>
+    <dimen name="et_height">55dp</dimen>
+    <dimen name="btn_height">55dp</dimen>
+    <dimen name="iv_padding">10dp</dimen>
+
+    <dimen name="l_cards_height">140dp</dimen>
+    <dimen name="l_cards_width">140dp</dimen>
+
+
+    <dimen name="default_margin_top">10dp</dimen>
+    <dimen name="custom_switch_thumb_height">30dp</dimen>
+    <dimen name="custom_switch_track_width">60dp</dimen>
+
+    <dimen name="delivery_route_card_radius">24dp</dimen>
+    <dimen name="app_bar_height">65dp</dimen>
+    <dimen name="btn_text_size">18sp</dimen>
+    <dimen name="et_text_size">18sp</dimen>
+    <dimen name="card_12_curve">12dp</dimen>
+
+    <dimen name="et_desc">14sp</dimen>
+    <dimen name="et_body">18sp</dimen>
+    <dimen name="et_date_time_size">18sp</dimen>
+    <dimen name="li_icon_size">24dp</dimen>
+    <dimen name="til_height">60dp</dimen>
+    <dimen name="form_default_margin_top">24dp</dimen>
+
+    <dimen name="llc_padding_horizontal">12dp</dimen>
+    <dimen name="llc_vehicle_photos_size">140dp</dimen>
+    <dimen name="tv_uploaded_margin_top">4dp</dimen>
+    <dimen name="form_small_margin_top">10dp</dimen>
+
+    <dimen name="tv_h1">22sp</dimen>
+    <dimen name="tv_h2">20sp</dimen>
+    <dimen name="tv_body">18sp</dimen>
+
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="tv_desc">18sp</dimen>
+
+    <dimen name="l_network_status_height">24dp</dimen>
+
+    <dimen name="et_otp_size">60dp</dimen>
+</resources>

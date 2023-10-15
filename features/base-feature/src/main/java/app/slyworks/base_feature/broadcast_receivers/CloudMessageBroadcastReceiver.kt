@@ -1,18 +1,19 @@
 package app.slyworks.base_feature.broadcast_receivers
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature._di.CloudMessageBRComponent
-import app.slyworks.communication_lib.ConsultationRequestsManager
-import app.slyworks.constants_lib.*
-import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.model.ConsultationResponse
-import app.slyworks.di_base_lib.AppComponent
+import app.slyworks.context_provider_lib.ContextProvider
+import app.slyworks.data_lib.helpers.consultations.ConsultationsHelper
+import app.slyworks.data_lib.helpers.storage.IUserDetailsHelper
+import app.slyworks.data_lib.model.models.ConsultationResponse
 import app.slyworks.utils_lib.*
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -22,9 +23,10 @@ import javax.inject.Inject
 class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
 
     @Inject
-    lateinit var dataManager: DataManager
+    lateinit var userDetailsHelper: IUserDetailsHelper
+
     @Inject
-    lateinit var consultationRequestsManager: ConsultationRequestsManager
+    lateinit var consultationRequestsHelper: ConsultationsHelper
 
     init {
        CloudMessageBRComponent.getInitialBuilder()
@@ -32,6 +34,7 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
            .inject(this)
     }
 
+    @SuppressLint("CheckResult")
     override fun onReceive(context: Context?, intent: Intent?) {
         val fromUID:String = intent!!.getStringExtra(EXTRA_CLOUD_MESSAGE_FROM_UID)!!
         val toFCMRegistrationToken:String = intent.getStringExtra(EXTRA_CLOUD_MESSAGE_TO_FCMTOKEN)!!
@@ -48,23 +51,28 @@ class CloudMessageBroadcastReceiver() : BroadcastReceiver() {
             responseType = response_accept
 
         val pendingResult: PendingResult = goAsync()
-        Observable.just(
+        Single.just(
             ConsultationResponse(
-                fromUID = dataManager.getUserDetailsProperty<String>("firebaseUID")!!,
+                fromUID = userDetailsHelper.getUserDetailsProperty<String>("firebaseUID")!!,
                 toUID = fromUID,
                 toFCMRegistrationToken = toFCMRegistrationToken,
                 status = responseType,
                 fullName = fullName)
            )
             .flatMap {
-                consultationRequestsManager.sendConsultationRequestResponse(it)
+                consultationRequestsHelper.sendResponseToConsultationRequest(it)
             }
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
-            .subscribe{
-                NotificationHelper.cancelNotification(notificationID, AppComponent.getContext())
+            .subscribe({
+                NotificationHelper.cancelNotification(notificationID, ContextProvider.getContext())
                 pendingResult.finish()
-            }
+            },{
+                Timber.e(it)
+
+                NotificationHelper.cancelNotification(notificationID, ContextProvider.getContext())
+                pendingResult.finish()
+            })
 
 
     }

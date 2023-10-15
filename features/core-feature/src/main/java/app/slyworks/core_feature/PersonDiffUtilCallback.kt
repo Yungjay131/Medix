@@ -1,8 +1,8 @@
 package app.slyworks.core_feature
 
 import androidx.recyclerview.widget.DiffUtil
-import app.slyworks.data_lib.vmodels.CallHistoryVModel
-import app.slyworks.data_lib.vmodels.PersonVModel
+import app.slyworks.data_lib.model.view_entities.CallHistoryVModel
+import app.slyworks.data_lib.model.view_entities.PersonVModel
 
 /**
  *Created by Joshua Sylvanus, 5:47 AM, 28/04/2022.

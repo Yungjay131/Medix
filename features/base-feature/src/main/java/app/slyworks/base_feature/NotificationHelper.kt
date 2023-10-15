@@ -15,34 +15,35 @@ import androidx.core.content.ContextCompat
 import app.slyworks.base_feature.broadcast_receivers.CloudMessageBroadcastReceiver
 import app.slyworks.base_feature.broadcast_receivers.VideoCallRequestBroadcastReceiver
 import app.slyworks.base_feature.broadcast_receivers.VoiceCallRequestBroadcastReceiver
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
 import app.slyworks.utils_lib.*
 
 
 /**
- *Created by Joshua Sylvanus, 11:45 PM, 11/1/2022.
+ * Created by Joshua Sylvanus, 11:45 PM, 11/1/2022.
  */
 class NotificationHelper(private val context:Context){
     //region Vars
     private val channelID1:String = context.getString(R.string.notification_channel_1_id)
     private val channelID2:String = context.getString(R.string.notification_channel_2_id)
-    private val color:Int = ContextCompat.getColor(context, R.color.app_pink)
+    private val color:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_pink)
     private val notificationManager:NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     //endregion
 
     companion object{
-        fun cancelNotification(notificationID: Int,context:Context){
-            val notificationManager:NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        fun cancelNotification(notificationID: Int, context: Context){
+            val notificationManager:NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notificationID)
         }
 
         fun createAppServiceNotification(context:Context): Notification {
             val channelID1:String = context.getString(R.string.notification_channel_1_id)
             val channelID2:String = context.getString(R.string.notification_channel_2_id)
-            val color:Int = ContextCompat.getColor(context, R.color.app_pink)
+            val color:Int = ContextCompat.getColor(context, app.slyworks.ui_base_lib.R.color.app_pink)
 
             val builder:NotificationCompat.Builder = NotificationCompat.Builder(context, channelID1)
 
@@ -77,7 +78,8 @@ class NotificationHelper(private val context:Context){
             notificationManager.cancel(NOTIFICATION_CONSULTATION_REQUEST_RESPONSE)
         }
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent,  PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(context, 0, intent,  PendingIntent.FLAG_CANCEL_CURRENT)
 
         val builder:NotificationCompat.Builder = NotificationCompat.Builder(context, channelID2)
 

@@ -12,36 +12,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral2Binding
 import app.slyworks.base_feature.PermissionManager
 import app.slyworks.base_feature.PermissionStatus
 import app.slyworks.base_feature.ui.ChangePhotoDialog
-import app.slyworks.data_lib.model.AccountType
-import app.slyworks.data_lib.model.Gender
+import app.slyworks.data_lib.model.models.AccountType
+import app.slyworks.data_lib.model.models.Gender
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.utils_lib.ContentResolverStore
-import app.slyworks.utils_lib.utils.closeKeyboard3
-import app.slyworks.utils_lib.utils.plusAssign
-import app.slyworks.utils_lib.utils.displayImage
-import app.slyworks.utils_lib.utils.displayMessage
+import app.slyworks.utils_lib.utils.*
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
  class RegistrationGeneral2Fragment : Fragment() {
     //region Vars
-    private lateinit var binding: FragmentRegistrationGeneral2Binding
-    private lateinit var viewModel: RegistrationActivityViewModel
-    private var permissionManager:PermissionManager = PermissionManager()
+     private var dob:String = ""
+
+     private var imageUri:Uri? = null
+     private var gender: Gender = Gender.NOT_SET
+
     private val disposables = CompositeDisposable()
 
-     private var date:String = ""
-     private var gender: Gender = Gender.NOT_SET
-     private lateinit var imageUri:Uri
-     private var hasProfileImageBeenSelected:Boolean = false
+     private lateinit var navigator: FragmentContinuationStateful
+     private lateinit var viewModel: RegistrationActivityViewModel
+
+     private lateinit var binding: FragmentRegistrationGeneral2Binding
+
+    @Inject
+    lateinit var permissionManager:PermissionManager
    //endregion
 
     companion object {
@@ -51,14 +53,12 @@ import java.util.*
 
      override fun onAttach(context: Context) {
          super.onAttach(context)
-         viewModel = (context as RegistrationActivity).viewModel
+
+         //TODO:inject PermissionManager here
      }
 
      override fun onDestroy() {
          super.onDestroy()
-
-         ContentResolverStore.nullifyContentResolver()
-
          disposables.clear()
      }
 
@@ -89,17 +89,8 @@ import java.util.*
      }
 
      private fun initData(){
-         ContentResolverStore.setContentResolver(requireActivity().contentResolver)
-
-         viewModel.progressLiveData.observe(viewLifecycleOwner){
-             (requireActivity() as IRegViewModel).toggleProgressView(it)
-         }
-
-         viewModel.profileImageUriLiveData.observe(viewLifecycleOwner){
-             binding.ivProfile.displayImage(it)
-             imageUri = it
-             hasProfileImageBeenSelected = true
-         }
+         navigator = (requireActivity() as RegistrationActivity).navigator
+         viewModel = (requireActivity() as RegistrationActivity).viewModel
 
          disposables +=
          permissionManager
@@ -109,11 +100,21 @@ import java.util.*
              .subscribe{ o: Outcome ->
                  when{
                      o.isSuccess -> {
-                         ChangePhotoDialog.getInstance().apply {
-                             viewModel.handleProfileImageUri(this.getObservable())
-                         }
-                             .show(requireActivity().supportFragmentManager, "")
+                         val dialog:ChangePhotoDialog = ChangePhotoDialog.newInstance()
+
+                         disposables +=
+                         dialog.getObservable()
+                             .subscribeOn(Schedulers.io())
+                             .observeOn(AndroidSchedulers.mainThread())
+                             .subscribe {
+                                 this@RegistrationGeneral2Fragment.imageUri = it
+
+                                 binding.ivProfile.displayImage(it)
+                             }
+
+                         dialog.show(requireActivity().supportFragmentManager, "")
                      }
+
                      o.isFailure -> {
                          val l:List<PermissionStatus> = o.getTypedValue<List<PermissionStatus>>()
                          displayMessage("Medix requires these permissions to work", binding.root)
@@ -124,7 +125,12 @@ import java.util.*
 
      private fun initViews(){
          val genders:MutableList<String> = mutableListOf("Male", "Female")
-         val genderSpinnerAdapter:ArrayAdapter<String> = ArrayAdapter<String>(requireContext(),android.R.layout.simple_spinner_dropdown_item, genders)
+         val genderSpinnerAdapter:ArrayAdapter<String> =
+             ArrayAdapter<String>(
+                 requireContext(),
+                 android.R.layout.simple_spinner_dropdown_item,
+                 genders
+             )
          genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
          binding.spinnerGender.setAdapter(genderSpinnerAdapter)
          binding.spinnerGender.setOnItemSelectedListener(
@@ -139,20 +145,12 @@ import java.util.*
 
              })
 
-         binding.ivProfile.setOnClickListener {
-             permissionManager.requestPermissions()
+         binding.etLastName.setOnEditorActionListener { textView, i, keyEvent ->
+             requireActivity().closeKeyboard()
+
+             binding.datePicker.requestFocus()
+             return@setOnEditorActionListener true
          }
-
-         binding.etLastName.setOnEditorActionListener(
-             TextView.OnEditorActionListener{ p0, p1, p2 ->
-                 if(p0!!.id == binding.etLastName.id){
-                     requireActivity().closeKeyboard3()
-                     binding.datePicker.requestFocus()
-                     return@OnEditorActionListener true
-                 }
-
-                 return@OnEditorActionListener false
-             })
 
          binding.datePicker.setOnClickListener{
              val calendar: Calendar = SimpleDateFormat.getDateInstance().calendar
@@ -161,45 +159,41 @@ import java.util.*
              val day:Int = calendar.get(Calendar.DAY_OF_MONTH)
 
              val datePickerDialog = DatePickerDialog(requireContext(),
-                 DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
-                     date = "${day}/${month + 1}/${year}"
-                     binding.datePicker.setText(date)
+                 DatePickerDialog.OnDateSetListener { datePicker, yr, mnth, dayOfMonth ->
+                     dob = "${day}/${mnth + 1}/${yr}"
+                     binding.datePicker.setText(dob)
                  }, year, month, day)
 
-             datePickerDialog.updateDate(1990, 1, 1)
+             datePickerDialog.updateDate(2002, 1, 1)
              datePickerDialog.show()
          }
 
-         binding.btnNext.setOnClickListener {
-             requireActivity().closeKeyboard3()
+         binding.ivProfile.setOnClickListener {
+             permissionManager.requestPermissions()
+         }
 
-             if(!check())
+         binding.btnNext.setOnClickListener {
+             requireActivity().closeKeyboard()
+
+             val firstName:String = binding.etFirstName.properText
+             val lastName:String = binding.etLastName.properText
+             if(!check(firstName, lastName))
                  return@setOnClickListener
 
-             val firstName:String = binding.etFirstName.text.toString().trim()
-             val lastName:String = binding.etLastName.text.toString().trim()
 
-             viewModel.registrationDetails.firstName = firstName
-             viewModel.registrationDetails.lastName = lastName
-             viewModel.registrationDetails.age = date
-             viewModel.registrationDetails.sex = gender
-             val f =
-                 if(viewModel.registrationDetails.accountType == AccountType.PATIENT)
+             viewModel.setNameDOBAndSex(firstName, lastName, dob, gender)
+             val f:Fragment =
+                 if(viewModel.getAccountType() == AccountType.PATIENT)
                      RegistrationPatientFragment.newInstance()
                  else
                      RegistrationDoctorFragment.newInstance()
 
-             (requireActivity() as RegistrationActivity).navigator
-                 .hideCurrent()
-                 .show(f)
+             navigator.show(f)
                  .navigate()
          }
      }
 
-     private fun check():Boolean {
-         val firstName:String = binding.etFirstName.text.toString().trim()
-         val lastName:String = binding.etLastName.text.toString().trim()
-
+     private fun check(firstName:String, lastName:String):Boolean {
          var status = true
 
          if(TextUtils.isEmpty(firstName)){
@@ -208,10 +202,10 @@ import java.util.*
          } else if(TextUtils.isEmpty(lastName)){
              displayMessage("please enter a last name", binding.root)
              status = false
-         } else if(!hasProfileImageBeenSelected){
+         } else if(imageUri == null){
              displayMessage("a profile image is required", binding.root)
              status = false
-         } else if(date == ""){
+         } else if(dob == ""){
              displayMessage("please enter your date of birth", binding.root)
              status = false
          } else if(gender == Gender.NOT_SET){

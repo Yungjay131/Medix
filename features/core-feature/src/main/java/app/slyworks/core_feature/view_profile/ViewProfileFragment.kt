@@ -17,13 +17,12 @@ import androidx.fragment.app.Fragment
 import app.slyworks.constants_lib.*
 import app.slyworks.controller_lib.Subscription
 import app.slyworks.core_feature.AppBarStateChangeListener
-import app.slyworks.core_feature.ProfileHostFragment
-import app.slyworks.core_feature.ProfileHostFragmentViewModel
+import app.slyworks.core_feature.profile.ProfileHostFragment
+import app.slyworks.core_feature.profile.ProfileHostFragmentViewModel
 import app.slyworks.core_feature.R
 import app.slyworks.core_feature.databinding.FragmentViewProfileBinding
-import app.slyworks.data_lib.vmodels.ConsultationRequestVModel
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.model.MessageMode
+import app.slyworks.data_lib.model.view_entities.ConsultationRequestVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.utils_lib.*
 
 import app.slyworks.utils_lib.utils.displayImage

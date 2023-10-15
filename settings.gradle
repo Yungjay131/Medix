@@ -1,6 +1,6 @@
 dependencyResolutionManagement {
-    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    //repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -14,20 +14,9 @@ dependencyResolutionManagement {
         }
     }
 }
+
 rootProject.name = "Medix"
 include ':app'
-include ':libraries:utils-lib'
-//include ':libraries:firebase-commons-lib'
-//include ':libraries:network-lib'
-//include ':libraries:auth-lib'
-//include ':libraries:communication-lib'
-//include ':libraries:controller-lib'
-//include ':libraries:constants-lib'
-//include ':libraries:di-base-lib'
-include ':libraries:room-lib'
-include ':libraries:location-lib'
-include ':libraries:data-lib'
-include ':libraries:payment-lib'
 
 include ':features:auth-feature'
 include ':features:video-call-feature'
@@ -36,3 +25,20 @@ include ':features:core-feature'
 include ':features:base-feature'
 include ':features:message-feature'
 include ':features:requests-feature'
+
+//include ':libraries:firebase-commons-lib'
+//include ':libraries:network-lib'
+//include ':libraries:auth-lib'
+//include ':libraries:communication-lib'
+//include ':libraries:controller-lib'
+//include ':libraries:constants-lib'
+//include ':libraries:di-base-lib'
+include ':libraries:data-lib'
+include ':libraries:room-lib'
+include ':libraries:location-lib'
+include ':libraries:payment-lib'
+include ':libraries:ui-base-lib'
+include ':libraries:utils-lib'
+include ':libraries:context-provider-lib'
+
+

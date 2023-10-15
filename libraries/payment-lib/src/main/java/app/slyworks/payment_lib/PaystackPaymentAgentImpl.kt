@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import app.slyworks.utils_lib.KEY_FAILED_TRANSACTIONS
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.utils_lib.PreferenceHelper
 import co.paystack.android.Paystack
 import co.paystack.android.PaystackSdk
 import co.paystack.android.Transaction
@@ -22,7 +22,7 @@ const val CUSTOMER_NAME = "customerName"
 const val CUSTOMER_EMAIL = "customerEmail"
 class PaystackPaymentAgentImpl(
     private val apiKey:String,
-    private val preferenceManager: PreferenceManager,
+    private val preferenceHelper: PreferenceHelper,
     applicationContext: Context
 ) : PaymentAgent {
 
@@ -80,10 +80,10 @@ class PaystackPaymentAgentImpl(
                     return@invokeOnCancellation
 
                 val failedTransactions: MutableList<String> =
-                    preferenceManager.get(KEY_FAILED_TRANSACTIONS, mutableListOf<String>())!!
+                    preferenceHelper.get(KEY_FAILED_TRANSACTIONS, mutableListOf<String>())!!
                 failedTransactions.add(transactionReference!!)
 
-                preferenceManager.set(KEY_FAILED_TRANSACTIONS, failedTransactions)
+                preferenceHelper.set(KEY_FAILED_TRANSACTIONS, failedTransactions)
             }
         }
 }

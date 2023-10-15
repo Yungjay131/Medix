@@ -1,25 +1,29 @@
 package app.slyworks.auth_feature.registration
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import app.slyworks.auth_feature.IRegViewModel
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import app.slyworks.auth_feature.databinding.FragmentRegistrationGeneral0Binding
-import app.slyworks.data_lib.model.AccountType
-import app.slyworks.utils_lib.utils.closeKeyboard3
+import app.slyworks.data_lib.model.models.AccountType
+import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class RegistrationGeneral0Fragment : Fragment() {
     //region Vars
-    private lateinit var binding: FragmentRegistrationGeneral0Binding
+    private var accountType: AccountType = AccountType.NOT_SET
+
+    private val disposables:CompositeDisposable = CompositeDisposable()
+
+    private lateinit var navigator: FragmentContinuationStateful
     private lateinit var viewModel: RegistrationActivityViewModel
-     private val disposables:CompositeDisposable = CompositeDisposable()
+
+    private lateinit var binding: FragmentRegistrationGeneral0Binding
     //endregion
 
     companion object {
@@ -27,10 +31,6 @@ class RegistrationGeneral0Fragment : Fragment() {
         fun newInstance(): RegistrationGeneral0Fragment = RegistrationGeneral0Fragment()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        viewModel = (context as IRegViewModel).viewModel
-    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
        binding = FragmentRegistrationGeneral0Binding.inflate(layoutInflater, container, false)
         return binding.root
@@ -39,7 +39,14 @@ class RegistrationGeneral0Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initData()
         initViews()
+    }
+
+
+    private fun initData(){
+       navigator = (requireActivity() as RegistrationActivity).navigator
+       viewModel = (requireActivity() as RegistrationActivity).viewModel
     }
 
     private fun initViews(){
@@ -57,18 +64,23 @@ class RegistrationGeneral0Fragment : Fragment() {
             binding.ivLogo.scaleY = animatorValue
         }
         logoAnimator.start()
+        */
 
-        val animationText = AnimationUtils.loadAnimation(requireContext(), app.slyworks.base_feature.R.anim.regisrtration_text_anim)
-        animationText.startOffset = 500
-
-        binding.tvText.startAnimation(animationText)*/
+        val animationText: Animation =
+            AnimationUtils.loadAnimation(
+                requireContext(),
+                app.slyworks.base_feature.R.anim.regisrtration_text_anim)
+        binding.tvText.startAnimation(animationText)
 
         disposables +=
         binding.sivPatient.observeChanges()
             .subscribe {
                 if(it){
                    binding.sivDoctor.setCurrentStatus(false)
-                   viewModel.registrationDetails.accountType = AccountType.PATIENT
+
+                   accountType = AccountType.PATIENT
+
+                   viewModel.setAccountType(AccountType.PATIENT)
                 }
             }
 
@@ -77,28 +89,29 @@ class RegistrationGeneral0Fragment : Fragment() {
             .subscribe {
                 if(it){
                     binding.sivPatient.setCurrentStatus(false)
-                    viewModel.registrationDetails.accountType = AccountType.DOCTOR
+
+                    accountType = AccountType.DOCTOR
+
+                    viewModel.setAccountType(AccountType.DOCTOR)
                 }
             }
 
-        disposables +=
-        Observable.combineLatest(binding.sivPatient.observeChanges(),
-                                 binding.sivDoctor.observeChanges(),
-            { isPatient:Boolean, isDoctor:Boolean ->
-                return@combineLatest isPatient || isDoctor
-            })
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(binding.btnNext::setEnabled)
-
         binding.btnNext.setOnClickListener {
-            requireActivity().closeKeyboard3()
+            if(!check())
+                return@setOnClickListener
 
-            (requireActivity() as RegistrationActivity)
-                .navigator
-                .hideCurrent()
-                .show(RegistrationGeneral1Fragment.newInstance())
+            navigator.show(RegistrationGeneral1Fragment.newInstance())
                 .navigate()
         }
+    }
+
+    private fun check():Boolean {
+        var status:Boolean = true
+        if(accountType == AccountType.NOT_SET){
+            displayMessage("please select an account type to continue", binding.root)
+            status = false
+        }
+
+        return status
     }
 }

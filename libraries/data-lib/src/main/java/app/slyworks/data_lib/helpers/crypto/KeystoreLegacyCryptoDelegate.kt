@@ -6,7 +6,7 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.utils_lib.PreferenceHelper
 import io.reactivex.rxjava3.core.Single
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -16,7 +16,6 @@ import java.security.Key
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.SecureRandom
-import java.security.spec.AlgorithmParameterSpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.CipherInputStream
@@ -30,7 +29,7 @@ import javax.security.auth.x500.X500Principal
  *Created by Joshua Sylvanus, 10:56 AM, 17-Sep-2023.
  */
 class KeystoreLegacyCryptoDelegate(private val context:Context,
-                                   private val preferenceManager: PreferenceManager) : ICryptoDelegate {
+                                   private val preferenceHelper: PreferenceHelper) : ICryptoDelegate {
     //region Vars
     private val KEY_ANDROID_KEYSTORE = "AndroidKeyStore"
     private val KEY_ALIAS = "app.slyworks.KEY_ALIAS"
@@ -97,7 +96,7 @@ class KeystoreLegacyCryptoDelegate(private val context:Context,
     }
 
     private fun initAESKey(){
-        var encryptedKeyB64:String? = preferenceManager.get(KEY_ENCRYPTED_KEY)
+        var encryptedKeyB64:String? = preferenceHelper.get(KEY_ENCRYPTED_KEY)
         if(encryptedKeyB64  == null){
             val key:ByteArray = ByteArray(16)
 
@@ -107,7 +106,7 @@ class KeystoreLegacyCryptoDelegate(private val context:Context,
             val encryptedKey:ByteArray = rsaEncrypt(key)
 
             encryptedKeyB64 = Base64.encodeToString(encryptedKey, Base64.NO_WRAP)
-            preferenceManager.set(KEY_ENCRYPTED_KEY, encryptedKeyB64)
+            preferenceHelper.set(KEY_ENCRYPTED_KEY, encryptedKeyB64)
         }
 
         val encryptedKey: ByteArray = Base64.decode(encryptedKeyB64, Base64.NO_WRAP)

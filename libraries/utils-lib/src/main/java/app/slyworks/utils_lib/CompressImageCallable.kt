@@ -1,18 +1,28 @@
 package app.slyworks.utils_lib
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.webkit.MimeTypeMap
+import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.concurrent.Callable
 
 
 /**
- *Created by Joshua Sylvanus, 7:22 PM, 1/3/2022.
+ * Created by Joshua Sylvanus, 7:22 PM, 1/3/2022.
  */
+
+
 class CompressImageCallable(val uri: Uri) : Callable<ByteArray> {
     companion object{
         //region Vars

@@ -3,6 +3,8 @@ package app.slyworks.auth_feature.onboarding
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import app.slyworks.base_feature.BaseViewModel
+import app.slyworks.base_feature.network_register.INetworkRegister
 import app.slyworks.base_feature.network_register.NetworkRegister
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -11,34 +13,11 @@ import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 5:54 PM, 18/05/2022.
+ * Created by Joshua Sylvanus, 5:54 PM, 18/05/2022.
  */
 class OnBoardingActivityViewModel
     @Inject
-    constructor(private val networkRegister: NetworkRegister) : ViewModel() {
-    private val l:MutableLiveData<Boolean> = MutableLiveData()
-    private val disposables:CompositeDisposable = CompositeDisposable()
+    constructor(override val networkRegister: INetworkRegister) : BaseViewModel() {
 
-    fun subscribeToNetwork(): LiveData<Boolean>{
-        disposables +=
-        networkRegister
-            .subscribeToNetworkUpdates()
-            .observeOn(Schedulers.io())
-            .subscribeOn(Schedulers.io())
-            .subscribe {
-                l.postValue(it)
-            }
-
-        return l
-    }
-
-    fun unsubscribeToNetwork(){
-        networkRegister.unsubscribeToNetworkUpdates()
-        disposables.clear()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        unsubscribeToNetwork()
-    }
+    override val disposables:CompositeDisposable = CompositeDisposable()
 }

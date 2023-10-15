@@ -25,7 +25,7 @@ class MAuthStateListener : FirebaseAuth.AuthStateListener {
     fun getCurrentUser():FirebaseUser? = currentUser
 
     override fun onAuthStateChanged(p0: FirebaseAuth) {
+        loggedInStatus = (p0.currentUser != null)
         currentUser = p0.currentUser
-        loggedInStatus = p0.currentUser != null
     }
 }

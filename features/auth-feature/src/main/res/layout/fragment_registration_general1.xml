@@ -5,11 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="vertical"
-    android:scrollbarStyle="insideOverlay"
-    android:scrollbarSize="4dp"
-    android:id="@+id/rootView"
-    tools:context="app.slyworks.auth_feature.registration.RegistrationGeneral1Fragment">
+    style="@style/ScrollView"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,7 +23,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:src="@drawable/ic_email"
-            app:tint="@color/appIVTint" />
+            app:tint="@color/app_grey_dark"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -35,8 +33,8 @@
             app:layout_constraintTop_toTopOf="@id/ivEmail"
             app:layout_constraintBottom_toBottomOf="@id/ivEmail"
             android:layout_marginStart="8dp"
-            android:text="Email" />
-
+            android:text="Email"
+            />
 
         <EditText
             android:id="@+id/etEmail"
@@ -50,7 +48,8 @@
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:paddingStart="@dimen/et_padding"
-            android:paddingEnd="@dimen/et_padding" />
+            android:paddingEnd="@dimen/et_padding"
+            />
 
         <ImageView
             android:id="@+id/ivPassword"
@@ -60,7 +59,9 @@
             app:layout_constraintTop_toBottomOf="@id/etEmail"
             android:layout_marginTop="30dp"
             android:src="@drawable/ic_lock"
-            app:tint="@color/appIVTint" />
+            app:tint="@color/app_grey_dark"
+
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -73,13 +74,14 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
+            style="@style/TextInputLayout"
             android:layout_width="0dp"
             android:layout_height="60dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivPassword"
             app:passwordToggleEnabled="true"
-            style="@style/TextInputLayout" >
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
@@ -103,7 +105,8 @@
             app:layout_constraintTop_toBottomOf="@id/tilPassword"
             android:layout_marginTop="30dp"
             android:src="@drawable/ic_lock"
-            app:tint="@color/appIVTint" />
+            app:tint="@color/app_grey_dark"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -111,29 +114,32 @@
             app:layout_constraintStart_toEndOf="@id/ivConfirmPassword"
             app:layout_constraintTop_toTopOf="@id/ivConfirmPassword"
             app:layout_constraintBottom_toBottomOf="@id/ivConfirmPassword"
-            android:text="Confirm Password" />
+            android:text="Confirm Password"
+            />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilConfirmPassword"
+            style="@style/TextInputLayout"
             android:layout_width="0dp"
             android:layout_height="60dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivConfirmPassword"
             app:passwordToggleEnabled="true"
-            style="@style/TextInputLayout" >
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingStart="@dimen/et_padding"
+                android:paddingEnd="@dimen/et_padding"
+                android:gravity="center_vertical"
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
                 android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:paddingStart="@dimen/et_padding"
-                android:paddingEnd="@dimen/et_padding"
-                android:background="@drawable/et_selector"/>
+                android:background="@drawable/et_selector"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -146,12 +152,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilConfirmPassword"
             android:layout_marginTop="48dp"
-            android:text="continue"
             android:textSize="20sp"
-            android:textColor="@color/white"
+            android:textColor="@color/app_white"
             android:textAllCaps="false"
+            android:text="continue"
+            android:enabled="false"
             android:background="@drawable/btn_login_selector"
-            android:enabled="false"/>
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

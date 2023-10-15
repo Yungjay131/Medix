@@ -6,55 +6,40 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Build
 import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
 
 
 /**
  * Created by Joshua Sylvanus, 11:27 AM, 29/05/2022.
  */
+
+interface INetworkRegister{
+    fun getNetworkStatus():Boolean
+    fun subscribeToNetworkUpdates():Observable<Boolean>
+    fun unsubscribeToNetworkUpdates():Unit
+}
+
 @SuppressLint("NewApi")
-class NetworkRegister(private val context: Context ) {
+class NetworkRegister(private val context: Context) : INetworkRegister{
     //region Vars
-    private var impl: NetworkWatcher? = null
+    private var impl: NetworkWatcher
     //endregion
 
-   init{ init2() }
-
-    private fun init1(context: Context){
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
-            val  filter = IntentFilter()
-            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-            impl = NetworkBroadcastReceiver()
-            context.registerReceiver(impl as NetworkBroadcastReceiver, filter)
-        }else{
-            impl = NetworkWatcherImpl(context)
-        }
-    }
-
-    private fun init2(){
+    init{
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             impl = NetworkWatcherLegacyImpl(context)
         else
             impl = NetworkWatcherImpl(context)
     }
 
+    override fun getNetworkStatus(): Boolean =
+        impl.getNetworkStatus()
 
-    fun getNetworkStatus(): Boolean{
-        if(impl == null)
-            init2()
+    override fun subscribeToNetworkUpdates():Observable<Boolean> =
+        impl.subscribeTo()
 
-        return impl!!.getNetworkStatus()
-    }
+    override fun unsubscribeToNetworkUpdates():Unit =
+        impl.dispose()
 
-    fun subscribeToNetworkUpdates():Observable<Boolean>{
-        if (impl == null)
-           init2()
-
-        return impl!!.subscribeTo()
-    }
-
-    fun unsubscribeToNetworkUpdates(){
-        impl?.dispose()
-        impl = null
-    }
 
 }

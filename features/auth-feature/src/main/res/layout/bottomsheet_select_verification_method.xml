@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
+    android:paddingHorizontal="12dp"
     android:paddingTop="24dp"
-    android:paddingBottom="12dp">
+    android:paddingBottom="12dp"
+    >
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
@@ -16,7 +16,8 @@
         android:gravity="center"
         android:text="Account Successfully created"
         android:textStyle="bold"
-        android:textSize="24sp"/>
+        android:textSize="24sp"
+        />
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
@@ -24,7 +25,8 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="Only thing left now is to verify your account!"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        />
 
     <app.slyworks.base_feature.custom_views.SelectionItemView
         android:id="@+id/siv_email"
@@ -34,8 +36,9 @@
         app:siv_title="Verify via Email"
         app:siv_title_color="@color/app_pink"
         app:siv_sub_title="Verify your account by clicking a link provided in a verification email that would be sent to the email address entered during registration."
-        app:siv_active_outline_color="@color/appCardBlue"
-        app:siv_sub_title_color="@color/appDarkGrey"/>
+        app:siv_active_outline_color="@color/app_blue"
+        app:siv_sub_title_color="@color/app_grey_dark"
+        />
 
     <app.slyworks.base_feature.custom_views.SelectionItemView
         android:id="@+id/siv_otp"
@@ -45,8 +48,9 @@
         app:siv_title="Verify via OTP"
         app:siv_title_color="@color/app_pink"
         app:siv_sub_title="Verify your account by entering a One Time Password (OTP) that would be sent to the phone number entered during registration"
-        app:siv_active_outline_color="@color/appCardBlue"
-        app:siv_sub_title_color="@color/appDarkGrey"/>
+        app:siv_active_outline_color="@color/app_blue"
+        app:siv_sub_title_color="@color/app_grey_dark"
+        />
 
 
     <androidx.appcompat.widget.AppCompatButton
@@ -57,9 +61,10 @@
         android:background="@drawable/btn_login_selector"
         android:enabled="false"
         android:fontFamily="@font/chivo_regular"
-        android:stateListAnimator="@xml/btn_state_list_animator"
         android:text="proceed"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:textColor="@color/app_white"
+        android:textSize="20sp"
+        android:stateListAnimator="@xml/btn_state_list_animator"
+        />
 </androidx.appcompat.widget.LinearLayoutCompat>

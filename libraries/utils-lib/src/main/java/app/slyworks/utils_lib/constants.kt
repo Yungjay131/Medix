@@ -51,6 +51,8 @@ const val KEY_FRAGMENT = "app.slyworks.medix.KEY_FRAGMENT"
 const val KEY_EMAIL = "app.slyworks.medix.KEY_EMAIL"
 const val KEY_PASS = "app.slyworks.medix.KEY_PASS"
 
+const val KEY_ACTIVITY_COUNT = "app.slyworks.medix.KEY_ACTIVITY_COUNT"
+
 const val KEY_FAILED_TRANSACTIONS = "app.slyworks.medix.KEY_FAILED_TRANSACTIONS"
 
 
@@ -81,6 +83,7 @@ const val FCM_REQUEST = "REQUEST"
 const val FCM_RESPONSE_ACCEPTED = "RESPONSE_ACCEPTED"
 const val FCM_RESPONSE_DECLINED = "RESPONSE_DECLINED"
 const val FCM_VOICE_CALL_REQUEST = "FCM_VOICE_CALL_REQUEST"
+const val FCM_VIDEO_CALL_REQUEST = "FCM_VIDEO_CALL_REQUEST"
 const val FCM_NEW_UPDATE_MESSAGE = "FCM_NEW_UPDATE_MESSAGE"
 
 const val REQUEST_PENDING = "REQUEST_PENDING"
@@ -123,6 +126,9 @@ const val EXTRA_INCOMING_VOICE_CALL_RESPONSE_TYPE = "app.slyworks.medix.EXTRA_IN
 const val EXTRA_LOGIN_DESTINATION = "app.slyworks.medix.EXTRA_LOGIN_DESTINATION"
 const val EXTRA_INITIAL_EXTRA = "app.slyworks.medix.EXTRA_INITIAL_EXTRA"
 const val EXTRA_IS_ACTIVITY_RECREATED = "app.slyworks.medix.EXTRA_IS_ACTIVITY_RECREATED"
+
+const val KEY_LOGIN_EMAIL = "app.slyworks.medix.KEY_LOGIN_EMAIL"
+const val KEY_LOGIN_PASSWORD = "app.slyworks.medix.KEY_LOGIN_PASSWORD"
 
 const val EXTRA_ACTIVITY = "app.slyworks.medix.EXTRA_ACTIVITY"
 
@@ -190,12 +196,13 @@ const val FRAGMENT_CHAT_HOST = "fragment_chat_host"
 const val FRAGMENT_PATIENT_HOME = "fragment_patient_home"
 const val FRAGMENT_DOCTOR_HOME = "fragment_doctor_home"
 const val FRAGMENT_PROFILE_HOST = "fragment_profile_host"
-const val FRAGMENT_REG_ZERO = "fragment_registration_0"
-const val FRAGMENT_REG_ONE = "fragment_registration_1"
-const val FRAGMENT_REG_TWO = "fragment_registration_2"
+const val FRAGMENT_REG_0 = "fragment_registration_0"
+const val FRAGMENT_REG_1 = "fragment_registration_1"
+const val FRAGMENT_REG_2 = "fragment_registration_2"
 const val FRAGMENT_REG_PATIENT = "fragment_registration_patient"
 const val FRAGMENT_REG_DOCTOR = "fragment_registration_doctor"
 const val FRAGMENT_REG_OTP = "fragment_registration_otp"
+const val FRAGMENT_REG_VERIFICATION_0 = "fragment_registration_verification_1"
 
 const val SPLASH_ACTIVITY_INTENT_FILTER = "app.slyworks.auth_feature.splash.SplashActivity.open"
 const val ONBOARDING_ACTIVITY_INTENT_FILTER = "app.slyworks.auth_feature.OnBoardingActivity.open"

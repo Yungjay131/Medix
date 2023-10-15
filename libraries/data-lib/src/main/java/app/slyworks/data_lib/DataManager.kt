@@ -1,8 +1,7 @@
 package app.slyworks.data_lib
 
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.helpers.crypto.FirebaseCryptoDelegate
-import app.slyworks.data_lib.vmodels.*
+import app.slyworks.data_lib.model.view_entities.*
 import app.slyworks.room_lib.daos.CallHistoryDao
 import app.slyworks.room_lib.daos.ConsultationRequestDao
 import app.slyworks.room_lib.daos.MessageDao

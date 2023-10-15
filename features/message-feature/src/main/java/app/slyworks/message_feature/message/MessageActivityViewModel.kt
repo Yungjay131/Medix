@@ -8,8 +8,8 @@ import app.slyworks.auth_lib.UsersManager
 import app.slyworks.communication_lib.ConnectionStatusManager
 import app.slyworks.communication_lib.MessageManager
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
 import app.slyworks.utils_lib.TimeHelper
 import app.slyworks.utils_lib.utils.plusAssign
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -28,7 +28,7 @@ sealed class MessageA_UIState{
     data class Loading(val status: Boolean):MessageA_UIState()
     data class StartCallDetailsUpdate(val status:Boolean, val details: FBUserDetailsVModel? = null):MessageA_UIState()
     data class MessageListUpdate(val status:Boolean, val list:List<MessageVModel>? = null):MessageA_UIState()
-    data class UserDetailsUpdate(val details:FBUserDetailsVModel):MessageA_UIState()
+    data class UserDetailsUpdate(val details: FBUserDetailsVModel):MessageA_UIState()
     data class ConnectionStatusUpdate(val status:String):MessageA_UIState()
 }
 class MessageActivityViewModel

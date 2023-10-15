@@ -48,10 +48,10 @@ class SplashActivity : AppCompatActivity() {
         * in the SplashScreen, to ensure proper functioning*/
     override fun onResume() {
         super.onResume()
-       navigateToAppropriateActivity()
+       navigateToCorrectActivity()
     }
 
-    private fun navigateToAppropriateActivity(){
+    private fun navigateToCorrectActivity(){
         viewModel.uiStateLD.observe(this){ state: SplashActivityUIState ->
             when(state){
                 is SplashActivityUIState.SessionInvalid -> {

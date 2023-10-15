@@ -14,60 +14,59 @@ import com.google.firebase.storage.StorageReference
  * Created by Joshua Sylvanus, 2:06 PM, 03/06/2022.
  */
 
-class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
+class FirebaseUtils(private val firebaseDB: FirebaseDatabase,
                     private val firebaseStorage: FirebaseStorage,
-                    private val firebaseFirestore: FirebaseFirestore) {
+                    private val firebaseFS: FirebaseFirestore) {
 
-    fun getIsUserTypingRef(myUID:String,userUID:String):DatabaseReference =
-        firebaseDatabase
-            .reference
+    fun createNewCallHistoryRef(uid:String, docID:String):DocumentReference =
+        firebaseFS.collection("call_history")
+            .document("$uid/$docID")
+
+    fun getCallHistoryRef(uid:String):DocumentReference =
+        firebaseFS.collection("call_history")
+            .document(uid)
+
+    fun getMissedCallHistoryRef(uid:String):com.google.firebase.firestore.Query =
+        firebaseFS.collection("call_history")
+            .whereEqualTo("type", MISSED_CALL)
+
+    fun getEncryptionDetailsRef():DocumentReference =
+        firebaseFS.collection("encryption_details")
+            .document("details")
+
+
+    fun getIsUserTypingRef(myUID:String,
+                           userUID:String):DatabaseReference =
+        firebaseDB.reference
             .child("typing")
             .child(userUID)
             .child(myUID)
 
-    fun getEncryptionDetailsRefFS():DocumentReference =
-        firebaseFirestore
-            .collection("encryption_details")
-            .document("details")
 
-    fun getEncryptionDetailsRef(): DatabaseReference =
-        firebaseDatabase
-            .reference
-            .child("encryption_details")
-
-    fun getUserDataRefForWorkManager(params: String): DatabaseReference {
-        return firebaseDatabase
+    fun getUserFCMRegistrationRef(uid: String): DatabaseReference {
+        return firebaseDB
             .reference
             .child("users")
-            .child(params)
-            .child("details")
-            .child("fcm_registration_token")
-    }
-
-    fun getUserDataRef(params: String): DatabaseReference {
-        return firebaseDatabase
-            .reference
-            .child("users")
-            .child(params)
+            .child(uid)
             .child("details")
             .child("fcm_registration_token")
     }
 
 
-    fun getVoiceCallRequestsRef(param: String): Query {
-        return firebaseDatabase
+    fun getVoiceCallRequestsRef(uid: String): Query {
+        return firebaseDB
             .reference
             .child("voice_call_requests")
-            .child(param)
+            .child(uid)
             .orderByChild("from")
             .equalTo(REQUEST_PENDING)
     }
 
-    fun getVideoCallRequestsRef(param: String): Query {
-        return firebaseDatabase
+    fun getVideoCallRequestsRef(uid: String): Query {
+        return firebaseDB
             .reference
             .child("video_call_requests")
-            .child(param)
+            .child(uid)
             .orderByChild("from")
             .equalTo(REQUEST_PENDING)
     }
@@ -77,7 +76,7 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
     }
 
     fun getUserMessagesRef(params: String): Query {
-        return firebaseDatabase
+        return firebaseDB
             .reference
             .child("messages")
             .child(params)
@@ -87,17 +86,8 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
             .equalTo(DELIVERED)
     }
 
-    fun getFCMRegistrationTokenRef(params: String): DatabaseReference {
-        return firebaseDatabase
-            .reference
-            .child("users")
-            .child(params)
-            .child("details")
-            .child("FCMRegistrationToken")
-    }
-
     fun getAllDoctorsRef(): Query {
-        return firebaseDatabase
+        return firebaseDB
             .reference
             .child("users")
             .orderByChild("details/accountType")
@@ -106,7 +96,7 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
     }
 
     fun getUserDataForUIDRef(params: String): DatabaseReference {
-        return firebaseDatabase
+        return firebaseDB
             .reference
             .child("users")
             .child(params)
@@ -114,49 +104,38 @@ class FirebaseUtils(private val firebaseDatabase: FirebaseDatabase,
     }
 
     fun getUserVerificationStatusRef(UID:String):DatabaseReference =
-        firebaseDatabase
+        firebaseDB
             .reference
             .child("users")
             .child(UID)
             .child("is_verified")
 
-    fun getUserSentConsultationRequestsRef1(params: String): Query {
-        return firebaseDatabase
+    /* received consultation requests */
+    fun getConsultationRequestsRef(uid:String):DatabaseReference{
+        return firebaseDB
             .reference
             .child("requests")
-            .child(params)
-            .child("to")
-            .child("status")
-            .equalTo(REQUEST_ACCEPTED)
+            .child(uid)
+            .child("from")
     }
 
-    fun getUserSentConsultationRequestsRef2(params: String): Query {
-        return firebaseDatabase
+    /* responses to sent consultation requests */
+    fun getConsultationResponsesRef(uid:String):DatabaseReference{
+        return firebaseDB
             .reference
             .child("requests")
-            .child(params)
+            .child(uid)
             .child("to")
-            .child("status")
-            .equalTo(REQUEST_DECLINED)
     }
 
-    fun getUserReceivedConsultationRequestsRef(params: String): Query {
-        return firebaseDatabase
+    fun getReceivedConsultationRequestsRef(uid: String): Query {
+        return firebaseDB
             .reference
             .child("requests")
-            .child(params)
+            .child(uid)
             .child("from")
             .orderByChild("status")
             .equalTo(REQUEST_PENDING)
-    }
-
-    fun getUserSentConsultationRequestsRef(params: String, params2: String): DatabaseReference {
-        return firebaseDatabase
-            .reference
-            .child("requests")
-            .child(params)
-            .child("to")
-            .child(params2)
     }
 
     fun getUserProfileImageStorageRef(params: String): StorageReference {

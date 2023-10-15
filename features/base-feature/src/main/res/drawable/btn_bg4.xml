@@ -5,7 +5,7 @@
 
     <solid
         android:width="1dp"
-        android:color="@color/appRed"/>
+        android:color="@color/app_red"/>
     <corners
         android:radius="@dimen/btn_video_invite_radius"/>
 </shape>

@@ -1,4 +1,4 @@
-package app.slyworks.firebase_commons_lib
+package app.slyworks.data_lib.firebase
 
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

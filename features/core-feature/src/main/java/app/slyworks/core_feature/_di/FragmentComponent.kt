@@ -1,12 +1,10 @@
 package app.slyworks.core_feature._di
 
-import androidx.fragment.app.Fragment
-import app.slyworks.core_feature.ProfileHostFragment
+import app.slyworks.core_feature.profile.ProfileHostFragment
 import app.slyworks.core_feature.chat.ChatHostFragment
-import app.slyworks.core_feature.home.DoctorHomeFragment
-import app.slyworks.core_feature.home.PatientHomeFragment
+import app.slyworks.core_feature.home.HomeDoctorFragment
+import app.slyworks.core_feature.home.HomePatienrFragment
 import app.slyworks.di_base_lib.FragmentScope
-import dagger.BindsInstance
 import dagger.Subcomponent
 
 
@@ -18,9 +16,9 @@ import dagger.Subcomponent
 @Subcomponent(modules = [FragmentViewModelModule::class])
 interface FragmentComponent {
    fun inject(fragment:ChatHostFragment)
-   fun inject(fragment:DoctorHomeFragment)
-   fun inject(fragment:PatientHomeFragment)
-   fun inject(fragment:ProfileHostFragment)
+   fun inject(fragment:HomeDoctorFragment)
+   fun inject(fragment:HomePatienrFragment)
+   fun inject(fragment: ProfileHostFragment)
 
    @Subcomponent.Builder
    interface Builder{

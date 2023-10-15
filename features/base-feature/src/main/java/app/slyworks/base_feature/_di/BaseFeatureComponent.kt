@@ -15,7 +15,8 @@ import app.slyworks.data_lib.firebase.FirebaseUtils
 import app.slyworks.location_lib.LocationTracker
 import app.slyworks.base_feature.network_register.NetworkRegister
 import app.slyworks.data_lib.helpers.auth.MAuthStateListener
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.data_lib.helpers.auth.RegistrationHelper
+import app.slyworks.utils_lib.PreferenceHelper
 import app.slyworks.utils_lib.TimeHelper
 import dagger.BindsInstance
 import dagger.Component
@@ -51,12 +52,12 @@ interface BaseFeatureComponent {
     fun getVibrationManager(): VibrationManager
     fun getNotificationHelper(): NotificationHelper
 
-    fun getPreferenceManager(): PreferenceManager
+    fun getPreferenceManager(): PreferenceHelper
     fun getTimeHelper(): TimeHelper
 
     fun getLoginManager(): LoginManager
     fun getUsersManager(): UsersManager
-    fun getRegistrationManager(): RegistrationManager
+    fun getRegistrationManager(): RegistrationHelper
     fun getVerificationHelper(): VerificationHelper
     fun getPersonsManager(): PersonsManager
     fun getMAuthStateListener(): MAuthStateListener
@@ -79,10 +80,6 @@ interface BaseFeatureComponent {
 
     fun getLocationTracker(): LocationTracker
 
-   /* fun getMessageDao(): MessageDao
-    fun getPersonDao(): PersonDao
-    fun getConsultationRequestDao(): ConsultationRequestDao
-    fun getCallHistoryDao(): CallHistoryDao*/
 
     @Component.Builder
     interface Builder{

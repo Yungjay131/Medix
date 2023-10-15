@@ -68,12 +68,13 @@ dependencies {
     implementation impl_depends.protobuf_javalite
 
     implementation platform(impl_depends.firebase_bom)
+    /* these 2 are used in MFirebaseMessagingService in base-feature module*/
+    api impl_depends.firebase_messaging
+    api impl_depends.firebase_database
     implementation impl_depends.firebase_analytics
     implementation impl_depends.firebase_auth
-    implementation impl_depends.firebase_database
     implementation impl_depends.firebase_storage
     implementation impl_depends.firebase_crashlytics
-    implementation impl_depends.firebase_messaging
     implementation impl_depends.firebase_firestore
 
     implementation impl_depends.retrofit

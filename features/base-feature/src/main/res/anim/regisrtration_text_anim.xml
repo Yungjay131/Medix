@@ -2,12 +2,24 @@
 <set
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:anim/linear_interpolator"
-    android:shareInterpolator="true">
+    android:shareInterpolator="true"
+    android:startOffset="500"
+    >
 
     <alpha
         android:duration="@android:integer/config_shortAnimTime"
         android:fromAlpha="0.0"
         android:toAlpha="1.0"/>
+
+    <scale
+        android:duration="200"
+        android:fromXScale="0.5"
+        android:fromYScale="0.5"
+        android:toXScale="1.0"
+        android:toYScale="1.0"
+        android:pivotX="50%p"
+        android:pivotY="50%p"
+        />
 
    <!-- <translate
         android:duration="@android:integer/config_longAnimTime"

@@ -9,10 +9,10 @@
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/appGrey"
+        android:background="@color/app_grey2"
         android:fitsSystemWindows="true"
         app:collapsedTitleTextAppearance="@style/AppTheme.collapsingToolbar"
-        app:contentScrim="@color/appGrey"
+        app:contentScrim="@color/app_grey2"
         app:expandedTitleTextAppearance="@style/AppTheme.collapsingToolbar"
         app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
         app:layout_scrollEffect="compress">
@@ -94,7 +94,7 @@
             android:id="@+id/tabLayout_frag_chat_host"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/appGrey"
+            android:background="@color/app_grey2"
             app:tabIndicatorColor="@color/appTextColor3"
             app:tabTextColor="@color/appTextColor3"
             app:layout_collapseMode="pin"

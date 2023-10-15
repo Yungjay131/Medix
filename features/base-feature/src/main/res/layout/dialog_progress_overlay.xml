@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#48FFFFFF"
+    >
+
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/l_progress_inner_bg"
+        android:padding="8dp"
+        >
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:indeterminateBehavior="repeat"
+            android:indeterminate="true"
+            android:indeterminateOnly="true"
+            android:indeterminateDuration="5000"
+            app:trackThickness="10dp"
+            app:trackColor="@color/app_grey_lightest"
+            app:indicatorColor="@color/app_pink"
+            app:indicatorDirectionCircular="clockwise"
+            app:indicatorSize="50dp"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progress_circular"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textColor="@color/app_pink"
+            android:textSize="20sp"
+            android:text="loading..."
+            tools:text="loading..."
+            />
+
+
+
+    </RelativeLayout>
+</RelativeLayout>

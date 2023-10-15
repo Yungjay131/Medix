@@ -7,7 +7,7 @@ import app.slyworks.utils_lib.DI_FRAGMENT_VIEWMODEL_KEY
 import app.slyworks.core_feature.calls_history.CallsHistoryFragmentViewModel
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
-import app.slyworks.core_feature.home.HomeFragmentViewModel
+import app.slyworks.core_feature.home.CoreViewModel
 import app.slyworks.core_feature.view_profile.ViewProfileFragmentViewModel
 import app.slyworks.di_base_lib.FragmentScope
 import dagger.Module
@@ -62,13 +62,13 @@ object FragmentViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(HomeFragmentViewModel::class)
+    @ViewModelKey(CoreViewModel::class)
     @FragmentScope
     fun provideHomeFragmentViewModel(viewModelFactory: MViewModelFactory,
                                      activity: AppCompatActivity)
-    : HomeFragmentViewModel
+    : CoreViewModel
             = ViewModelProvider(activity.viewModelStore,viewModelFactory)
-        .get(HomeFragmentViewModel::class.java)
+        .get(CoreViewModel::class.java)
 
     @Provides
     @IntoMap

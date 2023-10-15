@@ -4,9 +4,10 @@ import app.slyworks.utils_lib.KEY_FCM_REGISTRATION
 import app.slyworks.utils_lib.KEY_IS_THERE_NEW_FCM_REG_TOKEN
 import app.slyworks.utils_lib.KEY_LAST_SIGN_IN_TIME
 import app.slyworks.data_lib.firebase.FirebaseUtils
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.helpers.storage.IUserDetailsHelper
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.utils_lib.PreferenceHelper
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
@@ -19,8 +20,9 @@ class LoginHelper(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseUtils: FirebaseUtils,
     private val authStateListener: MAuthStateListener,
-    private val preferenceManager: PreferenceManager,
-    private val userDetailsStore: IUserDetailsStore): ILoginHelper {
+    private val preferenceHelper: PreferenceHelper,
+    private val userDetailsHelper: IUserDetailsHelper
+): ILoginHelper {
 
     private var loggedInStatus:Boolean = false
 
@@ -50,10 +52,10 @@ class LoginHelper(
     override fun logoutUser():Single<Outcome> =
         Single.fromCallable {
             firebaseAuth.signOut()
-            preferenceManager.clearPreference(KEY_LAST_SIGN_IN_TIME)
+            preferenceHelper.clearPreference(KEY_LAST_SIGN_IN_TIME)
             return@fromCallable Outcome.SUCCESS(Unit)
         }.concatMap {
-            userDetailsStore.clearUserDetails()
+            userDetailsHelper.clearUserDetails()
         }
 
     override fun loginUser(email:String, password:String): Single<Outcome> {
@@ -92,7 +94,7 @@ class LoginHelper(
                     else -> throw IllegalArgumentException("don't know the Outcome type")
                 }
             }.concatMap {
-                return@concatMap userDetailsStore.saveUserDetails(it.getTypedValue<FBUserDetailsVModel>())
+                return@concatMap userDetailsHelper.saveUserDetails(it.getTypedValue<FBUserDetailsVModel>())
             }
     }
 
@@ -134,21 +136,21 @@ class LoginHelper(
         /* upload the FCMRegistration token specific to this phone, since
         * its not based on FirebaseUID, but on device */
         Single.create { emitter ->
-            val isThereNewToken = preferenceManager.get(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)!!
+            val isThereNewToken = preferenceHelper.get(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)!!
             if(!isThereNewToken)
                 emitter.onSuccess(Outcome.SUCCESS(value = "no token to upload"))
 
-            val fcmToken:String? = preferenceManager.get(KEY_FCM_REGISTRATION)
+            val fcmToken:String? = preferenceHelper.get(KEY_FCM_REGISTRATION)
             if(fcmToken == null) {
                 Timber.e("synchronisation issues getting token")
                 emitter.onSuccess(Outcome.SUCCESS(value = "synchronisation issues getting token,no token to upload"))
             }
 
-            firebaseUtils.getUserDataRef(firebaseAuth.currentUser!!.uid)
+            firebaseUtils.getUserFCMRegistrationRef(firebaseAuth.currentUser!!.uid)
                 .setValue(fcmToken)
                 .addOnCompleteListener {
                     if(it.isSuccessful) {
-                        preferenceManager.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)
+                        preferenceHelper.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)
                         emitter.onSuccess(Outcome.SUCCESS(value = "token uploaded successfully"))
                     }else
                         emitter.onSuccess(Outcome.FAILURE(value = "token was not successfully uploaded", reason = it.exception?.message))
@@ -161,7 +163,7 @@ class LoginHelper(
                 .get()
                 .addOnCompleteListener {
                     if(it.isSuccessful){
-                        val user:FBUserDetailsVModel = it.result!!.getValue(FBUserDetailsVModel::class.java)!!
+                        val user: FBUserDetailsVModel = it.result!!.getValue(FBUserDetailsVModel::class.java)!!
 
                         loggedInStatus = true
 

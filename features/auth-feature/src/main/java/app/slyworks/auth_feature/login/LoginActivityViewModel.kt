@@ -2,129 +2,116 @@ package app.slyworks.auth_feature.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import app.slyworks.auth_lib.LoginManager
+import app.slyworks.base_feature.BaseViewModel
 import app.slyworks.base_feature.VibrationManager
+import app.slyworks.base_feature.network_register.INetworkRegister
 import app.slyworks.utils_lib.Outcome
-import app.slyworks.base_feature.network_register.NetworkRegister
+import app.slyworks.data_lib.repositories.login.ILoginRepository
+import app.slyworks.utils_lib.ACCOUNT_NOT_VERIFIED_PROMPT
+import app.slyworks.utils_lib.NO_NETWORK_CONNECTION_PROMPT
 import app.slyworks.utils_lib.utils.plusAssign
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 
 /**
- *Created by Joshua Sylvanus, 6:39 AM, 07/06/2022.
+ * Created by Joshua Sylvanus, 6:39 AM, 07/06/2022.
  */
+
+sealed class LoginUIState {
+    object LoadingStarted : LoginUIState()
+    object LoadingStopped : LoginUIState()
+
+    object LoadingForgotPasswordStarted : LoginUIState()
+    object LoadingForgotPasswordStopped : LoginUIState()
+
+    object ResetPasswordEmailSuccess : LoginUIState()
+    data class ResetPasswordEmailFailure(val reason:String) : LoginUIState()
+
+    object LoginSuccess : LoginUIState()
+
+    data class AccountNotVerified(val message:String) : LoginUIState()
+
+    data class Message(val message:String) :LoginUIState()
+}
+
 class LoginActivityViewModel
     @Inject
-    constructor(private val networkRegister: NetworkRegister,
-                private val loginManager: LoginManager,
-                private val vibrationManager: VibrationManager)
-    : ViewModel(){
+    constructor(override val networkRegister: INetworkRegister,
+                private val vibrationManager: VibrationManager,
+                private val repository: ILoginRepository) : BaseViewModel(){
     //region Vars
-    private val _passwordResetStatus:MutableLiveData<Boolean> = MutableLiveData()
-    val passwordResetLiveData:LiveData<Boolean>
-    get() = _passwordResetStatus as LiveData<Boolean>
+    private val _uiStateLD: MutableLiveData<LoginUIState> = MutableLiveData()
+    val uiStateLD: LiveData<LoginUIState> =_uiStateLD
 
-    private val _progressStateLiveData:MutableLiveData<Boolean> = MutableLiveData()
-    val progressStateLiveData:LiveData<Boolean>
-    get() = _progressStateLiveData
-
-    private val _loginSuccessLiveData:MutableLiveData<Boolean> = MutableLiveData()
-    val loginSuccessLiveData:LiveData<Boolean>
-    get() = _loginSuccessLiveData as LiveData<Boolean>
-
-    private val _resetPasswordFailureDataLiveData:MutableLiveData<String> = MutableLiveData()
-    val resetPasswordFailureDataLiveData:LiveData<String>
-        get() = _resetPasswordFailureDataLiveData as LiveData<String>
-
-    private val _resetPasswordFailedLiveData:MutableLiveData<Boolean> = MutableLiveData()
-    val resetPasswordFailedLiveData:LiveData<Boolean>
-    get() = _resetPasswordFailedLiveData as LiveData<Boolean>
-
-    private val _messageLiveData:MutableLiveData<String> = MutableLiveData()
-    val messageLiveData:LiveData<String>
-    get() = _messageLiveData
-
-    private val _accountNotVerifiedLD:MutableLiveData<Boolean> = MutableLiveData()
-    val accountNotVerifiedLD:LiveData<Boolean>
-    get() = _accountNotVerifiedLD
-
-    private val _forgotPasswordLoadingLD:MutableLiveData<Boolean> = MutableLiveData()
-    val forgotPasswordLoadingLD:LiveData<Boolean>
-    get() = _forgotPasswordLoadingLD
-
-    var emailVal:String = ""
-    var passwordVal:String = ""
-
-    private val disposables:CompositeDisposable = CompositeDisposable()
-    private var disposables2:Disposable = Disposable.empty()
+    override val disposables:CompositeDisposable = CompositeDisposable()
     //endregion
 
     fun vibrate(type:Int) = vibrationManager.vibrate(type)
 
-    fun getNetworkStatus() = networkRegister.getNetworkStatus()
-
-    fun subscribeToNetwork():LiveData<Boolean>{
-        val l:MutableLiveData<Boolean> = MutableLiveData()
-
-        disposables2 = networkRegister
-            .subscribeToNetworkUpdates()
-            .observeOn(Schedulers.io())
-            .subscribeOn(Schedulers.io())
-            .subscribe {
-                l.postValue(it)
-            }
-
-        return l
-    }
-
-    fun unsubscribeToNetwork(){
-        networkRegister.unsubscribeToNetworkUpdates()
-        disposables2.dispose()
-    }
-
     fun login(email:String, password:String){
         if(!networkRegister.getNetworkStatus()){
-            _messageLiveData.postValue("Please check your connection and try again")
+            _uiStateLD.setValue(LoginUIState.Message(NO_NETWORK_CONNECTION_PROMPT))
             return
         }
 
         disposables +=
-        loginManager
-            .loginUser(email, password)
-            .doOnSubscribe { _progressStateLiveData.postValue(true)  }
+        repository.login(email, password)
             .subscribeOn(Schedulers.io())
+            .doOnSubscribe {
+                _uiStateLD.setValue(LoginUIState.LoadingStarted)
+            }
+            .subscribeOn(AndroidSchedulers.mainThread())
             .observeOn(Schedulers.io())
-            .subscribe { it: Outcome ->
-                _progressStateLiveData.postValue(false)
+            .subscribe({ it: Outcome ->
+                _uiStateLD.postValue(LoginUIState.LoadingStopped)
 
                 when{
-                    it.isSuccess -> _loginSuccessLiveData.postValue(true)
-                    it.isFailure -> _messageLiveData.postValue(it.getAdditionalInfo())
-                    it.isError -> _accountNotVerifiedLD.postValue(true)
+                    it.isSuccess ->
+                        _uiStateLD.postValue(LoginUIState.LoginSuccess)
+                    it.isFailure ->
+                        _uiStateLD.postValue(LoginUIState.Message(it.getAdditionalInfo()!!))
+                    it.isError ->
+                        _uiStateLD.postValue(LoginUIState.AccountNotVerified(ACCOUNT_NOT_VERIFIED_PROMPT))
                 }
-            }
+            },{
+                Timber.e("error occurred:", it)
+                _uiStateLD.postValue(LoginUIState.LoadingStopped)
+                _uiStateLD.postValue(LoginUIState.Message("an error occurred"))
+            })
     }
 
     fun handleForgotPassword(email: String){
         if(!networkRegister.getNetworkStatus()){
-            _messageLiveData.postValue("Please check your connection and try again")
+            _uiStateLD.postValue(LoginUIState.Message(NO_NETWORK_CONNECTION_PROMPT))
             return
         }
 
         disposables +=
-        loginManager
-            .handleForgotPassword(email)
-            .doOnSubscribe { _forgotPasswordLoadingLD.postValue(true) }
+        repository.handleForgotPassword(email)
+            .doOnSubscribe {
+                _uiStateLD.postValue(LoginUIState.LoadingForgotPasswordStarted)
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .subscribe { it:Boolean ->
-                _progressStateLiveData.postValue(false)
-                _passwordResetStatus.postValue(it)
-            }
+            .subscribe({ it:Outcome ->
+                _uiStateLD.postValue(LoginUIState.LoadingForgotPasswordStopped)
+
+                when{
+                    it.isSuccess ->
+                    _uiStateLD.postValue(LoginUIState.ResetPasswordEmailSuccess)
+                    it.isFailure || it.isError ->
+                    _uiStateLD.postValue(LoginUIState.ResetPasswordEmailFailure(it.getAdditionalInfo()!!))
+                }
+            },
+            {
+                    Timber.e("error occurred:", it)
+                    _uiStateLD.postValue(LoginUIState.LoadingStopped)
+                    _uiStateLD.postValue(LoginUIState.Message("an error occurred"))
+            })
     }
 
     override fun onCleared() {

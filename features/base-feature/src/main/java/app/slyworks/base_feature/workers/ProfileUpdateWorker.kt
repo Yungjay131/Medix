@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.slyworks.utils_lib.KEY_UPLOAD_USER_PROFILE
-import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
 import app.slyworks.data_lib.firebase.FirebaseUtils
-import app.slyworks.utils_lib.PreferenceManager
+import app.slyworks.data_lib.helpers.storage.IUserDetailsHelper
+import app.slyworks.utils_lib.PreferenceHelper
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -20,9 +20,11 @@ class ProfileUpdateWorker(private val context: Context,
                           params:WorkerParameters) : CoroutineWorker(context,params) {
     //region Vars
     @Inject
-    lateinit var preferenceManager: PreferenceManager
+    lateinit var preferenceHelper: PreferenceHelper
+
     @Inject
-    lateinit var dataManager: DataManager
+    lateinit var userDetailsHelper: IUserDetailsHelper
+
     @Inject
     lateinit var firebaseUtils: FirebaseUtils
     //endregion
@@ -35,15 +37,16 @@ class ProfileUpdateWorker(private val context: Context,
     }
 
     override suspend fun doWork(): Result {
-       val isChanged:Boolean = preferenceManager.get(KEY_UPLOAD_USER_PROFILE, false) ?: return Result.failure()
+       val isChanged:Boolean = preferenceHelper.get(KEY_UPLOAD_USER_PROFILE, false) ?: return Result.failure()
        if(!isChanged)
            return Result.failure()
 
         var r:Result = Result.retry()
 
-        val details: FBUserDetailsVModel =
-            dataManager.getUserDetailsProperty<FBUserDetailsVModel>("userDetails")
-            ?: return Result.success()
+        val details: FBUserDetailsVModel? =
+            userDetailsHelper.getUserDetailsProperty<FBUserDetailsVModel>()
+        if(details == null)
+          return Result.success()
 
         /*TODO:there should be a try-catch-finally here*/
         return suspendCoroutine<Result> { continuation ->

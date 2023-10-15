@@ -1,7 +1,6 @@
 package app.slyworks.auth_feature.registration
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
@@ -18,47 +17,51 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.lifecycle.lifecycleScope
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.R
 import app.slyworks.auth_feature.databinding.FragmentRegistrationDoctorBinding
-import app.slyworks.auth_lib.VerificationDetails
 import app.slyworks.base_feature.ui.TermsAndConditionsBSDialog
+import app.slyworks.data_lib.model.models.VerificationDetails
 import app.slyworks.utils_lib.LOGIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.utils.closeKeyboard
 
 import app.slyworks.utils_lib.utils.displayMessage
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.px
 import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 import app.slyworks.base_feature.R as Base_R
 
 class RegistrationDoctorFragment : Fragment() {
-    private lateinit var binding: FragmentRegistrationDoctorBinding
-    private lateinit var viewModel: RegistrationActivityViewModel
-
-    private var createdLayoutsList:MutableList<View> = mutableListOf()
-    private val FALLBACK_ID:Int = R.id._view_horizontal_1
-    private var lastCreatedViewID:Int = FALLBACK_ID
+    //region Vars
     private var isThereCreatedLayout:Boolean = false
 
+    @IdRes
+    private val FALLBACK_ID:Int = R.id._view_horizontal_1
+    @IdRes
+    private var lastCreatedViewID:Int = FALLBACK_ID
+
+    private var createdLayoutsList:MutableList<View> = mutableListOf()
+
     private val disposables = CompositeDisposable()
+
+    private lateinit var navigator:FragmentContinuationStateful
+    private lateinit var viewModel: RegistrationActivityViewModel
+
+    private lateinit var binding: FragmentRegistrationDoctorBinding
+    //endregion
 
     companion object {
         @JvmStatic
         fun newInstance(): RegistrationDoctorFragment = RegistrationDoctorFragment()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        viewModel = (context as RegistrationActivity).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -74,48 +77,64 @@ class RegistrationDoctorFragment : Fragment() {
     }
 
     private fun initData(){
-        viewModel.progressLiveData.observe(viewLifecycleOwner){
-            (requireActivity() as IRegViewModel).toggleProgressView(it)
-        }
-        viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+        navigator = (requireActivity() as RegistrationActivity).navigator
+        viewModel = (requireActivity() as RegistrationActivity).viewModel
 
-        viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){ _ ->
+        viewModel.uiStateLD.observe(viewLifecycleOwner){
+            when(it){
+                is RegistrationUIState.RegistrationSuccess -> {
+                    val dialog:SelectVerificationMethodBSDialog =
+                        SelectVerificationMethodBSDialog.newInstance()
 
-            lifecycleScope.launch {
-                displayMessage("verification successful", binding.root)
+                    disposables +=
+                        dialog.getSubject()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                dialog.dismiss()
 
-                delay(1_000)
+                                when(it){
+                                    VerificationDetails.EMAIL -> viewModel.verifyByEmail()
+                                    VerificationDetails.OTP ->
+                                        navigator.show(RegistrationOTP1Fragment.newInstance())
+                                            .navigate()
+                                }
+                            }
 
-                Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
-                    .newAndClearTask()
-                    .navigate()
-            }
+                    dialog.show(requireActivity().supportFragmentManager,"")
+                }
 
-        }
+                is RegistrationUIState.EmailVerificationSuccess -> {
+                    displayMessage("verification successful", binding.root)
 
-        viewModel.registrationSuccessfulLiveData.observe(viewLifecycleOwner){
-            val dialog:SelectVerificationMethodBSDialog =
-                SelectVerificationMethodBSDialog.getInstance()
-
-            disposables +=
-                dialog.getSubject()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        dialog.dismiss()
-
-                        if(it == VerificationDetails.OTP) {
-                            (requireActivity() as RegistrationActivity).navigator
-                                .show(RegistrationOTP1Fragment.newInstance())
+                    /* delay 1 second then navigate back to LoginActivity */
+                    Completable.timer(1_000, TimeUnit.MILLISECONDS)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                                .newAndClearTask()
                                 .navigate()
-                            return@subscribe
-                        }
+                        },
+                            {
+                                Timber.e(it)
 
-                        viewModel.verifyByEmail()
-                    }
+                                Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                                    .newAndClearTask()
+                                    .navigate()
+                            })
+                }
 
-            dialog.show(requireActivity().supportFragmentManager,"")
+                is RegistrationUIState.EmailVerificationFailure ->
+                    displayMessage(it.error, binding.root)
+
+                is RegistrationUIState.Message ->
+                    displayMessage(it.message, binding.root)
+
+                else -> {}
+            }
         }
+
     }
 
     private fun initViews(){
@@ -167,13 +186,32 @@ class RegistrationDoctorFragment : Fragment() {
         }
 
         binding.btnSignUp.setOnClickListener {
+            requireActivity().closeKeyboard()
+
             if(!check())
                 return@setOnClickListener
 
-            viewModel.registrationDetails.history = parseUserSpecialization()
-
+            viewModel.setSpecialization(parseUserSpecialization())
             viewModel.registerUser()
         }
+    }
+
+    private fun parseUserSpecialization():List<String>{
+        val list = mutableListOf<CheckBox>(
+            binding.cbGeneralHealth)
+
+        val list2:List<String> =
+            list.filter { it.isChecked }
+                .map { it.text.toString() }
+
+        val list3 = mutableListOf<String>()
+        if(createdLayoutsList.isNotEmpty()){
+            createdLayoutsList.forEach { layout ->
+                list3.add(layout.findViewById<EditText>(Base_R.id.etText_layout_text).text.toString().trim())
+            }
+        }
+
+        return mutableListOf<String>().plus(list2).plus(list3)
     }
 
     private fun check():Boolean {
@@ -197,39 +235,57 @@ class RegistrationDoctorFragment : Fragment() {
         return status
     }
 
-    private fun parseUserSpecialization():MutableList<String>{
-        val list = mutableListOf<CheckBox>(
-            binding.cbGeneralHealth)
-
-        val list2:List<String> =
-            list.filter { it.isChecked }
-                .map { it.text.toString() }
-
-        val list3 = mutableListOf<String>()
-        if(createdLayoutsList.isNotEmpty()){
-            createdLayoutsList.forEach { layout ->
-                list3.add(layout.findViewById<EditText>(Base_R.id.etText_layout_text).text.toString().trim())
-            }
-        }
-
-        return mutableListOf<String>().plus(list2).plus(list3) as MutableList<String>
-    }
 
     private fun addLayout() {
         val inflater: LayoutInflater = LayoutInflater.from(requireContext())
 
-        val layout: View = inflater.inflate(Base_R.layout.layout_text, binding.container, false)
+        /* inflate the custom editText view */
+        val layout: View = inflater.inflate(app.slyworks.base_feature.R.layout.layout_text, binding.container, false)
+
+        /* generate an ID that would be used to identify it later */
         layout.setId(View.generateViewId())
 
+        /* get constrainSet for the container ConstraintLayout thats housing the
+        * newly custom editText layout */
         val constraintSet: ConstraintSet = ConstraintSet()
         constraintSet.clone(binding.container)
 
+        /* set the height of the custom EditText to 55dp??? */
         val layoutParams: ViewGroup.LayoutParams = layout.layoutParams
         layoutParams.height = 55
 
-        val ivCancel: ImageView = layout.findViewById(Base_R.id.ivCancel)
-        ivCancel.setOnClickListener { removeCreatedView(layout) }
+        /* set the click listener on the 'x' imageView of the custom EdtText */
+        val ivCancel: ImageView = layout.findViewById(app.slyworks.base_feature.R.id.ivCancel)
+        ivCancel.setOnClickListener {
+            /* remove this created view */
+            binding.container.removeView(layout)
+            createdLayoutsList.remove(layout)
 
+            if(createdLayoutsList.isEmpty())
+                isThereCreatedLayout = false
+
+            /* setting the anchor view for next created layout */
+            lastCreatedViewID = createdLayoutsList.lastOrNull()?.id ?: FALLBACK_ID
+
+            /* realign the add button to be below this added layout */
+            val constraintSet: ConstraintSet = ConstraintSet()
+            constraintSet.clone(binding.container)
+
+            constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.START, binding.container.id, ConstraintSet.START)
+            constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.END, binding.container.id, ConstraintSet.END)
+            constraintSet.connect(
+                binding.btnAddSpecialization.id,
+                ConstraintSet.TOP,
+                lastCreatedViewID,
+                ConstraintSet.BOTTOM,
+                resources.getDimensionPixelSize(app.slyworks.base_feature.R.dimen.layout_size_margin2))
+
+            constraintSet.applyTo(binding.container)
+
+            toggleEditStateForAllCustomLayout()
+        }
+
+        /* add a divider view after each custom EditText layout */
         val lp:ViewGroup.LayoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1.px)
         val divider:View = View(context)
         divider.setLayoutParams(lp)
@@ -243,30 +299,32 @@ class RegistrationDoctorFragment : Fragment() {
         constraintSet.connect(
             layout.id,
             ConstraintSet.TOP,
-            getAppropriateId(),
+            lastCreatedViewID,
             ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(Base_R.dimen.layout_size_margin)
+            resources.getDimensionPixelSize(app.slyworks.base_feature.R.dimen.layout_size_margin)
         )
 
         constraintSet.constrainWidth(layout.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.constrainHeight(layout.id, ConstraintSet.WRAP_CONTENT)
 
-        setAppropriateId(layout.id)
+        /* setting the anchor view for next created layout to this newly created layout */
+        lastCreatedViewID = layout.id
 
         constraintSet.connect(divider.id, ConstraintSet.START, binding.container.id, ConstraintSet.START)
         constraintSet.connect(divider.id, ConstraintSet.END, binding.container.id, ConstraintSet.END)
         constraintSet.connect(
             divider.id,
             ConstraintSet.TOP,
-            getAppropriateId(),
+            lastCreatedViewID,
             ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(Base_R.dimen.divider_top_margin)
+            resources.getDimensionPixelSize(app.slyworks.base_feature.R.dimen.divider_top_margin)
         )
 
         constraintSet.constrainWidth(layout.id, ConstraintSet.MATCH_CONSTRAINT)
         constraintSet.constrainHeight(layout.id, ConstraintSet.WRAP_CONTENT)
 
-        setAppropriateId(divider.id)
+        /* setting the anchor view for next created layout */
+        lastCreatedViewID = divider.id
 
         constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.START, binding.container.id, ConstraintSet.START)
         constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.END, binding.container.id, ConstraintSet.END)
@@ -275,10 +333,14 @@ class RegistrationDoctorFragment : Fragment() {
             ConstraintSet.TOP,
             layout.id,
             ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(Base_R.dimen.layout_size_margin2)
+            resources.getDimensionPixelSize(app.slyworks.base_feature.R.dimen.layout_size_margin2)
         )
 
+        /* apply all the changes to the host container */
         constraintSet.applyTo(binding.container)
+
+
+        /* do an alpha animation to fade in the newly created layout */
         layout.alpha = 0F
         val objectAnimator: ObjectAnimator = ObjectAnimator.ofFloat(
             layout,
@@ -290,70 +352,37 @@ class RegistrationDoctorFragment : Fragment() {
 
         isThereCreatedLayout = true
 
-        saveView(layout)
+        /* add it to list of views to be validated */
+        createdLayoutsList.add(layout)
 
-        redrawViews()
+        toggleEditStateForAllCustomLayout()
     }
 
-    private fun removeCreatedView(layout:View){
-        binding.container.removeView(layout)
-        createdLayoutsList.remove(layout)
-
+    private fun toggleEditStateForAllCustomLayout(){
         if(createdLayoutsList.isEmpty())
-            isThereCreatedLayout = false
+            return
 
-        setAppropriateId(createdLayoutsList.lastOrNull()?.id ?: FALLBACK_ID)
-        realignButton()
-        redrawViews()
-    }
+        createdLayoutsList.forEachIndexed {index:Int, constraintLayout: View ->
+            val editText:EditText = constraintLayout.findViewById(app.slyworks.base_feature.R.id.etText_layout_text)
+            val imageView:ImageView = constraintLayout.findViewById(app.slyworks.base_feature.R.id.ivCancel)
 
-    private fun saveView(layout:View):Boolean = createdLayoutsList.add(layout)
-
-    private fun realignButton(){
-        val constraintSet: ConstraintSet = ConstraintSet()
-        constraintSet.clone(binding.container)
-
-        constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.START, binding.container.id, ConstraintSet.START)
-        constraintSet.connect(binding.btnAddSpecialization.id, ConstraintSet.END, binding.container.id, ConstraintSet.END)
-        constraintSet.connect(
-            binding.btnAddSpecialization.id,
-            ConstraintSet.TOP,
-            getAppropriateId(),
-            ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(Base_R.dimen.layout_size_margin2))
-
-        constraintSet.applyTo(binding.container)
-    }
-
-    private fun redrawViews(){
-        if(createdLayoutsList.isEmpty()) return
-
-        createdLayoutsList.forEach { constraintLayout ->
-            val editText:EditText = constraintLayout.findViewById(Base_R.id.etText_layout_text)
-            val imageView:ImageView = constraintLayout.findViewById(Base_R.id.ivCancel)
-
-            toggleEditState(editText, false)
-            imageView.visibility = View.INVISIBLE
-            if(constraintLayout == createdLayoutsList.last()){
-                toggleEditState(editText, true)
+            /* is the last editText layout, make 'x' imageView visible and
+            make it editable*/
+            if(index == createdLayoutsList.lastIndex){
                 imageView.visibility = View.VISIBLE
+                editText.keyListener = editText.tag as KeyListener
+            }else {
+                imageView.visibility = View.INVISIBLE
+
+                if(editText.keyListener == null)
+                    return
+
+                editText.tag = editText.keyListener
+                editText.keyListener = null
+
             }
         }
 
     }
-
-    private fun toggleEditState(editText: EditText, status:Boolean){
-        if (status) {
-            editText.keyListener = editText.tag as KeyListener
-        }else{
-            if(editText.keyListener == null) return
-
-            editText.tag = editText.keyListener
-            editText.keyListener = null
-        }
-    }
-
-    private fun setAppropriateId(id:Int){ lastCreatedViewID = id }
-    private fun getAppropriateId():Int = lastCreatedViewID
 
 }

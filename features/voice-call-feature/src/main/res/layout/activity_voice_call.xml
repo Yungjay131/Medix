@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@id/guide_horizontal_2"
         android:src="@drawable/ic_call_end"
         android:tint="@color/white"
-        android:backgroundTint="@color/appRed"
+        android:backgroundTint="@color/app_red"
         android:outlineSpotShadowColor="@android:color/transparent"
         app:maxImageSize="25dp"
         app:fabCustomSize="60dp"
@@ -86,7 +86,7 @@
         app:layout_constraintBottom_toTopOf="@id/guide_horizontal_2"
         android:src="@drawable/ic_call_end"
         android:tint="@color/white"
-        android:backgroundTint="@color/appRed"
+        android:backgroundTint="@color/app_red"
         android:outlineSpotShadowColor="@android:color/transparent"
         app:maxImageSize="25dp"
         app:fabCustomSize="60dp" />

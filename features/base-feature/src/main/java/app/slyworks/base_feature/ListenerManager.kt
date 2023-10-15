@@ -2,9 +2,9 @@ package app.slyworks.base_feature
 
 import android.content.Context
 import android.graphics.Bitmap
-import app.slyworks.communication_lib.CallManager
-import app.slyworks.communication_lib.ConnectionStatusManager
-import app.slyworks.communication_lib.ConsultationRequestsManager
+import app.slyworks.data_lib.helpers.call.ICallHelper
+import app.slyworks.data_lib.helpers.connection_listener.IConnectionStatusHelper
+import app.slyworks.data_lib.helpers.consultations.IConsultationsHelper
 import app.slyworks.utils_lib.utils.plusAssign
 import com.bumptech.glide.Glide
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -13,14 +13,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 /**
- *Created by Joshua Sylvanus, 7:30 PM, 20/05/2022.
+ * Created by Joshua Sylvanus, 7:30 PM, 20/05/2022.
  */
 class ListenerManager(
     private val context: Context,
-    private val callManager: CallManager,
-    private val consultationRequestsManager: ConsultationRequestsManager,
+    private val callHelper: ICallHelper,
+    private val consultationsHelper: IConsultationsHelper,
     private val notificationHelper: NotificationHelper,
-    private val connectionStatusManager: ConnectionStatusManager){
+    private val connectionStatusManager: IConnectionStatusHelper){
 
     private val disposables:CompositeDisposable = CompositeDisposable()
     private val disposables2:CompositeDisposable = CompositeDisposable()
@@ -44,16 +44,16 @@ class ListenerManager(
     private fun observeMyConnectionStatusChanges(){
         /* should be set only once per app creation, preferably from the Application class
          * or from MainActivity (BaseActivity)*/
-        disposables2 +=
+      /*  disposables2 +=
         connectionStatusManager.setMyConnectionStatusHandler()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
-            .subscribe()
+            .subscribe()*/
     }
 
     private fun observeNewConsultationRequests(){
-        disposables +=
-        consultationRequestsManager.listenForConsultationRequests()
+      /*  disposables +=
+        consultationsHelper.listenForConsultationRequests()
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
             .subscribe {
@@ -62,31 +62,31 @@ class ListenerManager(
                     fullName = it.details.fullName,
                     toFCMRegistrationToken = it.details.fcm_registration_token,
                     message = "${it.details.fullName} would like a consultation with you")
-            }
+            }*/
     }
 
     private fun observeIncomingVideoCalls(){
-        disposables +=
-        callManager.listenForVideoCallRequests()
+        /*disposables +=
+        callHelper.listenForVideoCallRequests()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 notificationHelper.createIncomingVideoCallNotification(it)
-            }
+            }*/
     }
 
     private fun observeIncomingVoiceCalls(){
-        disposables +=
-        callManager.listenForVoiceCallRequests()
+     /*   disposables +=
+        callHelper.listenForVoiceCallRequests()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe {
                 val bitmap:Bitmap = Glide.with(context)
                     .asBitmap()
-                    .load(it.imageUri)
+                    .load(it)
                     .submit()
                     .get()
                 notificationHelper.createIncomingVoiceCallNotification(it, bitmap)
-            }
+            }*/
     }
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import app.slyworks.core_feature.calls_history.CallsHistoryFragmentViewModel
 import app.slyworks.core_feature.chat.ChatFragmentViewModel
 import app.slyworks.core_feature.chat.ChatHostFragmentViewModel
-import app.slyworks.core_feature.home.HomeFragmentViewModel
+import app.slyworks.core_feature.home.CoreViewModel
 import app.slyworks.core_feature.main.HomeActivityViewModel
 import app.slyworks.core_feature.view_profile.ViewProfileFragmentViewModel
 import javax.inject.Provider
@@ -32,8 +32,8 @@ constructor(private val viewModels:
             modelClass.isAssignableFrom(ChatFragmentViewModel::class.java) ->
                 viewModels[ChatFragmentViewModel::class.java] as T
 
-            modelClass.isAssignableFrom(HomeFragmentViewModel::class.java) ->
-                viewModels[HomeFragmentViewModel::class.java] as T
+            modelClass.isAssignableFrom(CoreViewModel::class.java) ->
+                viewModels[CoreViewModel::class.java] as T
 
             modelClass.isAssignableFrom(ViewProfileFragmentViewModel::class.java) ->
                 viewModels[ViewProfileFragmentViewModel::class.java] as T

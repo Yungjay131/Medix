@@ -8,7 +8,7 @@ import app.slyworks.base_feature.ui.ExitDialog
 open class MOnBackPressedCallback(private val activity: Activity)
     : OnBackPressedCallback(true) {
     override fun handleOnBackPressed() {
-        if(!ActivityUtils.isLastActivity()){
+        if(!ActivityHelper.isLastActivity()){
             isEnabled = false
             activity.onBackPressed()
             return

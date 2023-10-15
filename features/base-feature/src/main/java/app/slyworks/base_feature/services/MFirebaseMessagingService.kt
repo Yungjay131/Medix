@@ -1,23 +1,30 @@
 package app.slyworks.base_feature.services
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.widget.Toast
-import app.slyworks.auth_lib.LoginManager
-import app.slyworks.auth_lib.UsersManager
-import app.slyworks.base_feature.ActivityUtils
+import app.slyworks.base_feature.ActivityHelper
 import app.slyworks.base_feature.NotificationHelper
 import app.slyworks.base_feature.WorkInitializer
 import app.slyworks.base_feature._di.MFirebaseMSComponent
-import app.slyworks.constants_lib.*
 import app.slyworks.data_lib.DataManager
-import app.slyworks.data_lib.vmodels.FBUserDetailsVModel
-import app.slyworks.data_lib.vmodels.MessageVModel
+import app.slyworks.data_lib.model.view_entities.FBUserDetailsVModel
+import app.slyworks.data_lib.model.view_entities.MessageVModel
 import app.slyworks.base_feature.network_register.NetworkRegister
+import app.slyworks.data_lib.firebase.FirebaseUtils
+import app.slyworks.data_lib.helpers.auth.ILoginHelper
+import app.slyworks.data_lib.helpers.storage.IUserDetailsHelper
+import app.slyworks.data_lib.helpers.users.IUsersHelper
+import app.slyworks.data_lib.helpers.users.UsersHelper
 import app.slyworks.utils_lib.*
 import com.bumptech.glide.Glide
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.CompletableEmitter
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -28,17 +35,23 @@ import javax.inject.Inject
 class MFirebaseMessagingService : FirebaseMessagingService(){
     //region Vars
       @Inject
-      lateinit var preferenceManager: PreferenceManager
+      lateinit var preferenceHelper: PreferenceHelper
+
       @Inject
-      lateinit var loginManager: LoginManager
-      @Inject
-      lateinit var usersManager: UsersManager
+      lateinit var loginHelper: ILoginHelper
+
       @Inject
       lateinit var notificationHelper: NotificationHelper
+
       @Inject
-      lateinit var dataManager: DataManager
+      lateinit var userDetailsHelper: IUserDetailsHelper
+
+      @Inject
+      lateinit var usersHelper: IUsersHelper
+
       @Inject
       lateinit var networkRegister: NetworkRegister
+
       @Inject
       lateinit var workInitializer: WorkInitializer
     //endregion
@@ -49,27 +62,39 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
              .inject(this)
       }
 
+    @SuppressLint("CheckResult")
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
-        GlobalScope.launch(Dispatchers.IO) {
-            preferenceManager.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, true)
-            preferenceManager.set(KEY_FCM_REGISTRATION, token)
+        preferenceHelper.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, true)
+        preferenceHelper.set(KEY_FCM_REGISTRATION, token)
 
-            if(networkRegister.getNetworkStatus() && loginManager.getLoginStatus())
-                usersManager.sendFCMTokenToServer(token)
-            else
-                 /*enqueue task for upload since there is no network connection or user is not logged in */
-                workInitializer.initFCMTokenUploadWork(token)
+        if (networkRegister.getNetworkStatus() && loginHelper.getLoggedInStatus()) {
+            preferenceHelper.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)
+            preferenceHelper.clearPreference(KEY_FCM_REGISTRATION)
 
-        }
+            usersHelper.sendFCMTokenToServer(token)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        preferenceHelper.set(KEY_IS_THERE_NEW_FCM_REG_TOKEN, false)
+                        preferenceHelper.clearPreference(KEY_FCM_REGISTRATION)
+                    },
+                    {
+                        Timber.e(it)
+                    })
+        } else
+            /*enqueue task for upload since there is no network connection or user is not logged in */
+            workInitializer.initFCMTokenUploadWork(token)
     }
 
+    @SuppressLint("CheckResult")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-       if(ActivityUtils.isAppInForeground())
+       if(ActivityHelper.isAppInForeground())
             return
 
-       when(getMessageType(remoteMessage)){
+       when(remoteMessage.data.get("type")!!){
            FCM_NEW_MESSAGE -> {
                val message: MessageVModel =
                    MessageVModel(
@@ -88,15 +113,17 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                        receiverImageUri = remoteMessage.data["receiver_image_uri"]!!
                    )
 
-               CoroutineScope(Dispatchers.IO).launch {
+               Completable.fromCallable{
                    val bitmap: Bitmap = Glide.with(this@MFirebaseMessagingService.applicationContext)
                        .asBitmap()
                        .load(message.senderImageUri)
                        .submit()
                        .get()
-
-                  notificationHelper.createNewMessageNotification(message, bitmap)
+                   notificationHelper.createNewMessageNotification(message, bitmap)
                }
+               .observeOn(Schedulers.io())
+               .subscribeOn(Schedulers.io())
+               .subscribe()
            }
 
            FCM_REQUEST ->{
@@ -109,7 +136,7 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
 
            FCM_RESPONSE_ACCEPTED, FCM_RESPONSE_DECLINED ->{
                val fromUID:String = remoteMessage.data["fromUID"]!!
-               val toUID:String = dataManager.getUserDetailsProperty<String>("firebaseUID")!!
+               val toUID:String = userDetailsHelper.getUserDetailsProperty<String>("firebaseUID")!!
                val message:String = remoteMessage.data["message"]!!
                val status:String = remoteMessage.data["status"]!!
                val fullName:String = remoteMessage.data["fullName"]!!
@@ -133,24 +160,24 @@ class MFirebaseMessagingService : FirebaseMessagingService(){
                   specialization = null
               )
 
-               CoroutineScope(Dispatchers.IO).launch {
-                 val bitmap: Bitmap = Glide.with(this@MFirebaseMessagingService.applicationContext)
-                     .asBitmap()
-                     .load(details.imageUri)
-                     .submit()
-                     .get()
-
-                 notificationHelper.createIncomingVoiceCallNotification(details, bitmap)
+               Completable.fromCallable{
+                   val bitmap: Bitmap = Glide.with(this@MFirebaseMessagingService.applicationContext)
+                       .asBitmap()
+                       .load(details.imageUri)
+                       .submit()
+                       .get()
+                   notificationHelper.createIncomingVoiceCallNotification(details, bitmap)
                }
+               .observeOn(Schedulers.io())
+               .subscribeOn(Schedulers.io())
+               .subscribe()
+
            }
            FCM_NEW_UPDATE_MESSAGE ->{
                /* TODO:retrieve new Url to download new version of app from */
            }
        }
     }
-
-    private fun getMessageType(remoteMessage:RemoteMessage):String =
-      remoteMessage.data.get("type")!!
 
     override fun onDeletedMessages() {
         super.onDeletedMessages()

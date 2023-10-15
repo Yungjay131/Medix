@@ -1,44 +1,46 @@
 package app.slyworks.auth_feature.registration
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import app.slyworks.auth_feature.IRegViewModel
 import app.slyworks.auth_feature.databinding.FragmentRegistrationOtp2Binding
 import app.slyworks.utils_lib.LOGIN_ACTIVITY_INTENT_FILTER
+import app.slyworks.utils_lib.utils.closeKeyboard
 
-import app.slyworks.utils_lib.utils.closeKeyboard3
 import app.slyworks.utils_lib.utils.plusAssign
 import app.slyworks.utils_lib.utils.displayMessage
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.joshuasylvanus.navigator.Navigator
+import dev.joshuasylvanus.navigator.interfaces.FragmentContinuationStateful
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class RegistrationOTP2Fragment : Fragment() {
     //region Vars
-    private lateinit var binding: FragmentRegistrationOtp2Binding
+    private val disposables = CompositeDisposable()
+
+    private lateinit var navigator:FragmentContinuationStateful
     private lateinit var viewModel: RegistrationActivityViewModel
 
-    private val disposables = CompositeDisposable()
+    private lateinit var binding: FragmentRegistrationOtp2Binding
     //endregion
 
     companion object {
         @JvmStatic
         fun newInstance(): RegistrationOTP2Fragment = RegistrationOTP2Fragment()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        viewModel = (requireActivity() as IRegViewModel).viewModel
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -53,42 +55,117 @@ class RegistrationOTP2Fragment : Fragment() {
         initViews()
     }
 
+    @SuppressLint("CheckResult")
     private fun initData(){
-        viewModel.progressLiveData.observe(viewLifecycleOwner){}
-        viewModel.messageLiveData.observe(viewLifecycleOwner){ displayMessage(it, binding.root) }
+        navigator = (requireActivity() as RegistrationActivity).navigator
+        viewModel = (requireActivity() as RegistrationActivity).viewModel
 
-        viewModel.otpResentLiveData.observe(viewLifecycleOwner){
-            displayMessage("OTP resent", binding.root)
-            viewModel.initOTPTimeoutCountdown()
-        }
+        viewModel.uiStateLD.observe(viewLifecycleOwner){
+            when(it){
+                is RegistrationUIState.OTPVerificationResent -> {
+                    displayMessage("OTP resent", requireContext())
 
-        viewModel.verificationFailureLiveData.observe(viewLifecycleOwner){}
+                    binding.etOTP1.setText("")
+                    binding.etOTP2.setText("")
+                    binding.etOTP3.setText("")
+                    binding.etOTP4.setText("")
+                    binding.etOTP5.setText("")
+                    binding.etOTP6.setText("")
+                    viewModel.initOTPTimeoutCountdown()
+                }
 
-        viewModel.verificationSuccessfulLiveData.observe(viewLifecycleOwner){
-            lifecycleScope.launch {
-                displayMessage("verification successful", binding.root)
+                is RegistrationUIState.OTPVerificationSuccess ->{
+                    displayMessage("verification success.\nLogin to continue", requireContext())
 
-                delay(1_000)
+                    /* delay for 2 seconds then navigate to LoginActivity */
+                    Completable.timer(2_000, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                              Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                                  .newAndClearTask()
+                                  .navigate()
+                        },
+                        {
+                            Timber.e(it)
 
-                Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
-                    .newAndClearTask()
-                    .navigate()
+                            Navigator.intentFor(requireContext(), LOGIN_ACTIVITY_INTENT_FILTER)
+                                .newAndClearTask()
+                                .navigate()
+                        })
+                }
+
+                is RegistrationUIState.OTPVerificationFailure ->
+                    displayMessage(it.error, requireContext())
+
+                is RegistrationUIState.Message ->
+                    displayMessage(it.message, requireContext())
             }
-
         }
 
-        viewModel.otpCountDownLD.observe(viewLifecycleOwner){
-            binding.tvCounter.setText(it.toString())
-        }
+        viewModel.uiOTPStateLD.observe(viewLifecycleOwner){
+            when(it){
+                is RegistrationUIState.OTPCountDown ->
+                    binding.tvCounter.setText(it.toString())
 
-        viewModel.otpCountDownFinishedLD.observe(viewLifecycleOwner){
-            binding.tvResendOtp.isEnabled = it
+                is RegistrationUIState.OTPCountDownFinished -> {}
+            }
         }
 
         viewModel.initOTPTimeoutCountdown()
     }
 
     private fun initViews(){
+        binding.etOTP2.setOnKeyListener { _:View, keyCode:Int, _ ->
+            if(keyCode == KeyEvent.KEYCODE_DEL){
+                binding.etOTP2.setText("")
+                binding.etOTP1.requestFocus()
+                return@setOnKeyListener true
+            }
+
+            return@setOnKeyListener false
+        }
+
+        binding.etOTP3.setOnKeyListener { _:View, keyCode:Int, _ ->
+            if(keyCode == KeyEvent.KEYCODE_DEL){
+                binding.etOTP3.setText("")
+                binding.etOTP2.requestFocus()
+                return@setOnKeyListener true
+            }
+
+            return@setOnKeyListener false
+        }
+
+        binding.etOTP4.setOnKeyListener { _:View, keyCode:Int, _ ->
+            if(keyCode == KeyEvent.KEYCODE_DEL){
+                binding.etOTP4.setText("")
+                binding.etOTP3.requestFocus()
+                return@setOnKeyListener true
+            }
+
+            return@setOnKeyListener false
+        }
+
+        binding.etOTP5.setOnKeyListener { _:View, keyCode:Int, _ ->
+            if(keyCode == KeyEvent.KEYCODE_DEL){
+                binding.etOTP5.setText("")
+                binding.etOTP4.requestFocus()
+                return@setOnKeyListener true
+            }
+
+            return@setOnKeyListener false
+        }
+
+        binding.etOTP6.setOnKeyListener { _:View, keyCode:Int, _ ->
+            if(keyCode == KeyEvent.KEYCODE_DEL){
+                binding.etOTP6.setText("")
+                binding.etOTP5.requestFocus()
+                return@setOnKeyListener true
+            }
+
+            return@setOnKeyListener false
+        }
+
+
         disposables +=
         binding.etOTP1.textChanges()
             .subscribe {
@@ -123,21 +200,6 @@ class RegistrationOTP2Fragment : Fragment() {
                    binding.etOTP6.requestFocus()
             }
 
-        binding.etOTP6.setOnEditorActionListener(
-            TextView.OnEditorActionListener { p0, p1, p2 ->
-                if(p0!!.id == binding.etOTP6.id){
-                    requireActivity().closeKeyboard3()
-
-                    val otp:String =
-                        "${binding.etOTP1.text}${binding.etOTP2.text}" +
-                        "${binding.etOTP3.text}${binding.etOTP4.text}"
-                    viewModel.inputOTPSubject.onNext(otp)
-                    return@OnEditorActionListener true
-                }
-
-                return@OnEditorActionListener false
-            })
-
         disposables +=
         Observable.combineLatest(binding.etOTP1.textChanges(),
                                  binding.etOTP2.textChanges(),
@@ -146,24 +208,46 @@ class RegistrationOTP2Fragment : Fragment() {
                                  binding.etOTP5.textChanges(),
                                  binding.etOTP6.textChanges(),
             { t1,t2,t3,t4,t5,t6 ->
-                t1.length == 1 && t2.length == 1 && t3.length == 1 && t4.length == 1 && t5.length == 1 && t6.length == 1
+                t1.length == 1 &&
+                t2.length == 1 &&
+                t3.length == 1 &&
+                t4.length == 1 &&
+                t5.length == 1 &&
+                t6.length == 1
             })
             .subscribe(binding.btnNext::setEnabled)
 
-        binding.tvResendOtp.setOnClickListener{
-           viewModel.resendOTPSubject.onNext(true)
-        }
+        binding.etOTP6.setOnEditorActionListener(
+            TextView.OnEditorActionListener { p0, p1, p2 ->
+                if(p0!!.id == binding.etOTP6.id){
+                    requireActivity().closeKeyboard()
+
+                    val otp:String =
+                        "${binding.etOTP1.text}${binding.etOTP2.text}" +
+                                "${binding.etOTP3.text}${binding.etOTP4.text}"
+                    viewModel.receiveSMSCodeForOTP(otp)
+
+                    return@OnEditorActionListener true
+                }
+
+                return@OnEditorActionListener false
+            })
+
+
 
         binding.btnNext.setOnClickListener {
-            requireActivity().closeKeyboard3()
+            requireActivity().closeKeyboard()
 
             val otp:String =
             "${binding.etOTP1.text}${binding.etOTP2.text}" +
             "${binding.etOTP3.text}${binding.etOTP4.text}" +
             "${binding.etOTP5.text}${binding.etOTP6.text}"
-            viewModel.inputOTPSubject.onNext(otp)
+            viewModel.receiveSMSCodeForOTP(otp)
         }
 
+        binding.tvResendOtp.setOnClickListener{
+            viewModel.resendOTP()
+        }
 
     }
 }

@@ -9,21 +9,32 @@
     tools:context="app.slyworks.auth_feature.onboarding.OnBoardingActivity"
     android:id="@+id/rootView">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+   <!-- <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true">-->
 
+
+    <include
+        layout="@layout/layout_network_status"
+        android:id="@id/l_network_status"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/l_network_status_height"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_images"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/guide_horizontal_1"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/l_network_status"
+            app:layout_constraintBottom_toTopOf="@id/guide_horizontal_1"
+            >
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/onboarding_image_1"
@@ -397,5 +408,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--
     </androidx.constraintlayout.widget.ConstraintLayout>
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>
